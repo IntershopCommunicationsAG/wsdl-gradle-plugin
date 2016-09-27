@@ -18,6 +18,8 @@ package com.intershop.gradle.wsdl
 import com.intershop.gradle.wsdl.extension.WSDLExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.dsl.DependencyHandler
 
 /**
  * <p>This plugin will apply the WSDL plugin.</p>
@@ -37,5 +39,61 @@ class WSDLPlugin implements Plugin<Project> {
         project.logger.info("Applying ${EXTENSION_NAME} plugin to project: ${project.name}")
 
         this.extension = project.extensions.findByType(WSDLExtension) ?: project.extensions.create(EXTENSION_NAME, WSDLExtension, project)
+
+        addAxis1Configuration(project, extension)
+        addAxis2Configuration(project, extension)
+
+
+    }
+
+
+
+    /**
+     * Adds the dependencies for the axis 1 code generation. It is possible to override this.
+     *
+     * @param project
+     * @param extension
+     */
+    private void addAxis1Configuration(final Project project, WSDLExtension extension) {
+        final Configuration configuration =
+                project.getConfigurations().findByName(WSDLExtension.WSDLAXIS1_CONFIGURATION_NAME) ?:
+                        project.getConfigurations().create(WSDLExtension.WSDLAXIS1_CONFIGURATION_NAME)
+
+        configuration
+                .setVisible(false)
+                .setTransitive(false)
+                .setDescription("WSDL Axis1 configuration is used for code generation")
+                .defaultDependencies { dependencies ->
+            DependencyHandler dependencyHandler = project.getDependencies()
+
+            dependencies.add(dependencyHandler.create('axis:axis-wsdl4j:1.5.1'))
+            dependencies.add(dependencyHandler.create('commons-discovery:commons-discovery:0.5'))
+            dependencies.add(dependencyHandler.create('javax.activation:activation:1.1.1'))
+            dependencies.add(dependencyHandler.create('javax.mail:mail:1.4.7'))
+
+            dependencies.add(dependencyHandler.create('org.apache.axis:axis:' +  extension.getAxis1Version()))
+            dependencies.add(dependencyHandler.create('org.apache.axis:axis-jaxrpc:' +  extension.getAxis1Version()))
+        }
+    }
+
+    /**
+     * Adds the dependencies for the axis 2 code generation. It is possible to override this.
+     *
+     * @param project
+     * @param extension
+     */
+    private void addAxis2Configuration(final Project project, WSDLExtension extension) {
+        final Configuration configuration =
+                project.getConfigurations().findByName(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME) ?:
+                        project.getConfigurations().create(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME)
+
+        configuration
+                .setVisible(false)
+                .setTransitive(false)
+                .setDescription("WSDL Axis2 configuration is used for code generation")
+                .defaultDependencies { dependencies ->
+            DependencyHandler dependencyHandler = project.getDependencies()
+            dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:' + extension.getAxis2Version()))
+        }
     }
 }

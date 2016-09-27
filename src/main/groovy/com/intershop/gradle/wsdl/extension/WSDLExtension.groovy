@@ -15,7 +15,9 @@
  */
 package com.intershop.gradle.wsdl.extension
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.process.JavaForkOptions
 
 /**
  * <p>This is the extension object for the Intershop WSDL plugin.</p>
@@ -25,12 +27,12 @@ class WSDLExtension {
     /**
      * Default versions of Axis 1
      */
-    final static String AXIS1_DEFAULT_VERSION = '2.2.11'
+    final static String AXIS1_DEFAULT_VERSION = '1.5.1'
 
     /**
      * Default versions of Axis 2
      */
-    final static String AXIS2_DEFAULT_VERSION = '2.2.11'
+    final static String AXIS2_DEFAULT_VERSION = '1.7.3'
 
     /**
      * Extension name
@@ -38,9 +40,14 @@ class WSDLExtension {
     final static String WSDL_EXTENSION_NAME = 'wsdl'
 
     /**
-     * Dependency configuration name
+     * Dependency configuration name axis1
      */
-    final static String WSDL_CONFIGURATION_NAME = 'wsdl'
+    final static String WSDLAXIS1_CONFIGURATION_NAME = 'wsdlAxis1'
+
+    /**
+     * Dependency configuration name axis2
+     */
+    final static String WSDLAXIS2_CONFIGURATION_NAME = 'wsdlAxis2'
 
     /**
      * Task group name
@@ -51,6 +58,26 @@ class WSDLExtension {
      * Default source set name
      */
     final static String DEFAULT_SOURCESET_NAME = 'main'
+
+    /**
+     * Version of axis1, default is 1.4
+     */
+    String axis1Version
+
+    /**
+     * Version of axis2, default is 1.7.3
+     */
+    String axis2Version
+
+    /**
+     * Container for axis1 generation configurations
+     */
+    final NamedDomainObjectContainer<Axis1> axis1
+
+    /**
+     * Container for axis2 generation configurations
+     */
+    final NamedDomainObjectContainer<Axis2> axis2
 
     private Project project
 
@@ -71,15 +98,41 @@ class WSDLExtension {
             axis2Version = AXIS2_DEFAULT_VERSION
         }
 
+        axis1 = project.container(Axis1)
+        axis2 = project.container(Axis2)
     }
 
     /**
-     * Version of axis1, default is 2.2.11
+     * Closure with the configuration of axis1 code generation configurations
+     * @param closure with axis1 code generation configurations
      */
-    String axis1Version
+    void axis1(Closure c) {
+        axis1.configure(c)
+    }
 
     /**
-     * Version of axis2, default is 2.2.11
+     * Closure with the configuration of axis2 code generation configurations
+     * @param closure with axis2 code generation configurations
      */
-    String axis2Version
+    void axis2(Closure c) {
+        axis2.configure(c)
+    }
+
+    /**
+     * This configures the special options for the used VM for axis1.
+     */
+    JavaForkOptions axis1ForkOptions
+
+    void axis1ForkOptions(Closure c) {
+        project.configure(axis1ForkOptions, c)
+    }
+
+    /**
+     * This configures the special options for the used VM for axis2.
+     */
+    JavaForkOptions axis2ForkOptions
+
+    void axis2ForkOptions(Closure c) {
+        project.configure(axis2ForkOptions, c)
+    }
 }
