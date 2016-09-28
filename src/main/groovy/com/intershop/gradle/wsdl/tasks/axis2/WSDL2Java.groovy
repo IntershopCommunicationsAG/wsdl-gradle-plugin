@@ -20,6 +20,7 @@ import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import org.gradle.api.file.FileCollection
 import org.gradle.process.internal.JavaExecHandleBuilder
 
+
 class WSDL2Java extends AbstractWSDL2Java {
 
     static final String MAIN_CLASS_NAME = 'org.apache.axis2.wsdl.WSDL2Java'

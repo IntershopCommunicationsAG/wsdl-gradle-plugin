@@ -21,28 +21,28 @@ enum Databinding {
     ADB {
         @Override
         public String toString() {
-            return 'ADB'
+            return 'adb'
         }
     },
 
     XMLBEANS {
         @Override
         public String toString() {
-            return 'XMLBEANS'
-        }
-    },
-
-    JAXBRI {
-        @Override
-        public String toString() {
-            return 'JAXBRI'
+            return 'xmlbeans'
         }
     },
 
     JIBX {
         @Override
         public String toString() {
-            return 'JIBX'
+            return 'jibx'
+        }
+    },
+
+    NONE {
+        @Override
+        public String toString() {
+            return 'none'
         }
     }
 

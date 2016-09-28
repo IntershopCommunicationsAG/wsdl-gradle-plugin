@@ -15,42 +15,115 @@
  */
 package com.intershop.gradle.wsdl.extension
 
+import com.intershop.gradle.wsdl.utils.Databinding
 import org.gradle.util.GUtil
 
 class Axis2 extends BaseAxisConfig {
 
-    final static String DEFAULT_DATABINDING = 'adb'
-    final static String DEFAULT_LANGUAGE = 'java'
+    /**
+     * Generate code only for async style. When this option is used the generated
+     * stubs will have only the asynchronous invocation methods. Switched off by default.
+     */
+    boolean async = false
 
-    /** Language of the generated code. */
-    String language;
+    /**
+     * Generate code only for sync style . When this option is used the generated stubs
+     * will have only the synchronous invocation methods. Switched off by default.
+     * When async is set to true, this takes precedence.
+     */
+    boolean sync = false
 
-    /** The name of the service in the case of multiple services. */
-    String serviceName;
+    /**
+     * Generates server side code (i.e. skeletons). Default is false.
+     */
+    boolean serverSide = false
 
-    /** The name of the port in the presence of multiple ports. */
-    String portName;
+    /**
+     * Generates the service descriptor (i.e. server.xml). Default is false.
+     * Only valid if serverSide is true, the server side code generation option.
+     */
+    boolean serviceDescription = false
 
-    /** The Axis data binding: 'adb' (default), 'xmlbeans', 'jaxbri', 'jibx'). */
-    String databindingName;
+    /**
+     * Specifies the Databinding framework.
+     * Valid values are
+     *  - xmlbeans -> XMLBEANS,
+     *  - adb      -> ADB,
+     *  - jibx     -> JIBX, and
+     *  - none     -> NONE.
+     *  Default is adb.
+     */
+    String databindingMethod = Databinding.ADB.toString()
 
-    /** Synchronization Mode. */
-    String synchronizationMode;
+    /**
+     * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
+     * the client code (stubs) will also be generated along with the skeleton.
+     */
+    boolean generateAllClasses = false
 
-    /** WSDL version. */
+    /**
+     * Unpack classes. This option specifies whether to unpack the classes and
+     * generate separate classes for the databinders.
+     */
+    boolean unpackClasses = false
+
+    /**
+     * Specifies the service name to be code generated. If the service name is not specified,
+     * then the first service will be picked.
+     */
+    String serviceName
+
+    /**
+     * Specifies the port name to be code generated. If the port name is not specified,
+     * then the first port (of the selected service) will be picked.
+     */
+    String portName
+
+    /**
+     * Generate an interface for the service skeleton.
+     */
+    boolean serversideInterface	= false
+
+    /**
+     * WSDL Version. Valid Options : 2, 2.0, 1.1
+     */
     String wsdlVersion
 
     /**
-     * This option specifies whether to unpack the classes and
-     * generate separate classes for the databinders.
+     * Flattens the generated files
      */
-    Boolean unpackClasses = Boolean.TRUE
+    boolean flattenFiles = false
 
     /**
-     * Generate Axis2 service deployment descriptor
-     * file (services.xml): true, false (default).
+     * Switch on un-wrapping, if this value is true.
      */
-    Boolean generateServiceDeploymentDescriptor;
+    boolean unwrapParams = false
+
+    /**
+     * Use XMLBeans .xsdconfig file if this value is true.
+     * This is only valid if  databindingMethod is 'xmlbeans'.
+     */
+    boolean xsdconfig = false
+
+    /**
+     * Generate code for all ports
+     */
+    boolean allPorts = false
+
+    /**
+     * Generate Axis 1.x backword compatible code
+     */
+    boolean backwordCompatible = false
+
+    /**
+     * Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
+     */
+    boolean suppressPrefixes = false
+
+    /**
+     * Don't generate a MessageReceiver in the generated sources
+     */
+    boolean noMessageReceiver = false
 
     Axis2(String name) {
         super(name)
@@ -58,13 +131,5 @@ class Axis2 extends BaseAxisConfig {
 
     String getTaskName() {
         "axis2Wsdl2java" + GUtil.toCamelCase(name);
-    }
-
-    String getDatabindingName() {
-        (databindingName) ? databindingName : DEFAULT_DATABINDING
-    }
-
-    String getLanguage() {
-        (language) ? language : DEFAULT_LANGUAGE;
     }
 }

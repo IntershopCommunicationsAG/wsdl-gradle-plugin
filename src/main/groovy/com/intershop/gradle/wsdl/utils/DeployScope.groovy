@@ -13,35 +13,26 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.intershop.gradle.wsdl.utils
 
-import groovy.transform.CompileStatic
-
-/**
- * The names of all synchronization modes.
- */
-@CompileStatic
-enum SynchronizationMode {
-
-    SYNC {
+enum DeployScope {
+    APPLICATION {
         @Override
         public String toString() {
-            return 'SYNC'
+            return 'Application'
         }
     },
-
-    ASYNC {
+    REQUEST {
         @Override
         public String toString() {
-            return 'ASYNC'
+            return 'Request'
         }
     },
-
-    ALL {
+    SESSION {
         @Override
         public String toString() {
-            return 'ALL'
+            return 'Session'
         }
     }
-
 }
