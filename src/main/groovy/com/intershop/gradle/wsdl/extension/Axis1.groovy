@@ -161,6 +161,34 @@ class Axis1 extends BaseAxisConfig {
      */
     boolean wrapArrays = false
 
+    /**
+     * Output path for all sources
+     */
+    File outputDir
+
+    /**
+     * Name of the source set for generated Java code
+     * default value is 'main'
+     */
+    String sourceSetName
+
+    String getSourceSetName() {
+        if(! this.sourceSetName) {
+            return WSDLExtension.DEFAULT_SOURCESET_NAME
+        } else {
+            return this.sourceSetName
+        }
+    }
+
+    /**
+     * Additional ars for xjc
+     */
+    def args = []
+
+    void arg(String parameter) {
+        args.add(parameter)
+    }
+
     Axis1(String name) {
         super(name)
     }

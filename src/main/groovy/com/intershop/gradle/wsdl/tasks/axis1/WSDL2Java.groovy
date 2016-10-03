@@ -185,6 +185,12 @@ class WSDL2Java extends AbstractWSDL2Java {
     boolean wrapArrays = false
 
     /**
+     * Additional arguments
+     */
+    @Input
+    String[] addArgs = []
+
+    /**
      * The directory to generate the parser source files into.
      */
     @OutputDirectory
@@ -240,6 +246,10 @@ class WSDL2Java extends AbstractWSDL2Java {
 
         // Add debug logging
         addFlag(args, logger.debugEnabled || logger.traceEnabled, '--Debug')
+
+        addArgs.each {
+            args << it
+        }
 
         args << wsdlFile.toString()
 

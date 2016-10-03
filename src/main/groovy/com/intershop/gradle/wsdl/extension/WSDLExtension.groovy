@@ -50,6 +50,11 @@ class WSDLExtension {
     final static String WSDLAXIS2_CONFIGURATION_NAME = 'wsdlAxis2'
 
     /**
+     * Default output path
+     */
+    final static String CODEGEN_DEFAULT_OUTPUTPATH = 'generated/wsdl2java'
+
+    /**
      * Task group name
      */
     final static String WSDL_TASK_GROUP = 'wsdl code generation'

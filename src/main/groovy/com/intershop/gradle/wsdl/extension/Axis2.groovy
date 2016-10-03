@@ -125,6 +125,39 @@ class Axis2 extends BaseAxisConfig {
      */
     boolean noMessageReceiver = false
 
+    /**
+     * Output path for sources without resources
+     */
+    File srcOutputDir
+
+    /**
+     * Output path for resources without sources
+     */
+    File resourceOutputDir
+
+    /**
+     * Name of the source set for generated Java code
+     * default value is 'main'
+     */
+    String sourceSetName
+
+    String getSourceSetName() {
+        if(! this.sourceSetName) {
+            return WSDLExtension.DEFAULT_SOURCESET_NAME
+        } else {
+            return this.sourceSetName
+        }
+    }
+
+    /**
+     * Additional ars for xjc
+     */
+    def args = []
+
+    void arg(String parameter) {
+        args.add(parameter)
+    }
+
     Axis2(String name) {
         super(name)
     }
