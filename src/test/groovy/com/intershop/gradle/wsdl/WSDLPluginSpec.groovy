@@ -42,24 +42,24 @@ class WSDLPluginSpec extends AbstractProjectSpec {
         project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).getAxis1Version() == WSDLExtension.AXIS1_DEFAULT_VERSION
         project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).getAxis2Version() == WSDLExtension.AXIS2_DEFAULT_VERSION
 
-        /**
+
         when:
-        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).schemaGen {
+        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis1 {
             testconfiguration {
             }
         }
 
         then:
-        project.tasks.findByName("jaxbSchemaGenTestconfiguration")
+        project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
 
         when:
-        project.extensions.getByName(JaxbExtension.JAXB_EXTENSION_NAME).javaGen {
+        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis2 {
             testconfiguration {
             }
         }
 
         then:
-        project.tasks.findByName("jaxbJavaGenTestconfiguration")
-        **/
+        project.tasks.findByName("axis2Wsdl2javaTestconfiguration")
+        
     }
 }

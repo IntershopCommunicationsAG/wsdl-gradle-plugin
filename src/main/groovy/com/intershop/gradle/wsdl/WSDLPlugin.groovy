@@ -49,9 +49,9 @@ class WSDLPlugin implements Plugin<Project> {
         addAxis1Configuration(project)
         addAxis2Configuration(project)
 
-        Task wsdl2javaTask = project.tasks.findByName('wsdl2java')
+        Task wsdl2javaTask = project.getTasks().findByName('wsdl2java')
         if(! wsdl2javaTask) {
-            wsdl2javaTask = project.getTasks().create('wsdl2Java')
+            wsdl2javaTask = project.getTasks().create('wsdl2java')
             wsdl2javaTask.group = WSDLExtension.WSDL_TASK_GROUP
             wsdl2javaTask.description = 'WSDL to Java code generation tasks'
         }
@@ -122,7 +122,7 @@ class WSDLPlugin implements Plugin<Project> {
      * @param mainTask wsdl2Java
      */
     private void configureAxis2Tasks(Project project, Task mainTask) {
-        extension.getAxis1().all { Axis2 axis2Config ->
+        extension.getAxis2().all { Axis2 axis2Config ->
             com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.getTasks().create(axis2Config.getTaskName(), com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java.class )
             task.group = WSDLExtension.WSDL_TASK_GROUP
             task.description = "Create java files file for ${axis2Config.name} of ${project.name}"
