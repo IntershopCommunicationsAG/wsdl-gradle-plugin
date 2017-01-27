@@ -17,7 +17,6 @@ package com.intershop.gradle.wsdl
 
 import com.intershop.gradle.test.AbstractProjectSpec
 import com.intershop.gradle.wsdl.extension.WSDLExtension
-import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java
 import org.gradle.api.Plugin
 
 class WSDLPluginSpec extends AbstractProjectSpec {
@@ -91,7 +90,7 @@ class WSDLPluginSpec extends AbstractProjectSpec {
                 args = ['-Dtest=test', '-Dtest1=test1'] as List<String>
             }
         }
-        WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
+        com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
 
         then:
         task
@@ -120,24 +119,19 @@ class WSDLPluginSpec extends AbstractProjectSpec {
     def 'should set all parameters in task axis2'() {
         when:
         plugin.apply(project)
-        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis1 {
+        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis2 {
             testconfiguration {
                 wsdlFile = project.file('MyFile.wsdl')
                 packageName = 'com.intershop.wsdl'
                 namespacePackageMapping = ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
                 namespacePackageMappingFile = project.file('wsdl/package.mapping')
-                wrapArrays = true
-                noWrapped = true
+                unwrapParams = true
                 generateAllClasses = true
-                timeout = -1
-                userName = 'UserName'
-                password = 'password'
-                noImports = true
                 arg('testParameter')
 
             }
         }
-        WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
+        com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.tasks.findByName("axis2Wsdl2javaTestconfiguration")
 
         then:
         task
@@ -145,13 +139,9 @@ class WSDLPluginSpec extends AbstractProjectSpec {
         task.packageName == 'com.intershop.wsdl'
         task.namespacePackageMapping == ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
         task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
-        task.wrapArrays == true
-        task.noWrapped == true
+        task.unwrapParams == true
         task.generateAllClasses == true
-        task.timeout == -1
-        task.userName == 'UserName'
-        task.password == 'password'
-        task.noImports == true
+        task.wsdlVersion == null
         task.addArgs == ['testParameter' ] as List<String>
     }
 }
