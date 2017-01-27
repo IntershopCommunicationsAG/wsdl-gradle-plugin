@@ -89,7 +89,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
     /**
      * Java fork options for the Java task.
      */
-    JavaForkOptions forkOptions
+    JavaForkOptions javaOptions
 
     /**
      * Task action of the SonarQube runner
@@ -114,12 +114,12 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      *
      * @return JavaForkOptions
      */
-    public JavaForkOptions getForkOptions() {
-        if (forkOptions == null) {
-            forkOptions = new DefaultJavaForkOptions(getFileResolver());
+    public JavaForkOptions getJavaOptions() {
+        if (javaOptions == null) {
+            javaOptions = new DefaultJavaForkOptions(getFileResolver())
         }
 
-        return forkOptions;
+        return javaOptions
     }
 
     @Inject

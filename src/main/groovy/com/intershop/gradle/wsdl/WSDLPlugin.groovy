@@ -96,7 +96,6 @@ class WSDLPlugin implements Plugin<Project> {
             task.conventionMapping.namespacePackageMapping = { axis1Config.getNamespacePackageMapping() }
             task.conventionMapping.generateTestcase = { axis1Config.getGenerateTestcase() }
             task.conventionMapping.namespacePackageMappingFile = { axis1Config.getNamespacePackageMappingFile() }
-            task.conventionMapping.forkOptions = { extension.getAxis1ForkOptions() }
             task.conventionMapping.addArgs = { axis1Config.getArgs() }
 
             // identify sourceset configuration and add output to sourceset
@@ -160,7 +159,6 @@ class WSDLPlugin implements Plugin<Project> {
             task.conventionMapping.namespacePackageMapping = { axis2Config.getNamespacePackageMapping() }
             task.conventionMapping.generateTestcase = { axis2Config.getGenerateTestcase() }
             task.conventionMapping.namespacePackageMappingFile = { axis2Config.getNamespacePackageMappingFile() }
-            task.conventionMapping.forkOptions = { extension.getAxis2ForkOptions() }
             task.conventionMapping.addArgs = { axis2Config.getArgs() }
 
             // identify sourceset configuration and add output to sourceset

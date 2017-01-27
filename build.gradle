@@ -37,11 +37,6 @@ group 'com.intershop.gradle.wsdl'
 description 'WSDL plugin for Axis 1 and Axis 2'
 version = scm.version.version
 
-// release configuration
-group 'com.intershop.gradle.buildinfo'
-description 'Gradle Buildinfo Plugin'
-version = scm.version.version
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 

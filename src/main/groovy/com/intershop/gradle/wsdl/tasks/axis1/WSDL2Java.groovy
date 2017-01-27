@@ -188,7 +188,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Additional arguments
      */
     @Input
-    String[] addArgs = []
+    List<String> addArgs = []
 
     /**
      * The directory to generate the parser source files into.

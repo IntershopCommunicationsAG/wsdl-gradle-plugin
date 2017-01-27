@@ -51,7 +51,7 @@ abstract class BaseAxisConfig implements Named {
      * Like the generated implementation file, the generated test case file could be considered a template
      * that you may fill in.
      */
-    boolean generateTestcase
+    boolean generateTestcase = false
 
     /**
      * If there are a number of namespaces in the WSDL document, listing a mapping for them all could

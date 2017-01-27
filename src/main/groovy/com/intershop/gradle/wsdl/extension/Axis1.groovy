@@ -71,7 +71,7 @@ class Axis1 extends BaseAxisConfig {
      * </pre></blockquote></p>
      * If this configuration is used, serverSide is automatically set to true.
      */
-    String skeletonDeploy
+    boolean skeletonDeploy = false
 
     /**
      * Add scope to deploy.wsdd:
@@ -183,7 +183,7 @@ class Axis1 extends BaseAxisConfig {
     /**
      * Additional ars for xjc
      */
-    def args = []
+    List<String> args = []
 
     void arg(String parameter) {
         args.add(parameter)

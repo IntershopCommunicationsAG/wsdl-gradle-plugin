@@ -17,8 +17,6 @@ package com.intershop.gradle.wsdl.extension
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.process.JavaForkOptions
-
 /**
  * <p>This is the extension object for the Intershop WSDL plugin.</p>
  */
@@ -121,23 +119,5 @@ class WSDLExtension {
      */
     void axis2(Closure c) {
         axis2.configure(c)
-    }
-
-    /**
-     * This configures the special options for the used VM for axis1.
-     */
-    JavaForkOptions axis1ForkOptions
-
-    void axis1ForkOptions(Closure c) {
-        project.configure(axis1ForkOptions, c)
-    }
-
-    /**
-     * This configures the special options for the used VM for axis2.
-     */
-    JavaForkOptions axis2ForkOptions
-
-    void axis2ForkOptions(Closure c) {
-        project.configure(axis2ForkOptions, c)
     }
 }

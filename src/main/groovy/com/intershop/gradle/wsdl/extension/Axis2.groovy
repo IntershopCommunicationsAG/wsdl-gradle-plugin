@@ -152,7 +152,7 @@ class Axis2 extends BaseAxisConfig {
     /**
      * Additional ars for xjc
      */
-    def args = []
+    List<String> args = []
 
     void arg(String parameter) {
         args.add(parameter)

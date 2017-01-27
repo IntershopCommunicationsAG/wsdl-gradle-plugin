@@ -17,6 +17,7 @@ package com.intershop.gradle.wsdl
 
 import com.intershop.gradle.test.AbstractProjectSpec
 import com.intershop.gradle.wsdl.extension.WSDLExtension
+import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java
 import org.gradle.api.Plugin
 
 class WSDLPluginSpec extends AbstractProjectSpec {
@@ -60,6 +61,97 @@ class WSDLPluginSpec extends AbstractProjectSpec {
 
         then:
         project.tasks.findByName("axis2Wsdl2javaTestconfiguration")
-        
+    }
+
+    def 'should set all parameters in task axis1'() {
+        when:
+        plugin.apply(project)
+        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis1 {
+            testconfiguration {
+                noImports = true
+                timeout = 360
+                noWrapped = true
+                serverSide = true
+                skeletonDeploy = true
+                deployScope = 'Application'
+                generateAllClasses = true
+                typeMappingVersion = '1.2'
+                factory = 'TestFactory'
+                helperGen = true
+                userName = 'test'
+                password = 'testp'
+                implementationClassName = 'BlaClassName'
+                wrapArrays = true
+                sourceSetName = 'test'
+                packageName = 'com.test'
+                generateTestcase = true
+                namespacePackageMapping = ["a": "com.intershop.a", "b": "com.intershop.b", "c": "com.intershop.c"]
+                namespacePackageMappingFile = project.file('wsdl/package.mapping')
+                wsdlFile = project.file('MyFile.wsdl')
+                args = ['-Dtest=test', '-Dtest1=test1'] as List<String>
+            }
+        }
+        WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
+
+        then:
+        task
+        task.noImports == true
+        task.timeout == 360
+        task.noWrapped == true
+        task.serverSide == true
+        task.skeletonDeploy == true
+        task.deployScope == com.intershop.gradle.wsdl.utils.DeployScope.APPLICATION.toString()
+        task.generateAllClasses == true
+        task.typeMappingVersion == '1.2'
+        task.factory == 'TestFactory'
+        task.helperGen == true
+        task.userName == 'test'
+        task.password == 'testp'
+        task.implementationClassName == 'BlaClassName'
+        task.wrapArrays == true
+        task.packageName == 'com.test'
+        task.generateTestcase == true
+        task.namespacePackageMapping == ["a" : "com.intershop.a", "b" : "com.intershop.b", "c" : "com.intershop.c"]
+        task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
+        task.wsdlFile == project.file('MyFile.wsdl')
+        task.addArgs ==  ['-Dtest=test', '-Dtest1=test1'] as List<String>
+    }
+
+    def 'should set all parameters in task axis2'() {
+        when:
+        plugin.apply(project)
+        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis1 {
+            testconfiguration {
+                wsdlFile = project.file('MyFile.wsdl')
+                packageName = 'com.intershop.wsdl'
+                namespacePackageMapping = ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
+                namespacePackageMappingFile = project.file('wsdl/package.mapping')
+                wrapArrays = true
+                noWrapped = true
+                generateAllClasses = true
+                timeout = -1
+                userName = 'UserName'
+                password = 'password'
+                noImports = true
+                arg('testParameter')
+
+            }
+        }
+        WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
+
+        then:
+        task
+        task.wsdlFile == project.file('MyFile.wsdl')
+        task.packageName == 'com.intershop.wsdl'
+        task.namespacePackageMapping == ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
+        task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
+        task.wrapArrays == true
+        task.noWrapped == true
+        task.generateAllClasses == true
+        task.timeout == -1
+        task.userName == 'UserName'
+        task.password == 'password'
+        task.noImports == true
+        task.addArgs == ['testParameter' ] as List<String>
     }
 }
