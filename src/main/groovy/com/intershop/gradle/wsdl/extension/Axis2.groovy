@@ -136,6 +136,11 @@ class Axis2 extends BaseAxisConfig {
     File resourceOutputDir
 
     /**
+     * Output file location. This is where the files would be copied once the code generation is done.
+     */
+    File outputDir
+
+    /**
      * Name of the source set for generated Java code
      * default value is 'main'
      */
@@ -163,6 +168,6 @@ class Axis2 extends BaseAxisConfig {
     }
 
     String getTaskName() {
-        "axis2Wsdl2java" + GUtil.toCamelCase(name);
+        "axis2Wsdl2java" + GUtil.toCamelCase(name)
     }
 }

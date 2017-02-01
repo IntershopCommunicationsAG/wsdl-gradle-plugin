@@ -19,6 +19,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
@@ -35,6 +36,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * with the same name in different namespaces.
      * Only for Axis1: It is an error to use the --NStoPkg switch and --package at the same time.
      */
+    @Optional
     @Input
     String packageName
 
@@ -49,6 +51,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * urn:AddressFetcher2=samples.addr
      * </pre></blockquote></p>
      */
+    @Optional
     @Input
     Map<String, String> namespacePackageMapping
 
@@ -58,6 +61,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * Like the generated implementation file, the generated test case file could be considered a template
      * that you may fill in.
      */
+    @Optional
     @Input
     boolean generateTestcase
 
@@ -79,6 +83,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * If an entry for a given mapping exists both with namespacePackageMapping and in this properties file,
      * the namespacePackageMapping entry takes precedence.
      */
+    @Optional
     @InputFile
     File namespacePackageMappingFile
 
@@ -95,7 +100,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * Task action of the SonarQube runner
      */
     @TaskAction
-    public void run() {
+    void run() {
         JavaExecHandleBuilder exechandler = prepareExec()
         if (exechandler) {
             exechandler.build().start().waitForFinish().assertNormalExitValue()
@@ -114,7 +119,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      *
      * @return JavaForkOptions
      */
-    public JavaForkOptions getJavaOptions() {
+    JavaForkOptions getJavaOptions() {
         if (javaOptions == null) {
             javaOptions = new DefaultJavaForkOptions(getFileResolver())
         }
@@ -124,7 +129,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
 
     @Inject
     protected FileResolver getFileResolver() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException()
     }
 
     /**
@@ -134,7 +139,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * @param optionName Parameter name
      *
      */
-    private void addAttribute(List<String> arguments, String value, String optionName) {
+    protected static void addAttribute(List<String> arguments, String value, String optionName) {
         if (value) {
             arguments << optionName
             arguments << "${value}" // + ' ' + value
@@ -147,7 +152,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      * @param value Configured value
      * @param optionName name of the option
      */
-    private void addFlag(List<String> arguments, boolean value, String optionName) {
+    protected static void addFlag(List<String> arguments, boolean value, String optionName) {
         if (value) {
             arguments << optionName
         }

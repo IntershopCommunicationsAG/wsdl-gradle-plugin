@@ -67,7 +67,8 @@ class WSDLPlugin implements Plugin<Project> {
      */
     private void configureAxis1Tasks(Project project, Task mainTask) {
         extension.getAxis1().all { Axis1 axis1Config ->
-            com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java task = project.getTasks().create(axis1Config.getTaskName(), com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java.class )
+            com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java task = project.getTasks().create(axis1Config.getTaskName(),
+                    com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java.class )
             task.group = WSDLExtension.WSDL_TASK_GROUP
             task.description = "Create java files file for ${axis1Config.name} of ${project.name}"
 
@@ -92,6 +93,7 @@ class WSDLPlugin implements Plugin<Project> {
             task.conventionMapping.password = { axis1Config.getPassword() }
             task.conventionMapping.implementationClassName = { axis1Config.getImplementationClassName() }
             task.conventionMapping.wrapArrays = { axis1Config.getWrapArrays() }
+            task.conventionMapping.allowInvalidURL = { axis1Config.getAllowInvalidURL() }
             task.conventionMapping.packageName = { axis1Config.getPackageName() }
             task.conventionMapping.namespacePackageMapping = { axis1Config.getNamespacePackageMapping() }
             task.conventionMapping.generateTestcase = { axis1Config.getGenerateTestcase() }
@@ -122,17 +124,14 @@ class WSDLPlugin implements Plugin<Project> {
      */
     private void configureAxis2Tasks(Project project, Task mainTask) {
         extension.getAxis2().all { Axis2 axis2Config ->
-            com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.getTasks().create(axis2Config.getTaskName(), com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java.class )
+            com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.getTasks().create(axis2Config.getTaskName(),
+                    com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java.class )
             task.group = WSDLExtension.WSDL_TASK_GROUP
             task.description = "Create java files file for ${axis2Config.name} of ${project.name}"
 
-            task.conventionMapping.srcOutputDirectory = {
-                axis2Config.getSrcOutputDir() ?: new File(project.getBuildDir(),
-                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/${axis2Config.getName().replace(' ', '_')}/src")
-            }
-            task.conventionMapping.resourcesOutputDirectory = {
-                axis2Config.getResourceOutputDir() ?: new File(project.getBuildDir(),
-                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/${axis2Config.getName().replace(' ', '_')}/resources")
+            task.conventionMapping.outputDirectory = {
+                axis2Config.getOutputDir() ?: new File(project.getBuildDir(),
+                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/${axis2Config.getName().replace(' ', '_')}/output")
             }
 
             task.conventionMapping.wsdlFile = { axis2Config.getWsdlFile() }
@@ -166,12 +165,12 @@ class WSDLPlugin implements Plugin<Project> {
                 if (axis2Config.getSourceSetName() && project.plugins.hasPlugin(JavaBasePlugin) && ! project.convention.getPlugin(JavaPluginConvention.class).sourceSets.isEmpty()) {
                     SourceSet sourceSet = project.convention.getPlugin(JavaPluginConvention.class).sourceSets.findByName(axis2Config.getSourceSetName())
                     if(sourceSet != null) {
-                        if(! sourceSet.java.srcDirs.contains(task.getSrcOutputDirectory())) {
-                            sourceSet.java.srcDir(task.getSrcOutputDirectory())
+                        if(! sourceSet.java.srcDirs.contains(new File(task.getOutputDirectory(), 'src'))) {
+                            sourceSet.java.srcDir(new File(task.getOutputDirectory(), 'src'))
                         }
                         project.tasks.getByName(sourceSet.compileJavaTaskName).dependsOn(task)
-                        if(! sourceSet.resources.contains(task.getResourcesOutputDirectory())) {
-                            sourceSet.resources.srcDir(task.getResourcesOutputDirectory())
+                        if(! sourceSet.resources.contains(new File(task.getOutputDirectory(), 'resources'))) {
+                            sourceSet.resources.srcDir(new File(task.getOutputDirectory(), 'resources'))
                         }
                     }
                 }
@@ -187,25 +186,28 @@ class WSDLPlugin implements Plugin<Project> {
      * @param project
      * @param extension
      */
-    private void addAxis1Configuration(final Project project) {
+    private static void addAxis1Configuration(final Project project) {
+
         final Configuration configuration =
                 project.getConfigurations().findByName(WSDLExtension.WSDLAXIS1_CONFIGURATION_NAME) ?:
                         project.getConfigurations().create(WSDLExtension.WSDLAXIS1_CONFIGURATION_NAME)
 
-        configuration
-                .setVisible(false)
-                .setTransitive(false)
-                .setDescription("WSDL Axis1 configuration is used for code generation")
-                .defaultDependencies { dependencies ->
-            DependencyHandler dependencyHandler = project.getDependencies()
+        if(configuration.getAllDependencies().isEmpty()) {
+            configuration
+                    .setTransitive(false)
+                    .setDescription("WSDL Axis1 configuration is used for code generation")
+                    .defaultDependencies { dependencies ->
+                DependencyHandler dependencyHandler = project.getDependencies()
 
-            dependencies.add(dependencyHandler.create('axis:axis-wsdl4j:1.5.1'))
-            dependencies.add(dependencyHandler.create('commons-discovery:commons-discovery:0.5'))
-            dependencies.add(dependencyHandler.create('javax.activation:activation:1.1.1'))
-            dependencies.add(dependencyHandler.create('javax.mail:mail:1.4.7'))
+                dependencies.add(dependencyHandler.create('axis:axis-wsdl4j:1.5.1'))
+                dependencies.add(dependencyHandler.create('commons-discovery:commons-discovery:0.5'))
+                dependencies.add(dependencyHandler.create('javax.activation:activation:1.1.1'))
+                dependencies.add(dependencyHandler.create('javax.mail:mail:1.4.7'))
+                dependencies.add(dependencyHandler.create('commons-logging:commons-logging:1.2'))
 
-            dependencies.add(dependencyHandler.create('org.apache.axis:axis:' +  extension.getAxis1Version()))
-            dependencies.add(dependencyHandler.create('org.apache.axis:axis-jaxrpc:' +  extension.getAxis1Version()))
+                dependencies.add(dependencyHandler.create('org.apache.axis:axis:1.4'))
+                dependencies.add(dependencyHandler.create('org.apache.axis:axis-jaxrpc:1.4'))
+            }
         }
     }
 
@@ -215,18 +217,33 @@ class WSDLPlugin implements Plugin<Project> {
      * @param project
      * @param extension
      */
-    private void addAxis2Configuration(final Project project) {
+    private static void addAxis2Configuration(final Project project) {
+
         final Configuration configuration =
                 project.getConfigurations().findByName(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME) ?:
                         project.getConfigurations().create(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME)
 
-        configuration
-                .setVisible(false)
-                .setTransitive(false)
-                .setDescription("WSDL Axis2 configuration is used for code generation")
-                .defaultDependencies { dependencies ->
-            DependencyHandler dependencyHandler = project.getDependencies()
-            dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:' + extension.getAxis2Version()))
+        if(configuration.getAllDependencies().isEmpty()) {
+            configuration
+                    .setTransitive(false)
+                    .setDescription("WSDL Axis2 configuration is used for code generation")
+                    .defaultDependencies { dependencies ->
+                DependencyHandler dependencyHandler = project.getDependencies()
+
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-kernel:1.7.3'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:1.7.3'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb:1.7.3'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb-codegen:1.7.3'))
+                dependencies.add(dependencyHandler.create('com.sun.xml.ws:jaxws-tools:2.2.10'))
+                dependencies.add(dependencyHandler.create('wsdl4j:wsdl4j:1.6.3'))
+                dependencies.add(dependencyHandler.create('commons-logging:commons-logging:1.2'))
+                dependencies.add(dependencyHandler.create('org.apache.neethi:neethi:3.0.3'))
+                dependencies.add(dependencyHandler.create('org.apache.ws.commons.axiom:axiom-api:1.2.20'))
+                dependencies.add(dependencyHandler.create('org.apache.ws.commons.axiom:axiom-impl:1.2.20'))
+                dependencies.add(dependencyHandler.create('org.apache.woden:woden-core:1.0M10'))
+                dependencies.add(dependencyHandler.create('org.apache.ws.xmlschema:xmlschema-core:2.2.1'))
+
+            }
         }
     }
 }

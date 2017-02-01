@@ -32,6 +32,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Generate code only for async style. When this option is used the generated
      * stubs will have only the asynchronous invocation methods. Switched off by default.
      */
+    @Optional
     @Input
     boolean async = false
 
@@ -40,12 +41,14 @@ class WSDL2Java extends AbstractWSDL2Java {
      * will have only the synchronous invocation methods. Switched off by default.
      * When async is set to true, this takes precedence.
      */
+    @Optional
     @Input
     boolean sync = false
 
     /**
      * Generates server side code (i.e. skeletons). Default is false.
      */
+    @Optional
     @Input
     boolean serverSide = false
 
@@ -53,6 +56,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Generates the service descriptor (i.e. server.xml). Default is false.
      * Only valid if serverSide is true, the server side code generation option.
      */
+    @Optional
     @Input
     boolean serviceDescription = false
 
@@ -65,6 +69,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      *  - none     -> NONE.
      *  Default is adb.
      */
+    @Optional
     @Input
     String databindingMethod = Databinding.ADB.toString()
 
@@ -72,6 +77,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
      * the client code (stubs) will also be generated along with the skeleton.
      */
+    @Optional
     @Input
     boolean generateAllClasses = false
 
@@ -79,6 +85,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Unpack classes. This option specifies whether to unpack the classes and
      * generate separate classes for the databinders.
      */
+    @Optional
     @Input
     boolean unpackClasses = false
 
@@ -86,6 +93,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Specifies the service name to be code generated. If the service name is not specified,
      * then the first service will be picked.
      */
+    @Optional
     @Input
     String serviceName
 
@@ -93,30 +101,35 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Specifies the port name to be code generated. If the port name is not specified,
      * then the first port (of the selected service) will be picked.
      */
+    @Optional
     @Input
     String portName
 
     /**
      * Generate an interface for the service skeleton.
      */
+    @Optional
     @Input
     boolean serversideInterface	= false
 
     /**
      * WSDL Version. Valid Options : 2, 2.0, 1.1
      */
+    @Optional
     @Input
     String wsdlVersion
 
     /**
      * Flattens the generated files
      */
+    @Optional
     @Input
     boolean flattenFiles = false
 
     /**
      * Switch on un-wrapping, if this value is true.
      */
+    @Optional
     @Input
     boolean unwrapParams = false
 
@@ -124,52 +137,50 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Use XMLBeans .xsdconfig file if this value is true.
      * This is only valid if  databindingMethod is 'xmlbeans'.
      */
+    @Optional
     @Input
     boolean xsdconfig = false
 
     /**
      * Generate code for all ports
      */
+    @Optional
     @Input
     boolean allPorts = false
 
     /**
      * Generate Axis 1.x backword compatible code
      */
+    @Optional
     @Input
     boolean backwordCompatible = false
 
     /**
      * Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
      */
+    @Optional
     @Input
     boolean suppressPrefixes = false
 
     /**
      * Don't generate a MessageReceiver in the generated sources
      */
+    @Optional
     @Input
     boolean noMessageReceiver = false
 
     /**
      * Additional arguments
      */
+    @Optional
     @Input
     List<String> addArgs = []
 
     /**
-     * The directory to generate the parser source files into.
+     * A directory path for generated sources
      */
-    @Optional
     @OutputDirectory
-    File srcOutputDirectory
-
-    /**
-     * A directory path for generated resources
-     */
-    @Optional
-    @OutputDirectory
-    File resourcesOutputDirectory
+    File  outputDirectory
 
     /**
      * Prepares the JavaExecHandlerBuilder for the task.
@@ -177,15 +188,14 @@ class WSDL2Java extends AbstractWSDL2Java {
      * @return JavaExecHandleBuilder
      */
     JavaExecHandleBuilder prepareExec() {
-        JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver());
-
-        getForkOptions().copyTo(javaExec);
+        JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
+        getJavaOptions().copyTo(javaExec)
 
         FileCollection axis2CodegenConfiguration = getProject().getConfigurations().getAt(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME)
 
         List<String> args = []
 
-        addAttribute(args, getWsdlFile().toString(), '-uri')
+        addAttribute(args, getWsdlFile().absolutePath, '-uri')
         addAttribute(args, 'java', '--language')
         addAttribute(args, getPackageName(), '--package')
 
@@ -206,22 +216,27 @@ class WSDL2Java extends AbstractWSDL2Java {
         addAttribute(args, getServiceName(), '--service-name')
         addAttribute(args, getPortName(), '--port-name')
 
-        if (! getNamespacePackageMapping().isEmpty()) {
+        if (getNamespacePackageMapping()) {
             String attr = ''
             getNamespacePackageMapping().each {
                 attr += "${it.key}=${it.value},"
             }
-            addAttribute(args, attr.subSequence(0, attr.length() - 1), '--namespace2package')
+            addAttribute(args, attr.subSequence(0, attr.length() - 1).toString(), '--namespace2package')
         }
 
         addFlag(args, getServersideInterface(), '--serverside-interface')
         addAttribute(args, getWsdlVersion(), '--wsdl-version')
 
 
-        addAttribute(args, getSrcOutputDirectory(), '--source-folder')
-        addAttribute(args, getResourcesOutputDirectory(), '--resource-folder')
+        addAttribute(args, 'src' , '--source-folder')
+        addAttribute(args, 'resources', '--resource-folder')
 
-        addAttribute(args, getNamespacePackageMappingFile().toString(), '--external-mapping')
+        addAttribute(args, getOutputDirectory()?.absolutePath, '--output')
+        if(getOutputDirectory()) {
+            getOutputDirectory().mkdirs()
+        }
+
+        addAttribute(args, getNamespacePackageMappingFile()?.absolutePath, '--external-mapping')
         addFlag(args, getFlattenFiles(), '--flatten-files')
         addFlag(args, getUnwrapParams(), '--unwrap-params')
 

@@ -23,16 +23,6 @@ import org.gradle.api.Project
 class WSDLExtension {
 
     /**
-     * Default versions of Axis 1
-     */
-    final static String AXIS1_DEFAULT_VERSION = '1.5.1'
-
-    /**
-     * Default versions of Axis 2
-     */
-    final static String AXIS2_DEFAULT_VERSION = '1.7.3'
-
-    /**
      * Extension name
      */
     final static String WSDL_EXTENSION_NAME = 'wsdl'
@@ -63,16 +53,6 @@ class WSDLExtension {
     final static String DEFAULT_SOURCESET_NAME = 'main'
 
     /**
-     * Version of axis1, default is 1.4
-     */
-    String axis1Version
-
-    /**
-     * Version of axis2, default is 1.7.3
-     */
-    String axis2Version
-
-    /**
      * Container for axis1 generation configurations
      */
     final NamedDomainObjectContainer<Axis1> axis1
@@ -89,17 +69,9 @@ class WSDLExtension {
      *
      * @param project
      */
-    public WSDLExtension(Project project) {
+    WSDLExtension(Project project) {
 
         this.project = project
-
-        if(! axis1Version) {
-            axis1Version = AXIS1_DEFAULT_VERSION
-        }
-
-        if(! axis2Version) {
-            axis2Version = AXIS2_DEFAULT_VERSION
-        }
 
         axis1 = project.container(Axis1)
         axis2 = project.container(Axis2)

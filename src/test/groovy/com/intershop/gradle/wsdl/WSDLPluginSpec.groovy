@@ -37,13 +37,6 @@ class WSDLPluginSpec extends AbstractProjectSpec {
     def 'should add WSDL generate task for each wsdl config'() {
         when:
         plugin.apply(project)
-
-        then:
-        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).getAxis1Version() == WSDLExtension.AXIS1_DEFAULT_VERSION
-        project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).getAxis2Version() == WSDLExtension.AXIS2_DEFAULT_VERSION
-
-
-        when:
         project.extensions.getByName(WSDLExtension.WSDL_EXTENSION_NAME).axis1 {
             testconfiguration {
             }

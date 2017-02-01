@@ -162,6 +162,13 @@ class Axis1 extends BaseAxisConfig {
     boolean wrapArrays = false
 
     /**
+     * This flag is used to allow Stub generation even if WSDL endpoint URL is not a valid URL.
+     * It's the responsibility of the user to update the endpoint value before using generated classes
+     * default=false
+     */
+    boolean allowInvalidURL = false
+
+    /**
      * Output path for all sources
      */
     File outputDir
@@ -194,6 +201,6 @@ class Axis1 extends BaseAxisConfig {
     }
 
     String getTaskName() {
-        "axis1Wsdl2java" + GUtil.toCamelCase(name);
+        "axis1Wsdl2java" + GUtil.toCamelCase(name)
     }
 }
