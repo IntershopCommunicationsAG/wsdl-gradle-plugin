@@ -126,16 +126,6 @@ class Axis2 extends BaseAxisConfig {
     boolean noMessageReceiver = false
 
     /**
-     * Output path for sources without resources
-     */
-    File srcOutputDir
-
-    /**
-     * Output path for resources without sources
-     */
-    File resourceOutputDir
-
-    /**
      * Output file location. This is where the files would be copied once the code generation is done.
      */
     File outputDir

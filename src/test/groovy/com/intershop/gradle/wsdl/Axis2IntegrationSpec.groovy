@@ -162,8 +162,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaQstartadb').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/qstartadb/output/resources/services.xml')).exists()
-        (new File(testProjectDir, 'build/generated/wsdl2java/qstartadb/output/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/output/resources/services.xml')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/output/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -234,8 +234,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaQstartjibx').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/qstartjibx/output/resources/services.xml')).exists()
-        (new File(testProjectDir, 'build/generated/wsdl2java/qstartjibx/output/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/output/resources/services.xml')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/output/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -300,7 +300,7 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaQstartxmlbeans').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/qstartxmlbeans/output/src/samples/quickstart/service/xmlbeans/StockQuoteServiceStub.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartxmlbeans/output/src/samples/quickstart/service/xmlbeans/StockQuoteServiceStub.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions

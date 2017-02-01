@@ -45,11 +45,7 @@ class Axis1 extends BaseAxisConfig {
     boolean noWrapped = false
 
     /**
-     * Emit the server-side bindings for the web service:
-     *  - a skeleton class named <bindingName>Skeleton. This may or may not be emitted (see skeletonDeploy).
-     *  - an implementation template class named <bindingName>Impl. Note that, if this class already exists, then it is not emitted.
-     * deploy.wsdd
-     * undeploy.wsdd
+     * Emit the server-side bindings for the web service.
      */
     boolean serverSide = false
 
@@ -167,6 +163,23 @@ class Axis1 extends BaseAxisConfig {
      * default=false
      */
     boolean allowInvalidURL = false
+
+    /**
+     * namescape to specifically include in the generated code (defaults to
+     * all namespaces unless specifically excluded with the -x option)
+     */
+    String nsInclude
+
+    /*
+     * namespace to specifically exclude from the generated code (defaults to
+     * none excluded until first namespace included with -i option)
+     */
+    String nsExclude
+
+    /*
+     * names and values of a properties for use by the custom GeneratorFactory
+     */
+    Map<String, String> wsdlProperties
 
     /**
      * Output path for all sources

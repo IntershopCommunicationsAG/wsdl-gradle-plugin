@@ -109,7 +109,7 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis1Wsdl2javaEcho').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/echo/samples/echo/InteropTestPortType.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis1/echo/samples/echo/InteropTestPortType.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -160,7 +160,7 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
         result.task(':axis1Wsdl2javaAddress').outcome == SUCCESS
         result.task(':axis1Wsdl2javaHello').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/address/samples/jaxrpc/address/deploy.wsdd')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis1/address/samples/jaxrpc/address/deploy.wsdd')).exists()
 
         where:
         gradleVersion << supportedGradleVersions

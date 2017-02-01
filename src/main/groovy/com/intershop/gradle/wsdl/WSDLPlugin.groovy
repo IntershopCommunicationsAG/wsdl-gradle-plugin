@@ -74,7 +74,7 @@ class WSDLPlugin implements Plugin<Project> {
 
             task.conventionMapping.outputDirectory = {
                 axis1Config.getOutputDir() ?: new File(project.getBuildDir(),
-                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/${axis1Config.getName().replace(' ', '_')}")
+                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/axis1/${axis1Config.getName().replace(' ', '_')}")
             }
 
             task.conventionMapping.wsdlFile = { axis1Config.getWsdlFile() }
@@ -98,6 +98,9 @@ class WSDLPlugin implements Plugin<Project> {
             task.conventionMapping.namespacePackageMapping = { axis1Config.getNamespacePackageMapping() }
             task.conventionMapping.generateTestcase = { axis1Config.getGenerateTestcase() }
             task.conventionMapping.namespacePackageMappingFile = { axis1Config.getNamespacePackageMappingFile() }
+            task.conventionMapping.nsInclude = { axis1Config.getNsInclude() }
+            task.conventionMapping.nsExclude = { axis1Config.getNsExclude() }
+            task.conventionMapping.wsdlProperties = { axis1Config.getWsdlProperties() }
             task.conventionMapping.addArgs = { axis1Config.getArgs() }
 
             // identify sourceset configuration and add output to sourceset
@@ -131,7 +134,7 @@ class WSDLPlugin implements Plugin<Project> {
 
             task.conventionMapping.outputDirectory = {
                 axis2Config.getOutputDir() ?: new File(project.getBuildDir(),
-                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/${axis2Config.getName().replace(' ', '_')}/output")
+                        "${WSDLExtension.CODEGEN_DEFAULT_OUTPUTPATH}/axis2/${axis2Config.getName().replace(' ', '_')}/output")
             }
 
             task.conventionMapping.wsdlFile = { axis2Config.getWsdlFile() }

@@ -200,6 +200,29 @@ class WSDL2Java extends AbstractWSDL2Java {
     boolean wrapArrays = false
 
     /**
+     * namescape to specifically include in the generated code (defaults to
+     * all namespaces unless specifically excluded with the -x option)
+     */
+    @Optional
+    @Input
+    String nsInclude
+
+    /*
+     * namespace to specifically exclude from the generated code (defaults to
+     * none excluded until first namespace included with -i option)
+     */
+    @Optional
+    @Input
+    String nsExclude
+
+    /*
+     * Names and values of a properties for use by the custom GeneratorFactory
+     */
+    @Optional
+    @Input
+    Map<String,String> wsdlProperties
+
+    /**
      * Additional arguments
      */
     @Optional
@@ -266,8 +289,16 @@ class WSDL2Java extends AbstractWSDL2Java {
         addAttribute(args, getImplementationClassName(), '--implementationClassName')
         addFlag(args, getWrapArrays(),'--wrapArrays')
         addFlag(args, getAllowInvalidURL(), '--allowInvalidURL')
+        addAttribute(args, getNsInclude(), '--nsInclude')
+        addAttribute(args, getNsExclude(), '--nsInclude')
 
-        // Add verbose logging
+        if(getWsdlProperties()) {
+            getWsdlProperties().each {
+                addAttribute(args, "${it.key}=${it.value}", '--property ')
+            }
+        }
+
+                // Add verbose logging
         addFlag(args, logger.infoEnabled, '--verbose')
 
         // Add debug logging

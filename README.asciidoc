@@ -1,0 +1,313 @@
+= WSDL Gradle Plugin
+:latestRevision: 1.0.0
+:toc:
+
+== Summary
+This plugin generates Java code from WSDL files based on Apache Axis 1 (see http://axis.apache.org/axis/)
+or Apache Axis 2 (see http://axis.apache.org/axis2/java/core/).
+
+== Usage
+To apply the WSDL Gradle Plugin to your projects, add the following in your build script:
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+plugins {
+    id 'com.intershop.gradle.wsdl' version '{latestRevision}'
+}
+
+wsdl {
+    axis1 {
+        genNameAxis1 {
+            wsdlFile = file('staticfiles/wsdl/axis1File.wsdl'
+            serverSide = true
+            namespacePackageMapping = [
+                'http://soapinterop.org/':'samples.axis1',
+                'http://soapinterop.org/xsd':'samples.axis1'
+            ]
+            // more parameters are possible
+        }
+    }
+    axis2 {
+        genNameAxis2 {
+            wsdlFile = file('staticfiles/wsdl/axis2File.wsdl')
+            serverSide = true
+            allPorts = true
+            serviceDescription = true
+            packageName = 'samples.axis2'
+            databindingMethod = 'none'
+            // more parameters are possible
+        }
+    }
+
+    // set special JVM configuration parameter for code generation tasks of Axis1
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java) {
+        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
+        javaOptions.systemProperty 'http.proxyPort', '8081'
+    }
+
+    // set special JVM configuration parameter for code generation tasks of Axis2
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
+        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
+        javaOptions.systemProperty 'http.proxyPort', '8081'
+    }
+----
+
+If the JavaBasePlugin is applied to the project, generated java sources will be added to the specified source set. Per default the main source set is used.
+
+IMPORTANT: This plugin uses the version 1.4 of Axis 1 and 1.7.3 of Axis 2. It is possible to change or extend the configuration with special configurations.
+
+== Tasks
+The WSDL Gradle plugin adds one task `wsdl2java` to the project. A special task is added for each configuration.
+The task `wsdl2java` depends on all other tasks.
+
+[cols="25%,30%,45%", width="95%, options="header"]
+|===
+|Task name                          | Type                                            |Description
+|wsdl2java                          | Task                                            | Overall ``wsdl2java`` code generation task of a project. This task depends on all ``axis1Wsdl2java`` and ``axis2Wsdl2java`` tasks.
+|axis1Wsdl2java<configuration name> | com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java | This task generates Java code from WSDL file using Axis 1.
+|axis2Wsdl2java<configuration name> | com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java | This task generates Java code from WSDL file using Axis 2.
+|===
+
+== Project Extension 'wsdl'
+This plugin adds an extension *`wsdl`* to the project.
+
+=== Methods
+[cols="20%,15%,65%", width="95%", options="header"]
+|===
+|Method  | Values | Description
+|*axis1* | <<axis1, axis1>> | This contains all code generation configurations for Axis 1.
+|*axis2* | <<axis2, axis2>> | This contains all code generation configurations for Axis 2.
+|===
+
+==== [[axis1]]Object 'axis1' (com.intershop.gradle.wsdl.extension.Axis1)
+
+===== Properties
+
+[cols="15%,11%,11%,11%,52%", width="90%, options="header"]
+|===
+|Property | Type | Default value | WSDL2Java Parameter | Description
+| *noImports* | `boolean` | `false` | -n, --noImports | Only generate code for the WSDL document that appears on the command line if this value is true.
+The default behaviour is to generate files for all WSDL documents, the immediate one and all imported ones.
+| *timeout* | `int` | `240` | -O, --timeout | Timeout in seconds. The default is 240. Use -1 to disable the timeout.
+| *noWrapped* | `boolean` | `false` | -W, --noWrapped | If this value is true, it turns off the special treatment of what is called "wrapped" document/literal
+style operations. By default, WSDL2Java will recognize the following conditions: +
+- If an input message has is a single part. +
+- The part is an element. +
+- The element has the same name as the operation +
+- The element's complex type has no attributes +
+If this value is true, WSDL2Java will 'unwrap' the top level element, and treat each of the components of the element as
+arguments to the operation. This type of WSDL is the default for Microsoft .NET web services, which wrap up RPC style arguments
+in this top level schema element.
+| *serverSide* | `boolean` | `false` | -s, --server-side | Emit the server-side bindings for the web service.
+| *skeletonDeploy* | `boolean` | `false` | -S, --skeletonDeploy | Deploy skeleton (true) or implementation (false) in deploy.wsdd. Default is false. Assumes server-side="true".
+| *deployScope* | `String` | | -d, --deployScope | Add scope to deploy.wsdd: +
+- APPLICATION -> "Application", +
+- REQUEST     -> "Request", or +
+- SESSION     -> "Session". +
+If this option does not appear, no scope tag appears in deploy.wsdd, which the Axis runtime defaults to "Request".
+| *generateAllClasses* | `boolean` | `false` | -a, --all | Generate code for all elements, even unreferenced ones. By default,  WSDL2Java only generates code for those elements in the WSDL file that are referenced.
+| *typeMappingVersion* | `String`  | `1.2` | -T, --typeMappingVersion | Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+| *factory* | `String` | | -F, --factory | Used to extend the functionality of the WSDL2Java emitter. The argument is the name of a class which extends JavaWriterFactory.
+| *helperGen* | `boolean` | `false` | -H, --helperGen | Emits separate Helper classes for meta data.
+| *userName* | `String` | | -U, --user | This username is used in resolving the WSDL-URI provided as the input to WSDL2Java. +
+If the URI contains a username, this will override the command line switch. An example of a URL with a username and password is: http://user:password@hostname:port/path/to/service?WSDL
+| *password* | `String` | | -P, --password | This password is used in resolving the WSDL-URI provided as the input to WSDL2Java. +
+If the URI contains a password, this will override the command line switch.
+| *implementationClassName* | `String` | | -c, --implementationClassName | Set the name of the implementation class. Especially useful when exporting an existing class as
+a web service using java2wsdl followed by wsdl2java. If you are using the skeleton deploy option
+you must make sure, after generation, that your implementation class implements the port type name
+interface generated by wsdl2java. You should also make sure that all your exported methods throws
+java.lang.RemoteException.
+| *wrapArrays* | `boolean` | `false` | -w, --wrapArrays | Prefer generating JavaBean classes like "ArrayOfString" for certain schema array patterns (default is to use String [])
+| *allowInvalidURL* | `boolean` | `false` | --allowInvalidURL | This flag is used to allow Stub generation even if WSDL endpoint URL is not a valid URL.
+It's the responsibility of the user to update the endpoint value before using generated classes.
+| *sourceSetName* | `String` | `main` | | Name of the source set for generated Java code default value is 'main'
+| *packageName* | `String` | | -p, --package | This is a shorthand option to map all namespaces in a WSDL document to the same
+Java package name. This can be useful, but dangerous. You must make sure that you understand the effects of doing this. For instance there may be multiple types
+with the same name in different namespaces. It is an error to use the --NStoPkg switch and --package at the same time.
+| *namespacePackageMapping* | `Map<String:String>` | | -N, --NStoPkg | By default, package names are generated from the namespace strings in the WSDL document in a
+magical manner (typically, if the namespace is of the form "http://x.y.com" or "urn:x.y.com" the corresponding package will be "com.y.x"). If this magic is not what you want, you can provide your
+own mapping using the this maps argument. For example, if there is a namespace in the WSDL document called "urn:AddressFetcher2", and you want files generated from the objects within this namespace
+to reside in the package samples.addr.
+| *generateTestcase* | `boolean` | `false` | -t, --testCase | Generate a client-side JUnit test case. This test case can stand on its own, but it doesn't
+really do anything except pass default values (null for objects, 0 or false for primitive types). Like the generated implementation file, the generated test case file could be considered a template that you may fill in.
+| *namespacePackageMappingFile* | `File` | | -f, --fileNStoPkg | If there are a number of namespaces in the WSDL document, listing a mapping for them all could
+become tedious. To help keep the command line terse, WSDL2Java will also look for mappings in
+a properties file. By default, this file is named "NStoPkg.properties" and it must reside in
+the default package (ie., no package). But you can explicitly provide your own file using this option. The entries in this file are of the same form as the arguments to the namespacePackageMapping option.
+For example, instead of providing the command line option as above, we could provide the same information in a properties file: urn\:AddressFetcher2=samples.addr
+(Note that the colon must be escaped in the properties file.) If an entry for a given mapping exists both with namespacePackageMapping and in this properties file, the namespacePackageMapping entry takes precedence.
+| *nsInclude* | `String` | | -i, --nsInclude | Namescape to specifically include in the generated code (defaults to all namespaces unless specifically excluded with the nsExclude option)
+| *nsExclude* | `String` | | -x, --nsExclude | Namespace to specifically exclude from the generated code (defaults to none excluded until first namespace included with nsInclude option)
+| *properties* | `Map<String:String>` | | -p, --property | Names and values of a properties for use by the custom GeneratorFactory
+| *outputDir* | `File` | | -o, --output | Output directory for emitted files
+| *args* | `List<String>` | | | List of additional arguments for WSDL2Java command line tool.
+| *wsdlFile* | `File` | | | Input WSDL file
+|===
+
+The default output dir is `<project build dir>/generated/wsdl2java/axis1/<configuration name>`
+
+===== Methods
+
+[cols="17%,17%,66%", width="90%, options="header"]
+|===
+|Method | Parameter | Description
+|*arg* | `String` | Add an additional command line arguments passed to the XJC
+|===
+
+==== [[axis1]]Object 'axis2' (com.intershop.gradle.wsdl.extension.Axis2)
+
+===== Properties
+
+[cols="15%,11%,11%,11%,52%", width="90%, options="header"]
+|===
+|Property | Type | Default value | WSDL2Java Parameter | Description
+| *async* | `boolean` | `false` | -a, --async | Generate code only for async style. When this option is used the generated stubs will have only the asynchronous invocation methods. Switched off by default.
+| *sync*  | `boolean` | `false` | -s, --sync  | Generate code only for sync style. When this option is used the generated stubs will have only the synchronous invocation methods. Switched off by default. When async is set to true, this takes precedence.
+| *serverSide* | `boolean` | `false` | -ss, --server-side | Generates server side code (i.e. skeletons). Default is false.
+| *serviceDescription* | `boolean` | `false` | -sd, --service-description | Generates the service descriptor (i.e. server.xml). Default is false. + Only valid if serverSide is true, the server side code generation option.
+| *databindingMethod* | `String` | `adb` | -d , --databinding-method | Specifies the Databinding framework. Valid values are +
+ - xmlbeans -> XMLBEANS, +
+ - adb      -> ADB, +
+ - jibx     -> JIBX, and +
+ - none     -> NONE.
+| *generateAllClasses*  | `boolean` | `false` | -g, --generate-all  | Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true, the client code (stubs) will also be generated along with the skeleton.
+| *unpackClasses* | `boolean` | `false` | -u, --unpack-classes | Unpack classes. This option specifies whether to unpack the classes and generate separate classes for the databinders.
+| *serviceName* | `String` | | -sn, --service-name | Specifies the service name to be code generated. If the service name is not specified, then the first service will be picked.
+| *portName* | `String` | | -pn, --port-name | Specifies the port name to be code generated. If the port name is not specified, then the first port (of the selected service) will be picked.
+| *serversideInterface*  | `boolean` | `false` | -ssi, --serverside-interface | Generate an interface for the service skeleton.
+| *wsdlVersion* | `String` | | -wv, --wsdl-version | WSDL Version. Valid Options : 2, 2.0, 1.1
+| *flattenFiles* | `boolean` | `false` | -f, --flatten-files | Flattens the generated files if true
+| *unwrapParams* | `boolean` | `false` | -uw, --unwrap-params | Switch on un-wrapping, if this value is true.
+| *xsdconfig* | `boolean` | `false` | -xsdconfig | Use XMLBeans .xsdconfig file if this value is true. This is only valid if  databindingMethod is 'xmlbeans'.
+| *allPorts* | `boolean` | `false` | -ap, --all-ports | Generate code for all ports
+| *backwordCompatible* | `boolean` | `false` | -b, --backword-compatible | Generate Axis 1.x backword compatible code
+| *suppressPrefixes* | `boolean` | `false` | -sp, --suppress-prefixes | Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
+| *noMessageReceiver* | `boolean` | `false` | --noMessageReceiver | Don't generate a MessageReceiver in the generated sources
+| *sourceSetName* | `String` | `main` | | Name of the source set for generated Java code default value is 'main'
+| *packageName* | `String` | | -p, --package | 	The target package name. If omitted, a default package (formed using the target namespace of the WSDL) will be used.
+| *namespacePackageMapping* | `Map<String, String>` | -ns2p, --namespace2package | 	Specifies a comma separated list of namespaces and packages where the given package will be used in the place of the auto generated package for the relevant namespace. The list will be the format of ns1=pkg1,ns2=pkg2.
+| *generateTestcase* | `boolean` | `false` | -t, --test-case | Generates a test case. In the case of Java it would be a JUnit test case.
+| *namespacePackageMappingFile* | `File` | | -em, --external-mapping | Specify an external mapping file
+| *outputDir* | `File` | | -o, --output | Output file location. This is where the files would be copied once the code generation is done. If this option is omitted the generated files would be copied to the working directory.
+| *args* | `List<String>` | | | List of additional arguments for WSDL2Java command line tool.
+| *wsdlFile* | `File` | | | Input WSDL file
+|===
+
+The default output dir is `<project build dir>/generated/wsdl2java/axis2/<configuration name>`
+
+===== Methods
+
+[cols="17%,17%,66%", width="90%, options="header"]
+|===
+|Method | Parameter | Description
+|*arg* | `String` | Add an additional command line arguments passed to the XJC
+|===
+
+== WSDL2Java Command Line Tool / Additonal Java VM configuration
+
+The code generator task uses the WSDL2Java commandline tool of Axis 1 or Axis 2. It is possible to add additional environment variables to these JVM.
+
+This configuration adds a https proxy configuration to all Axis1 WSDL2Java tasks
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java) {
+        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
+        javaOptions.systemProperty 'http.proxyPort', '8081'
+    }
+----
+
+This configuration adds a https proxy configuration to all Axis2 WSDL2Java tasks
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
+        javaOptions.systemProperty 'https.proxyHost', 'test.host.com'
+        javaOptions.systemProperty 'https.proxyPort', '4081'
+    }
+----
+
+== Version Configuration for WSDL2Java tasks
+
+This plugin adds two configurations `wsdlAxis1` for Axis 1 and `wsdlAxis2` for Axis 2.
+These dependencies are used for the classpath of WSDL command line tool.
+
+=== Axis 1
+The base configuration uses dependencies of Axis 1 with version 1.4.
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+'axis:axis-wsdl4j:1.5.1'
+'commons-discovery:commons-discovery:0.5'
+'javax.activation:activation:1.1.1'
+'javax.mail:mail:1.4.7'
+'commons-logging:commons-logging:1.2'
+'org.apache.axis:axis:1.4'
+'org.apache.axis:axis-jaxrpc:1.4'
+----
+
+It is possible to change the configuration / version of the used dependencies.
+
+=== Axis 2
+The base configuration uses dependencies of Axis 1 with version 1.7.3
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+'org.apache.axis2:axis2-kernel:1.7.3'
+'org.apache.axis2:axis2-codegen:1.7.3'
+'org.apache.axis2:axis2-adb:1.7.3'
+'org.apache.axis2:axis2-adb-codegen:1.7.3'
+'com.sun.xml.ws:jaxws-tools:2.2.10'
+'wsdl4j:wsdl4j:1.6.3'
+'commons-logging:commons-logging:1.2'
+'org.apache.neethi:neethi:3.0.3'
+'org.apache.ws.commons.axiom:axiom-api:1.2.20'
+'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
+'org.apache.woden:woden-core:1.0M10'
+'org.apache.ws.xmlschema:xmlschema-core:2.2.1'
+----
+
+It is possible to change the configuration or version of the used dependencies.
+This configuration is used for a different databinding 'XMLBeans'.
+
+[source,groovy]
+[subs=+attributes]
+.build.gradle
+----
+
+    configurations {
+        wsdlAxis2.extendsFrom(compile)
+    }
+
+    dependencies {
+        wsdlAxis2 'org.apache.axis2:axis2-codegen:1.7.3'
+        wsdlAxis2 'wsdl4j:wsdl4j:1.6.3'
+        wsdlAxis2 'commons-logging:commons-logging:1.2'
+        wsdlAxis2 'org.apache.neethi:neethi:3.0.3'
+        wsdlAxis2 'org.apache.ws.commons.axiom:axiom-api:1.2.20'
+        wsdlAxis2 'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
+        wsdlAxis2 'org.apache.woden:woden-core:1.0M10'
+        wsdlAxis2 'org.apache.ws.xmlschema:xmlschema-core:2.2.1'
+    }
+
+----
+
+== License
+
+Copyright 2014-2016 Intershop Communications.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
