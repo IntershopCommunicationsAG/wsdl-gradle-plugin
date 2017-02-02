@@ -20,7 +20,7 @@ plugins {
 wsdl {
     axis1 {
         genNameAxis1 {
-            wsdlFile = file('staticfiles/wsdl/axis1File.wsdl'
+            wsdlFile = file('staticfiles/wsdl/axis1File.wsdl')
             serverSide = true
             namespacePackageMapping = [
                 'http://soapinterop.org/':'samples.axis1',
