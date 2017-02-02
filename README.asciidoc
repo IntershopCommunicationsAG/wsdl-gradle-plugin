@@ -143,7 +143,7 @@ WSDL2Java Parameter: --allowInvalidURL
 Java package name. This can be useful, but dangerous. You must make sure that you understand the effects of doing this. For instance there may be multiple types
 with the same name in different namespaces. It is an error to use the --NStoPkg switch and --package at the same time. +
 WSDL2Java Parameter: -p, --package
-| *namespacePackageMapping* | `Map<String:String>` | | By default, package names are generated from the namespace strings in the WSDL document in a
+| *namespacePackageMapping* | `Map<String, String>` | | By default, package names are generated from the namespace strings in the WSDL document in a
 magical manner (typically, if the namespace is of the form "http://x.y.com" or "urn:x.y.com" the corresponding package will be "com.y.x"). If this magic is not what you want, you can provide your
 own mapping using the this maps argument. For example, if there is a namespace in the WSDL document called "urn:AddressFetcher2", and you want files generated from the objects within this namespace
 to reside in the package samples.addr. +
@@ -161,7 +161,7 @@ WSDL2Java Parameter: -f, --fileNStoPkg
 WSDL2Java Parameter: -i, --nsInclude
 | *nsExclude* | `String` | | Namespace to specifically exclude from the generated code (defaults to none excluded until first namespace included with nsInclude option) +
 WSDL2Java Parameter: -x, --nsExclude
-| *properties* | `Map<String:String>` | | Names and values of a properties for use by the custom GeneratorFactory +
+| *properties* | `Map<String, String>` | | Names and values of a properties for use by the custom GeneratorFactory +
 WSDL2Java Parameter: -p, --property
 | *outputDir* | `File` | | Output directory for emitted files +
 WSDL2Java Parameter: -o, --output
