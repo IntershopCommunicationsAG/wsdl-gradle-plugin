@@ -195,8 +195,8 @@ pluginBundle {
     tags = ['intershop', 'gradle', 'plugin', 'build', 'wsdl']
 
     plugins {
-        gradleTestPlugin {
-            id = 'com.intershop.gradle.buildinfo'
+        gradleWSDLPlugin {
+            id = 'com.intershop.gradle.wsdl'
             displayName = project.description
         }
     }
