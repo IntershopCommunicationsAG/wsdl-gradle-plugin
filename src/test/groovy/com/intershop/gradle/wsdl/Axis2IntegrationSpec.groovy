@@ -413,4 +413,57 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         where:
         gradleVersion << supportedGradleVersions
     }
+
+    def 'Test code generation with multiple files'() {
+        given:
+        copyResources('axis2/multiple-files/StockQuoteServiceOne.wsdl', 'staticfiles/wsdl/StockQuoteServiceOne.wsdl')
+        copyResources('axis2/multiple-files/StockQuoteServiceTwo.wsdl', 'staticfiles/wsdl/StockQuoteServiceTwo.wsdl')
+
+        buildFile << """
+            plugins {
+                id 'java'
+                id 'com.intershop.gradle.wsdl'
+            }
+            
+            wsdl {
+                axis2 {
+                    bank {
+                        wsdlFile = file('staticfiles/wsdl')
+                        serverSide = false
+                        serviceDescription = true
+                        packageName = 'ws.webServices'
+                    }
+                }
+            }
+
+            repositories {
+                jcenter()
+            }
+            
+            dependencies {
+                compile 'org.apache.axis2:axis2:1.7.3'
+                compile 'org.apache.axis2:axis2-adb:1.7.3'
+            }
+        """.stripIndent()
+
+        when:
+        List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
+        def result = getPreparedGradleRunner()
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result.task(':axis2Wsdl2javaBank').outcome == SUCCESS
+        result.task(':compileJava').outcome == SUCCESS
+
+        List<String> files = new ArrayList(Arrays.asList('build/generated/wsdl2java/axis2/bank/output/src/ws/webServices/StockQuoteServiceOneCallbackHandler.java',
+                'build/generated/wsdl2java/axis2/bank/output/src/ws/webServices/StockQuoteServiceOneStub.java',
+                'build/generated/wsdl2java/axis2/bank/output/src/ws/webServices/StockQuoteServiceTwoCallbackHandler.java',
+                'build/generated/wsdl2java/axis2/bank/output/src/ws/webServices/StockQuoteServiceTwoStub.java'))
+        files.forEach{file -> assert (new File(testProjectDir, file)).exists()}
+
+        where:
+        gradleVersion << supportedGradleVersions
+    }
 }

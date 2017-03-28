@@ -24,6 +24,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
 import org.gradle.process.internal.JavaExecHandleBuilder
+import groovyx.gpars.*
+
 
 import javax.inject.Inject
 
@@ -88,7 +90,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
     File namespacePackageMappingFile
 
     /** WSDL file for generation. */
-    @InputFile
+    @Input
     File wsdlFile
 
     /**
@@ -101,9 +103,10 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      */
     @TaskAction
     void run() {
-        JavaExecHandleBuilder exechandler = prepareExec()
-        if (exechandler) {
-            exechandler.build().start().waitForFinish().assertNormalExitValue()
+        List<JavaExecHandleBuilder> exechandlerList = prepareExec()
+        def results = []
+        GParsPool.withPool {
+            results << exechandlerList.eachParallel {it.build().start().waitForFinish().assertNormalExitValue()}
         }
     }
 
@@ -112,7 +115,7 @@ abstract class AbstractWSDL2Java extends DefaultTask {
      *
      * @return JavaExecHandleBuilder
      */
-    abstract JavaExecHandleBuilder prepareExec()
+    abstract List<JavaExecHandleBuilder> prepareExec()
 
     /**
      * Set Java fork options.
