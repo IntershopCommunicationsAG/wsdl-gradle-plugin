@@ -302,7 +302,7 @@ The base configuration uses dependencies of Axis 1 with version 1.4.
 It is possible to change the configuration / version of the used dependencies.
 
 === Axis 2
-The base configuration uses dependencies of Axis 1 with version 1.7.3
+The base configuration uses dependencies of Axis 2 with version 1.7.3
 
 [source,groovy]
 [subs=+attributes]
