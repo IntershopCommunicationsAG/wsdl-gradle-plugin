@@ -245,12 +245,35 @@ class WSDL2Java extends AbstractWSDL2Java {
     File outputDirectory
 
 
+    List<JavaExecHandleBuilder> prepareExec()
+    {
+        File file = getWsdlFile()
+        List<JavaExecHandleBuilder> list = new ArrayList<JavaExecHandleBuilder>()
+
+        if (file.isDirectory())
+        {
+            file.eachFile() { fileItem ->
+
+                JavaExecHandleBuilder exechandler = generateWsdl(fileItem)
+                list.add(exechandler)
+            }
+        }
+        else
+        {
+            JavaExecHandleBuilder exechandler = generateWsdl(file)
+            list.add(exechandler)
+        }
+        return list
+    }
+
+
     /**
      * Prepares the JavaExecHandlerBuilder for the task.
      *
      * @return JavaExecHandleBuilder
      */
-    JavaExecHandleBuilder prepareExec() {
+        JavaExecHandleBuilder generateWsdl(File file) {
+//    JavaExecHandleBuilder prepareExec() {
 
         JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
         getJavaOptions().copyTo(javaExec)
@@ -260,6 +283,7 @@ class WSDL2Java extends AbstractWSDL2Java {
         List<String> args = []
 
         addAttribute(args, getOutputDirectory().absolutePath, '--output')
+
 
         addFlag(args, getNoImports(), '--noImports')
         addAttribute(args, Integer.toString(getTimeout()), '--timeout')
@@ -308,7 +332,8 @@ class WSDL2Java extends AbstractWSDL2Java {
             args << it
         }
 
-        args << wsdlFile.toString()
+        args << file.toString()
+//        args << fileItem.toString()
 
         return javaExec
                 .setClasspath(axis1CodegenConfiguration)
