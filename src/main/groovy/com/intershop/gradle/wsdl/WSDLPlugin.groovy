@@ -233,10 +233,10 @@ class WSDLPlugin implements Plugin<Project> {
                     .defaultDependencies { dependencies ->
                 DependencyHandler dependencyHandler = project.getDependencies()
 
-                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-kernel:1.7.3'))
-                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:1.7.3'))
-                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb:1.7.3'))
-                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb-codegen:1.7.3'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-kernel:1.7.4'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:1.7.4'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb:1.7.4'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb-codegen:1.7.4'))
                 dependencies.add(dependencyHandler.create('com.sun.xml.ws:jaxws-tools:2.2.10'))
                 dependencies.add(dependencyHandler.create('wsdl4j:wsdl4j:1.6.3'))
                 dependencies.add(dependencyHandler.create('commons-logging:commons-logging:1.2'))
