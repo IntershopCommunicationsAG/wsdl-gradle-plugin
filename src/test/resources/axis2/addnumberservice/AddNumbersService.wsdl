@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:ns1="http://org.apache.axis2/xsd"
+	xmlns:ns="http://server.additionservice.internal.axis2.platform.intershop.com.server.tests"
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	targetNamespace="http://server.additionservice.internal.axis2.platform.intershop.com.server.tests">
+    <wsdl:documentation>
+        This service method creates the mathematical sum of two whole-number and
+        positive summands.
+        This service tests if the Axis2 REST support via HTTP-GET works correctly.
+        The operation parameters of a HTTP-GET based REST request can only consist
+        of simple types. For this reason the ComplexObjectEchoService cannot be used
+        to test such kind of request types.
+    </wsdl:documentation>
+    <wsdl:types>
+			<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://server.additionservice.internal.axis2.platform.intershop.com.server.tests">
+            <xs:complexType name="Exception">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Exception" nillable="true" type="xs:anyType"/>
+
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="Add">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="summand1" type="xs:int"/>
+                        <xs:element minOccurs="0" name="summand2" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+
+            </xs:element>
+            <xs:element name="AddResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+
+    </wsdl:types>
+    <wsdl:message name="AddRequest">
+        <wsdl:part name="parameters" element="ns:Add"/>
+    </wsdl:message>
+    <wsdl:message name="AddResponse">
+        <wsdl:part name="parameters" element="ns:AddResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="AddNumbersServicePortType">
+        <wsdl:operation name="Add">
+
+            <wsdl:input message="ns:AddRequest" wsaw:Action="urn:Add"/>
+            <wsdl:output message="ns:AddResponse" wsaw:Action="urn:AddResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="AddNumbersServiceSoap11Binding" type="ns:AddNumbersServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="Add">
+            <soap:operation soapAction="urn:Add" style="document"/>
+            <wsdl:input>
+
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AddNumbersServiceSoap12Binding" type="ns:AddNumbersServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+
+        <wsdl:operation name="Add">
+            <soap12:operation soapAction="urn:Add" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+    <wsdl:binding name="AddNumbersServiceHttpBinding" type="ns:AddNumbersServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="Add">
+            <http:operation location="AddNumbersService/Add"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="Add"/>
+            </wsdl:input>
+            <wsdl:output>
+
+                <mime:content type="text/xml" part="Add"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="AddNumbersService">
+        <wsdl:port name="AddNumbersServiceHttpSoap11Endpoint" binding="ns:AddNumbersServiceSoap11Binding">
+            <soap:address location="http://localhost/servlet/WFS/Axis2/eTest/AddNumbersService.AddNumbersServiceHttpSoap11Endpoint"/>
+        </wsdl:port>
+        <wsdl:port name="AddNumbersServiceHttpSoap12Endpoint" binding="ns:AddNumbersServiceSoap12Binding">
+
+            <soap12:address location="http://localhost/servlet/WFS/Axis2/eTest/AddNumbersService.AddNumbersServiceHttpSoap12Endpoint"/>
+        </wsdl:port>
+        <wsdl:port name="AddNumbersServiceHttpEndpoint" binding="ns:AddNumbersServiceHttpBinding">
+            <http:address location="http://localhost/servlet/WFS/Axis2/eTest/AddNumbersService.AddNumbersServiceHttpEndpoint"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

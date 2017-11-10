@@ -49,6 +49,7 @@ class Axis2 extends BaseAxisConfig {
      * Valid values are
      *  - xmlbeans -> XMLBEANS,
      *  - adb      -> ADB,
+     *  - jaxbri   -> JAXBRI
      *  - jibx     -> JIBX, and
      *  - none     -> NONE.
      *  Default is adb.
