@@ -9,7 +9,7 @@ plugins {
     id 'idea'
 
     // intershop test plugin
-    id 'com.intershop.gradle.test' version '2.1.0'
+    id 'com.intershop.gradle.test' version '2.2.0'
 
     // plugin for documentation
     id 'org.asciidoctor.convert' version '1.5.3'
@@ -18,13 +18,13 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '2.1.0'
+    id 'com.intershop.gradle.scmversion' version '2.5.5'
 
     // plugin for publishing to Gradle Portal
-    id 'com.gradle.plugin-publish' version '0.9.5'
+    id 'com.gradle.plugin-publish' version '0.9.9'
 
     // plugin for publishing to jcenter
-    id 'com.jfrog.bintray' version '1.7.1'
+    id 'com.jfrog.bintray' version '1.8.0'
 }
 
 scm {
