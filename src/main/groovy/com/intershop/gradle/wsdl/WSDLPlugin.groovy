@@ -237,6 +237,7 @@ class WSDLPlugin implements Plugin<Project> {
                 dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-codegen:1.7.4'))
                 dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb:1.7.4'))
                 dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-adb-codegen:1.7.4'))
+                dependencies.add(dependencyHandler.create('org.apache.axis2:axis2-jaxbri:1.7.4'))
                 dependencies.add(dependencyHandler.create('com.sun.xml.ws:jaxws-tools:2.2.10'))
                 dependencies.add(dependencyHandler.create('wsdl4j:wsdl4j:1.6.3'))
                 dependencies.add(dependencyHandler.create('commons-logging:commons-logging:1.2'))
@@ -245,7 +246,8 @@ class WSDLPlugin implements Plugin<Project> {
                 dependencies.add(dependencyHandler.create('org.apache.ws.commons.axiom:axiom-impl:1.2.20'))
                 dependencies.add(dependencyHandler.create('org.apache.woden:woden-core:1.0M10'))
                 dependencies.add(dependencyHandler.create('org.apache.ws.xmlschema:xmlschema-core:2.2.1'))
-
+                dependencies.add(dependencyHandler.create('com.sun.xml.bind:jaxb-impl:2.2.6'))
+                dependencies.add(dependencyHandler.create('com.sun.xml.bind:jaxb-xjc:2.2.6'))
             }
         }
     }

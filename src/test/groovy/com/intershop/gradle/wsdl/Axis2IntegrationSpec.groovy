@@ -413,4 +413,49 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         where:
         gradleVersion << supportedGradleVersions
     }
+
+    def 'Test code generation add number service'() {
+        given:
+        copyResources('axis2/addnumberservice/AddNumbersService.wsdl', 'staticfiles/wsdl/AddNumbersService.wsdl')
+
+        buildFile << """
+            plugins {
+                id 'java'
+                id 'com.intershop.gradle.wsdl'
+            }
+            
+            wsdl {
+                axis2 {
+                    numberservice {
+                        wsdlFile = file('staticfiles/wsdl/AddNumbersService.wsdl')
+                        databindingMethod = 'jaxbri'
+                        wsdlVersion = '1.1'
+                    }
+                }
+            }
+
+            repositories {
+                jcenter()
+            }
+            
+            dependencies {
+                compile 'org.apache.axis2:axis2:1.7.4'
+                compile 'org.apache.axis2:axis2-jaxbri:1.7.4'
+            }
+        """.stripIndent()
+
+        when:
+        List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
+        def result = getPreparedGradleRunner()
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result.task(':axis2Wsdl2javaNumberservice').outcome == SUCCESS
+        result.task(':compileJava').outcome == SUCCESS
+
+        where:
+        gradleVersion << supportedGradleVersions
+    }
 }

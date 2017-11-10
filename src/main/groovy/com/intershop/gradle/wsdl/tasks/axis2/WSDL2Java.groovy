@@ -65,6 +65,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * Valid values are
      *  - xmlbeans -> XMLBEANS,
      *  - adb      -> ADB,
+     *  - jaxbri   -> JAXBRI
      *  - jibx     -> JIBX, and
      *  - none     -> NONE.
      *  Default is adb.
@@ -210,7 +211,7 @@ class WSDL2Java extends AbstractWSDL2Java {
         addFlag(args, getGenerateTestcase(), '--test-case')
         addFlag(args, getServerSide(), '--server-side')
         addFlag(args, getServiceDescription(), '--service-description')
-        addAttribute(args, getDatabindingMethod(), '--databinding-method')
+        addAttribute(args, getDatabindingMethod().toString(), '--databinding-method')
         addFlag(args, getGenerateAllClasses(),'--generate-all')
         addFlag(args, getUnpackClasses(), '--unpack-classes')
         addAttribute(args, getServiceName(), '--service-name')
@@ -255,6 +256,8 @@ class WSDL2Java extends AbstractWSDL2Java {
         addArgs.each {
             args << it
         }
+
+        println args
 
         return javaExec
                 .setClasspath(axis2CodegenConfiguration)

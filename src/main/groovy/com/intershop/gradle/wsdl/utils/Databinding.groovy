@@ -32,6 +32,13 @@ enum Databinding {
         }
     },
 
+    JAXBRI {
+        @Override
+        public String toString() {
+            return 'jaxbri'
+        }
+    },
+
     JIBX {
         @Override
         public String toString() {
