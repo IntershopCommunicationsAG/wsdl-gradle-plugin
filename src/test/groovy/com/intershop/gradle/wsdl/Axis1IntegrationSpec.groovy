@@ -274,4 +274,58 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
         where:
         gradleVersion << supportedGradleVersions
     }
+
+    def 'Test code generation wsrp service'() {
+        given:
+        copyResources('axis1/wsrpservice/NStoPkg.properties' ,'staticfiles/wsdl/NStoPkg.properties')
+        copyResources('axis1/wsrpservice/wsrp_service.wsdl' ,'staticfiles/wsdl/wsrp_service.wsdl')
+        copyResources('axis1/wsrpservice/wsrp_v1_bindings.wsdl' ,'staticfiles/wsdl/wsrp_v1_bindings.wsdl')
+        copyResources('axis1/wsrpservice/wsrp_v1_interfaces.wsdl' ,'staticfiles/wsdl/wsrp_v1_interfaces.wsdl')
+        copyResources('axis1/wsrpservice/wsrp_v1_types.xsd' ,'staticfiles/wsdl/wsrp_v1_types.xsd')
+        copyResources('axis1/wsrpservice/wsrp_v1_types_original.xsd' ,'staticfiles/wsdl/wsrp_v1_types_original.xsd')
+        copyResources('axis1/wsrpservice/xml.xsd' ,'staticfiles/wsdl/xml.xsd')
+
+
+        buildFile << """
+            plugins {
+                id 'java'
+                id 'com.intershop.gradle.wsdl'
+            }
+            
+            wsdl {
+                axis1 {
+                    wsrpservice {
+                        wsdlFile = file('staticfiles/wsdl/wsrp_service.wsdl')
+                        namespacePackageMappingFile = file('staticfiles/wsdl/NStoPkg.properties')
+                        wrapArrays = true
+                        noWrapped = true
+                    }
+                }
+            }
+
+            repositories {
+                jcenter()
+            }
+            
+            dependencies {
+                compile 'org.apache.axis:axis:1.4'
+                compile 'org.apache.axis:axis-jaxrpc:1.4'
+                compile 'javax.xml:jaxrpc-api:1.1'
+            }
+        """.stripIndent()
+
+        when:
+        List<String> args = ['compileJava']
+        def result = getPreparedGradleRunner()
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result.task(':axis1Wsdl2javaWsrpservice').outcome == SUCCESS
+        result.task(':compileJava').outcome == SUCCESS
+
+        where:
+        gradleVersion << supportedGradleVersions
+    }
 }

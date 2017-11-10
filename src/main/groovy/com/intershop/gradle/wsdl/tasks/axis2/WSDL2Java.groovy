@@ -257,8 +257,6 @@ class WSDL2Java extends AbstractWSDL2Java {
             args << it
         }
 
-        println args
-
         return javaExec
                 .setClasspath(axis2CodegenConfiguration)
                 .setMain(MAIN_CLASS_NAME)

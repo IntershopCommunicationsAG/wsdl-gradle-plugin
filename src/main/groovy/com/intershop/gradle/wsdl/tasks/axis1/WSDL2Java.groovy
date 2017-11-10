@@ -264,8 +264,11 @@ class WSDL2Java extends AbstractWSDL2Java {
         addFlag(args, getNoImports(), '--noImports')
         addAttribute(args, Integer.toString(getTimeout()), '--timeout')
         addFlag(args, getNoWrapped(), '--noWrapped')
+        addFlag(args, getWrapArrays(),'--wrapArrays')
         addFlag(args, getServerSide(), '--server-side')
-        
+        addAttribute(args, getNsInclude(), '--nsInclude')
+        addAttribute(args, getNsExclude(), '--nsInclude')
+
         if(getSkeletonDeploy()) {
             addAttribute(args, getSkeletonDeploy() ? 'true' : 'false', '--skeletonDeploy')
         }
@@ -287,10 +290,8 @@ class WSDL2Java extends AbstractWSDL2Java {
         addAttribute(args, getUserName() ,'--user')
         addAttribute(args, getPassword() ,'--password')
         addAttribute(args, getImplementationClassName(), '--implementationClassName')
-        addFlag(args, getWrapArrays(),'--wrapArrays')
+
         addFlag(args, getAllowInvalidURL(), '--allowInvalidURL')
-        addAttribute(args, getNsInclude(), '--nsInclude')
-        addAttribute(args, getNsExclude(), '--nsInclude')
 
         if(getWsdlProperties()) {
             getWsdlProperties().each {
@@ -298,7 +299,7 @@ class WSDL2Java extends AbstractWSDL2Java {
             }
         }
 
-                // Add verbose logging
+        // Add verbose logging
         addFlag(args, logger.infoEnabled, '--verbose')
 
         // Add debug logging
@@ -308,7 +309,7 @@ class WSDL2Java extends AbstractWSDL2Java {
             args << it
         }
 
-        args << wsdlFile.toString()
+        args << wsdlFile.toURI().toURL().toString()
 
         return javaExec
                 .setClasspath(axis1CodegenConfiguration)
