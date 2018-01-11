@@ -1,5 +1,5 @@
 = WSDL Gradle Plugin
-:latestRevision: 1.0.0
+:latestRevision: 1.1.0
 :toc:
 
 == Summary
@@ -56,7 +56,7 @@ wsdl {
 
 If the JavaBasePlugin is applied to the project, generated java sources will be added to the specified source set. Per default the main source set is used.
 
-IMPORTANT: This plugin uses the version 1.4 of Axis 1 and 1.7.3 of Axis 2. It is possible to change or extend the configuration with special configurations.
+IMPORTANT: This plugin uses the version 1.4 of Axis 1 and 1.7.7 of Axis 2. It is possible to change or extend the configuration with special configurations.
 
 == Tasks
 The WSDL Gradle plugin adds one task `wsdl2java` to the project. A special task is added for each configuration.
