@@ -47,8 +47,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-adb:1.7.3'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -94,8 +94,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-adb:1.7.3'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -147,8 +147,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-adb:1.7.3'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -274,12 +274,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-kernel:1.7.3'
-                compile 'org.apache.axis2:axis2-xmlbeans:1.7.3'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-kernel:1.7.7'
+                compile 'org.apache.axis2:axis2-xmlbeans:1.7.7'
                 compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
                 
-                wsdlAxis2 'org.apache.axis2:axis2-codegen:1.7.3'
+                wsdlAxis2 'org.apache.axis2:axis2-codegen:1.7.7'
                 wsdlAxis2 'wsdl4j:wsdl4j:1.6.3'
                 wsdlAxis2 'commons-logging:commons-logging:1.2'
                 wsdlAxis2 'org.apache.neethi:neethi:3.0.3'
@@ -335,8 +335,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-kernel:1.7.3'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-kernel:1.7.7'
             }
         """.stripIndent()
 
@@ -439,8 +439,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.4'
-                compile 'org.apache.axis2:axis2-jaxbri:1.7.4'
+                compile 'org.apache.axis2:axis2:1.7.7'
+                compile 'org.apache.axis2:axis2-jaxbri:1.7.7'
             }
         """.stripIndent()
 
