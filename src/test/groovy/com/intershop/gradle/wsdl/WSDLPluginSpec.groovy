@@ -77,7 +77,20 @@ class WSDLPluginSpec extends AbstractProjectSpec {
                 sourceSetName = 'test'
                 packageName = 'com.test'
                 generateTestcase = true
-                namespacePackageMapping = ["a": "com.intershop.a", "b": "com.intershop.b", "c": "com.intershop.c"]
+                namespacePackageMappings {
+                    conf1 {
+                        namespace = "a"
+                        packageName = "com.intershop.a"
+                    }
+                    conf2 {
+                        namespace = "b"
+                        packageName = "com.intershop.b"
+                    }
+                    conf3 {
+                        namespace = "c"
+                        packageName = "com.intershop.c"
+                    }
+                }
                 namespacePackageMappingFile = project.file('wsdl/package.mapping')
                 wsdlFile = project.file('MyFile.wsdl')
                 args = ['-Dtest=test', '-Dtest1=test1'] as List<String>
@@ -92,7 +105,7 @@ class WSDLPluginSpec extends AbstractProjectSpec {
         task.noWrapped == true
         task.serverSide == true
         task.skeletonDeploy == true
-        task.deployScope == com.intershop.gradle.wsdl.utils.DeployScope.APPLICATION.toString()
+        task.deployScope == com.intershop.gradle.wsdl.utils.DeployScope.APPLICATION.scope
         task.generateAllClasses == true
         task.typeMappingVersion == '1.2'
         task.factory == 'TestFactory'
@@ -103,10 +116,10 @@ class WSDLPluginSpec extends AbstractProjectSpec {
         task.wrapArrays == true
         task.packageName == 'com.test'
         task.generateTestcase == true
-        task.namespacePackageMapping == ["a" : "com.intershop.a", "b" : "com.intershop.b", "c" : "com.intershop.c"]
+        task.namespacePackageMappingList.contains("a=com.intershop.a")
         task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
         task.wsdlFile == project.file('MyFile.wsdl')
-        task.addArgs ==  ['-Dtest=test', '-Dtest1=test1'] as List<String>
+        task.args ==  ['-Dtest=test', '-Dtest1=test1'] as List<String>
     }
 
     def 'should set all parameters in task axis2'() {
@@ -116,11 +129,24 @@ class WSDLPluginSpec extends AbstractProjectSpec {
             testconfiguration {
                 wsdlFile = project.file('MyFile.wsdl')
                 packageName = 'com.intershop.wsdl'
-                namespacePackageMapping = ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
+                namespacePackageMappings {
+                    conf1 {
+                        namespace = "a"
+                        packageName = "com.intershop.a"
+                    }
+                    conf2 {
+                        namespace = "b"
+                        packageName = "com.intershop.b"
+                    }
+                    conf3 {
+                        namespace = "c"
+                        packageName = "com.intershop.c"
+                    }
+                }
                 namespacePackageMappingFile = project.file('wsdl/package.mapping')
                 unwrapParams = true
                 generateAllClasses = true
-                arg('testParameter')
+                addArg('testParameter')
 
             }
         }
@@ -130,11 +156,10 @@ class WSDLPluginSpec extends AbstractProjectSpec {
         task
         task.wsdlFile == project.file('MyFile.wsdl')
         task.packageName == 'com.intershop.wsdl'
-        task.namespacePackageMapping == ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
         task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
         task.unwrapParams == true
         task.generateAllClasses == true
-        task.wsdlVersion == null
-        task.addArgs == ['testParameter' ] as List<String>
+        task.wsdlVersion == ""
+        task.args == ['testParameter'] as List<String>
     }
 }

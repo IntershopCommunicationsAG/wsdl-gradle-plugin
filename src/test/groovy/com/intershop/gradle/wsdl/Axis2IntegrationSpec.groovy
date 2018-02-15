@@ -18,6 +18,7 @@ package com.intershop.gradle.wsdl
 import com.intershop.gradle.test.AbstractIntegrationSpec
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class Axis2IntegrationSpec extends AbstractIntegrationSpec {
 
@@ -54,14 +55,24 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
 
         when:
         List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
-        def result = getPreparedGradleRunner()
+        def result1 = getPreparedGradleRunner()
                 .withArguments(args)
                 .withGradleVersion(gradleVersion)
                 .build()
 
         then:
-        result.task(':axis2Wsdl2javaBank').outcome == SUCCESS
-        result.task(':compileJava').outcome == SUCCESS
+        result1.task(':axis2Wsdl2javaBank').outcome == SUCCESS
+        result1.task(':compileJava').outcome == SUCCESS
+
+        when:
+        def result2 = getPreparedGradleRunner()
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result2.task(':axis2Wsdl2javaBank').outcome == UP_TO_DATE
+        result2.task(':compileJava').outcome == UP_TO_DATE
 
         where:
         gradleVersion << supportedGradleVersions
@@ -134,9 +145,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
                         serversideInterface = true
                         allPorts = true
                         packageName = 'samples.quickstart.service.adb'
-                        namespacePackageMapping = [
-                            'http://quickstart.samples/xsd':'samples.quickstart.service.adb.xsd'
-                        ]
+                        namespacePackageMappings {
+                            quickstart {
+                                namespace = 'http://quickstart.samples/xsd'
+                                packageName = 'samples.quickstart.service.adb.xsd'
+                            }
+                        }
                         databindingMethod = 'adb'
                     }
                 }
@@ -162,8 +176,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaQstartadb').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/output/resources/services.xml')).exists()
-        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/output/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/resources/services.xml')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartadb/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -190,9 +204,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
                         serversideInterface = true
                         allPorts = true
                         packageName = 'samples.quickstart.service.jibx'
-                        namespacePackageMapping = [
-                            'http://quickstart.samples/xsd':'samples.quickstart.service.jibx.xsd'
-                        ]
+                        namespacePackageMappings {
+                            quickstart {
+                                namespace = 'http://quickstart.samples/xsd'
+                                packageName = 'samples.quickstart.service.jibx.xsd'
+                            }
+                        }
                         databindingMethod = 'jibx'
                     }
                 }
@@ -234,73 +251,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaQstartjibx').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/output/resources/services.xml')).exists()
-        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/output/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java')).exists()
-
-        where:
-        gradleVersion << supportedGradleVersions
-    }
-
-    def 'Test code generation qstartxmlbeans'() {
-        given:
-        copyResources('axis2/quickstartadb/StockQuoteService.wsdl', 'staticfiles/wsdl/StockQuoteService.wsdl')
-
-        buildFile << """
-            plugins {
-                id 'java'
-                id 'com.intershop.gradle.wsdl'
-            }
-            
-            wsdl {
-                axis2 {
-                    qstartxmlbeans {
-                        wsdlFile = file('staticfiles/wsdl/StockQuoteService.wsdl')
-                        sync = true
-                        packageName = 'samples.quickstart.service.xmlbeans'
-                        namespacePackageMapping = [
-                            'http://quickstart.samples/xsd':'samples.quickstart.service.xmlbeans.xsd'
-                        ]
-                        databindingMethod = 'xmlbeans'
-                    }
-                }
-            }
-
-            repositories {
-                jcenter()
-            }
-            
-            configurations {
-                wsdlAxis2.extendsFrom(compile)
-            }
-            
-            dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-kernel:1.7.7'
-                compile 'org.apache.axis2:axis2-xmlbeans:1.7.7'
-                compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
-                
-                wsdlAxis2 'org.apache.axis2:axis2-codegen:1.7.7'
-                wsdlAxis2 'wsdl4j:wsdl4j:1.6.3'
-                wsdlAxis2 'commons-logging:commons-logging:1.2'
-                wsdlAxis2 'org.apache.neethi:neethi:3.0.3'
-                wsdlAxis2 'org.apache.ws.commons.axiom:axiom-api:1.2.20'
-                wsdlAxis2 'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
-                wsdlAxis2 'org.apache.woden:woden-core:1.0M10'
-                wsdlAxis2 'org.apache.ws.xmlschema:xmlschema-core:2.2.1'
-            }
-        """.stripIndent()
-
-        when:
-        List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
-        def result = getPreparedGradleRunner()
-                .withArguments(args)
-                .withGradleVersion(gradleVersion)
-                .build()
-
-        then:
-        result.task(':axis2Wsdl2javaQstartxmlbeans').outcome == SUCCESS
-        result.task(':compileJava').outcome == SUCCESS
-        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartxmlbeans/output/src/samples/quickstart/service/xmlbeans/StockQuoteServiceStub.java')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/resources/services.xml')).exists()
+        (new File(testProjectDir, 'build/generated/wsdl2java/axis2/qstartjibx/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java')).exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -377,12 +329,14 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
             }
 
             tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
-                javaOptions.jvmArgs += ["-XX:-UseSerialGC"]  
-                
-                javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
-                javaOptions.systemProperty 'http.proxyPort', '8081'
-                javaOptions.systemProperty 'https.proxyHost', 'test.host.com' 
-                javaOptions.systemProperty 'https.proxyPort', '4081'
+                forkOptions { JavaForkOptions options ->
+                    options.setMaxHeapSize('64m')
+                    options.jvmArgs += ["-XX:-UseSerialGC"]  
+                    options.systemProperty('http.proxyHost', 'test.host.com')
+                    options.systemProperty('http.proxyPort', '8081')
+                    options.systemProperty('https.proxyHost', 'test.host.com')
+                    options.systemProperty('https.proxyPort', '4081')
+                }
             }
 
             repositories {
@@ -405,10 +359,6 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         then:
         result.task(':axis2Wsdl2javaBank').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
-        result.output.contains('-Dhttp.proxyHost=test.host.com')
-        result.output.contains('-Dhttp.proxyPort=8081')
-        result.output.contains('-Dhttps.proxyHost=test.host.com')
-        result.output.contains('-Dhttps.proxyPort=4081')
 
         where:
         gradleVersion << supportedGradleVersions

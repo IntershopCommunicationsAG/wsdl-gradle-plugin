@@ -2,23 +2,22 @@ plugins {
     // project plugins
     id 'java-gradle-plugin'
     id 'groovy'
+    id 'nebula.kotlin' version '1.2.21'
+
     // test coverage
     id 'jacoco'
 
     // ide plugin
     id 'idea'
 
-    // intershop test plugin
-    id 'com.intershop.gradle.test' version '2.2.0'
-
-    // plugin for documentation
-    id 'org.asciidoctor.convert' version '1.5.3'
-
     // publish plugin
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '2.5.5'
+    id 'com.intershop.gradle.scmversion' version '3.4.0'
+
+    // plugin for documentation
+    id 'org.asciidoctor.convert' version '1.5.3'
 
     // plugin for publishing to Gradle Portal
     id 'com.gradle.plugin-publish' version '0.9.9'
@@ -37,8 +36,22 @@ group 'com.intershop.gradle.wsdl'
 description 'WSDL plugin for Axis 1 and Axis 2'
 version = scm.version.version
 
+gradlePlugin {
+    plugins {
+        wsdlPlugin {
+            id = 'com.intershop.gradle.wsdl'
+            implementationClass = 'com.intershop.gradle.wsdl.WSDLPlugin'
+        }
+    }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
@@ -47,7 +60,7 @@ if (project.version.endsWith('-SNAPSHOT')) {
 
 // test configuration
 test {
-    systemProperty 'intershop.gradle.versions', '2.11, 3.1'
+    systemProperty 'intershop.gradle.versions', '4.5.1'
 }
 
 task copyAsciiDoc {
@@ -195,18 +208,20 @@ pluginBundle {
     tags = ['intershop', 'gradle', 'plugin', 'build', 'wsdl']
 
     plugins {
-        gradleWSDLPlugin {
-            id = 'com.intershop.gradle.wsdl'
+        wsdlPlugin {
+            id = gradlePlugin.plugins.wsdlPlugin.id
             displayName = project.description
         }
     }
 }
 
 dependencies {
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
-        exclude group: 'org.codehaus.groovy'
-    }
+    compileOnly 'org.apache.axis:axis:1.4'
+    compileOnly 'org.apache.axis2:axis2-codegen:1.7.7'
+
     testCompile 'commons-io:commons-io:2.2'
+    testCompile 'com.intershop.gradle.test:test-gradle-plugin:3.0.0'
+    testCompile gradleTestKit()
 }
 
 repositories {
