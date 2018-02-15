@@ -28,11 +28,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
-import org.gradle.process.internal.JavaExecHandleBuilder
-import org.gradle.process.internal.JavaExecHandleFactory
-import javax.inject.Inject
 
-open class WSDL2Java() : AbstractWSDL2Java(){
+open class WSDL2Java : AbstractWSDL2Java(){
 
     /**
      * Only generate code for the WSDLExtension document that appears on the command line if this value is true.
@@ -332,7 +329,7 @@ open class WSDL2Java() : AbstractWSDL2Java(){
                 properties.add("${it.name}=${it.value}")
             }
 
-            return properties.toList<String>()
+            return properties.toList()
         }
 
     /**
@@ -378,7 +375,7 @@ open class WSDL2Java() : AbstractWSDL2Java(){
 
 
     fun calculateParameters() : List<String> {
-        val parameters: MutableList<String> = mutableListOf<String>()
+        val parameters: MutableList<String> = mutableListOf()
 
         addAttribute(parameters, outputDir.absolutePath, "--output")
 

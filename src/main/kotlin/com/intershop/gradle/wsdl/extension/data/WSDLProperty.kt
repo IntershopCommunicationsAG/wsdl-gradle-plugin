@@ -16,8 +16,6 @@
 package com.intershop.gradle.wsdl.extension.data
 
 import org.gradle.api.Named
-import org.gradle.api.Project
-import org.gradle.api.provider.Property
 
 class WSDLProperty (private val propname: String) : Named {
 

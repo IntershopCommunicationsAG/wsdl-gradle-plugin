@@ -20,7 +20,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-class WSDL2JavaRunner @Inject constructor(val paramList: List<String>) : Runnable {
+class WSDL2JavaRunner @Inject constructor(private val paramList: List<String>) : Runnable {
 
     companion object {
         val log: Logger = LoggerFactory.getLogger(WSDL2JavaRunner::class.java.name)

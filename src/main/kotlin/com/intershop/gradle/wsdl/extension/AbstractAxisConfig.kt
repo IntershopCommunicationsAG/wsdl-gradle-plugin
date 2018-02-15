@@ -16,19 +16,16 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
-import org.gradle.api.Action
+import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
-import groovy.lang.Closure
 import java.io.File
 import kotlin.reflect.KProperty
 

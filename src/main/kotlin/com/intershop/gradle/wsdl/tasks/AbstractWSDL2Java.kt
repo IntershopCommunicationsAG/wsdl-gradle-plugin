@@ -100,7 +100,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
                 mappings.add("${it.namespace}=${it.packageName}")
             }
 
-            return mappings.toList<String>()
+            return mappings.toList()
         }
 
     /**

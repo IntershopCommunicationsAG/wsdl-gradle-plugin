@@ -148,7 +148,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     @get:Input
     var serviceName: String
         get() = serviceNameProperty.getOrElse("")
-        set(value) = serviceNameProperty.set(value.toString())
+        set(value) = serviceNameProperty.set(value)
 
     fun provideServiceName(serviceName: Provider<String>) = serviceNameProperty.set(serviceName)
 
@@ -313,7 +313,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     }
 
     fun calculateParameters() : List<String> {
-        val parameters: MutableList<String> = mutableListOf<String>()
+        val parameters: MutableList<String> = mutableListOf()
 
         addAttribute(parameters, wsdlFile.absolutePath, "-uri")
         addAttribute(parameters, "java", "--language")

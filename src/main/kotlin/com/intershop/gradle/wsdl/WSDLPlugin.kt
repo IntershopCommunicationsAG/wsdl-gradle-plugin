@@ -16,13 +16,13 @@
 package com.intershop.gradle.wsdl
 
 import com.intershop.gradle.wsdl.extension.WSDLExtension
-import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java as axis1WSDL2Java
-import com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java as axis2WSDL2Java
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginConvention
+import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java as axis1WSDL2Java
+import com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java as axis2WSDL2Java
 
 /**
  * Plugin Class
@@ -181,7 +181,6 @@ class WSDLPlugin : Plugin<Project> {
      * Adds the dependencies for the AXIS1 code generation. It is possible to override this.
      *
      * @param project
-     * @param extension
      */
     private fun addWsdlAxis1Configuration(project: Project) {
         val configuration = project.configurations.maybeCreate(WSDLExtension.WSDL_AXIS1_CONFIGURATION_NAME)
@@ -206,7 +205,6 @@ class WSDLPlugin : Plugin<Project> {
      * Adds the dependencies for the AXIS2 code generation. It is possible to override this.
      *
      * @param project
-     * @param extension
      */
     private fun addWsdlAxis2Configuration(project: Project) {
         val configuration = project.configurations.maybeCreate(WSDLExtension.WSDL_AXIS2_CONFIGURATION_NAME)

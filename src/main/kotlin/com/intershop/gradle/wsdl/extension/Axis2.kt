@@ -16,7 +16,6 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.utils.Databinding
-import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
