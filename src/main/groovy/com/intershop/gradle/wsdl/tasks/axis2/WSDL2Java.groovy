@@ -20,8 +20,9 @@ import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.Databinding
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.process.internal.DefaultExecActionFactory
 import org.gradle.process.internal.JavaExecHandleBuilder
 
 class WSDL2Java extends AbstractWSDL2Java {
@@ -189,7 +190,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      * @return JavaExecHandleBuilder
      */
     JavaExecHandleBuilder prepareExec() {
-        JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
+        JavaExecHandleBuilder javaExec = new DefaultExecActionFactory(getFileResolver()).newJavaExec()
         getJavaOptions().copyTo(javaExec)
 
         FileCollection axis2CodegenConfiguration = getProject().getConfigurations().getAt(WSDLExtension.WSDLAXIS2_CONFIGURATION_NAME)

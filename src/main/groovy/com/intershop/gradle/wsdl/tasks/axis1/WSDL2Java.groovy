@@ -21,6 +21,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.process.internal.DefaultExecActionFactory
 import org.gradle.process.internal.JavaExecHandleBuilder
 /**
  * Task to execute the WSDL2Java Tool for Axis1.
@@ -252,7 +253,7 @@ class WSDL2Java extends AbstractWSDL2Java {
      */
     JavaExecHandleBuilder prepareExec() {
 
-        JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
+        JavaExecHandleBuilder javaExec = new DefaultExecActionFactory(getFileResolver()).newJavaExec()
         getJavaOptions().copyTo(javaExec)
 
         FileCollection axis1CodegenConfiguration = getProject().getConfigurations().getAt(WSDLExtension.WSDLAXIS1_CONFIGURATION_NAME)
