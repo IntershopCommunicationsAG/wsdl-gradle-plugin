@@ -35,7 +35,7 @@ operator fun <T> Property<T>.getValue(receiver: Any?, property: KProperty<*>): T
 operator fun org.gradle.api.file.RegularFileProperty.setValue(receiver: Any?, property: KProperty<*>, value: File) = set(value)
 operator fun org.gradle.api.file.RegularFileProperty.getValue(receiver: Any?, property: KProperty<*>): File = get().asFile
 
-abstract class BaseAxisConfig(val project: Project, private val confname: String) : Named {
+abstract class AbbstractAxisConfig(val project: Project, private val confname: String) : Named {
 
     override fun getName() : String {
         return confname

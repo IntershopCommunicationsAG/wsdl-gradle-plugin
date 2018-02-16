@@ -23,7 +23,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
 
-open class Axis2(project: Project, private val confname: String) : BaseAxisConfig(project, confname) {
+open class Axis2(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
 
     // properties will analyzed as Boolean
     val asyncProperty: Property<String> = project.objects.property(String::class.java)

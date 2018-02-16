@@ -25,7 +25,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
 
-open class Axis1(project: Project, private val confname: String) : BaseAxisConfig(project, confname) {
+open class Axis1(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
 
     // property is a string, because there are problems with Integer and Int for the property
     private val timeoutProperty: Property<String> = project.objects.property(String::class.java)
