@@ -22,6 +22,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -31,6 +32,8 @@ import kotlin.reflect.KProperty
 
 operator fun <T> Property<T>.setValue(receiver: Any?, property: KProperty<*>, value: T) = set(value)
 operator fun <T> Property<T>.getValue(receiver: Any?, property: KProperty<*>): T = get()
+
+inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
 operator fun org.gradle.api.file.RegularFileProperty.setValue(receiver: Any?, property: KProperty<*>, value: File) = set(value)
 operator fun org.gradle.api.file.RegularFileProperty.getValue(receiver: Any?, property: KProperty<*>): File = get().asFile
@@ -50,13 +53,13 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     private val argumentsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
 
     // will be analyzed as Boolean
-    private val generateTestcaseProperty: Property<String> = project.objects.property(String::class.java)
+    private val generateTestcaseProperty = project.objects.property<Boolean>()
 
     val namespacePackageMappingsContainer: NamedDomainObjectContainer<NamespacePackageMapping> = project.container(NamespacePackageMapping::class.java)
 
     init {
         sourceSetNameProperty.set(SourceSet.MAIN_SOURCE_SET_NAME)
-        generateTestcaseProperty.set("false")
+        generateTestcaseProperty.set(false)
     }
 
     /**
@@ -92,12 +95,10 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
      * Like the generated implementation file, the generated test case file could be considered a template
      * that you may fill in.
      */
-    val generateTestcaseProvider: Provider<String>
+    val generateTestcaseProvider: Provider<Boolean>
         get() = generateTestcaseProperty
 
-    var generateTestcase: Boolean
-        get() = generateTestcaseProperty.get().toBoolean()
-        set(value) = generateTestcaseProperty.set(value.toString())
+    var generateTestcase by generateTestcaseProperty
 
     /**
      * If there are a number of namespaces in the WSDLExtension document, listing a mapping for them all could

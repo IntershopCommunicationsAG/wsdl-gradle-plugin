@@ -26,20 +26,20 @@ import java.io.File
 open class Axis2(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
 
     // properties will analyzed as Boolean
-    val asyncProperty: Property<String> = project.objects.property(String::class.java)
-    val syncProperty: Property<String> = project.objects.property(String::class.java)
-    val serverSideProperty: Property<String> = project.objects.property(String::class.java)
-    val serviceDescriptionProperty: Property<String> = project.objects.property(String::class.java)
-    val generateAllClassesProperty: Property<String> = project.objects.property(String::class.java)
-    val unpackClassesProperty: Property<String> = project.objects.property(String::class.java)
-    val serversideInterfaceProperty: Property<String> = project.objects.property(String::class.java)
-    val flattenFilesProperty: Property<String> = project.objects.property(String::class.java)
-    val unwrapParamsProperty: Property<String> = project.objects.property(String::class.java)
-    val xsdconfigProperty: Property<String> = project.objects.property(String::class.java)
-    val allPortsProperty: Property<String> = project.objects.property(String::class.java)
-    val backwordCompatibleProperty: Property<String> = project.objects.property(String::class.java)
-    val suppressPrefixesProperty: Property<String> = project.objects.property(String::class.java)
-    val noMessageReceiverProperty: Property<String> = project.objects.property(String::class.java)
+    val asyncProperty = project.objects.property<Boolean>()
+    val syncProperty = project.objects.property<Boolean>()
+    val serverSideProperty = project.objects.property<Boolean>()
+    val serviceDescriptionProperty = project.objects.property<Boolean>()
+    val generateAllClassesProperty = project.objects.property<Boolean>()
+    val unpackClassesProperty = project.objects.property<Boolean>()
+    val serversideInterfaceProperty = project.objects.property<Boolean>()
+    val flattenFilesProperty = project.objects.property<Boolean>()
+    val unwrapParamsProperty = project.objects.property<Boolean>()
+    val xsdconfigProperty = project.objects.property<Boolean>()
+    val allPortsProperty = project.objects.property<Boolean>()
+    val backwordCompatibleProperty = project.objects.property<Boolean>()
+    val suppressPrefixesProperty = project.objects.property<Boolean>()
+    val noMessageReceiverProperty = project.objects.property<Boolean>()
     
     // Strings
     val databindingMethodProperty: Property<String> = project.objects.property(String::class.java)
@@ -50,24 +50,24 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
     private val outputDirProperty: DirectoryProperty = project.layout.directoryProperty()
 
     init {
-        asyncProperty.set("false")
-        syncProperty.set("false")
-        serverSideProperty.set("false")
-        serviceDescriptionProperty.set("false")
+        asyncProperty.set(false)
+        syncProperty.set(false)
+        serverSideProperty.set(false)
+        serviceDescriptionProperty.set(false)
         databindingMethodProperty.set(Databinding.ADB.binding)
-        generateAllClassesProperty.set("false")
-        unpackClassesProperty.set("false")
+        generateAllClassesProperty.set(false)
+        unpackClassesProperty.set(false)
         serviceNameProperty.set("")
         portNameProperty.set("")
-        serversideInterfaceProperty.set("false")
+        serversideInterfaceProperty.set(false)
         wsdlVersionProperty.set("")
-        flattenFilesProperty.set("false")
-        unwrapParamsProperty.set("false")
-        xsdconfigProperty.set("false")
-        allPortsProperty.set("false")
-        backwordCompatibleProperty.set("false")
-        suppressPrefixesProperty.set("false")
-        noMessageReceiverProperty.set("false")
+        flattenFilesProperty.set(false)
+        unwrapParamsProperty.set(false)
+        xsdconfigProperty.set(false)
+        allPortsProperty.set(false)
+        backwordCompatibleProperty.set(false)
+        suppressPrefixesProperty.set(false)
+        noMessageReceiverProperty.set(false)
 
         outputDirProperty.set(project.layout.buildDirectory.dir("${WSDLExtension.CODEGEN_OUTPUTPATH}/axis2/${name.replace(' ', '_')}"))
     }
@@ -76,45 +76,37 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
      * Generate code only for async style. When this option is used the generated
      * stubs will have only the asynchronous invocation methods. Switched off by default.
      */
-    val asyncProvider: Provider<String>
+    val asyncProvider: Provider<Boolean>
         get() = asyncProperty
 
-    var async: Boolean
-        get() = asyncProperty.get().toBoolean()
-        set(value) = asyncProperty.set(value.toString())
+    var async by asyncProperty
 
     /**
      * Generate code only for sync style . When this option is used the generated stubs
      * will have only the synchronous invocation methods. Switched off by default.
      * When async is set to true, this takes precedence.
      */
-    val syncProvider: Provider<String>
+    val syncProvider: Provider<Boolean>
         get() = syncProperty
 
-    var sync: Boolean
-        get() = syncProperty.get().toBoolean()
-        set(value) = syncProperty.set(value.toString())
+    var sync by syncProperty
 
     /**
      * Generates server side code (i.e. skeletons). Default is false.
      */
-    val serverSideProvider: Provider<String>
+    val serverSideProvider: Provider<Boolean>
         get() = serverSideProperty
 
-    var serverSide: Boolean
-        get() = serverSideProperty.get().toBoolean()
-        set(value) = serverSideProperty.set(value.toString())
+    var serverSide by serverSideProperty
 
     /**
      * Generates the service descriptor (i.e. server.xml). Default is false.
      * Only valid if serverSide is true, the server side code generation option.
      */
-    val serviceDescriptionProvider: Provider<String>
+    val serviceDescriptionProvider: Provider<Boolean>
         get() = serviceDescriptionProperty
 
-    var serviceDescription: Boolean
-        get() = serviceDescriptionProperty.get().toBoolean()
-        set(value) = serviceDescriptionProperty.set(value.toString())
+    var serviceDescription by serviceDescriptionProperty
 
     /**
      * Specifies the Databinding framework.
@@ -135,23 +127,19 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
      * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
      * the client code (stubs) will also be generated along with the skeleton.
      */
-    val generateAllClassesProvider: Provider<String>
+    val generateAllClassesProvider: Provider<Boolean>
         get() = generateAllClassesProperty
 
-    var generateAllClasses: Boolean
-        get() = generateAllClassesProperty.get().toBoolean()
-        set(value) = generateAllClassesProperty.set(value.toString())
+    var generateAllClasses by generateAllClassesProperty
 
     /**
      * Unpack classes. This option specifies whether to unpack the classes and
      * generate separate classes for the databinders.
      */
-    val unpackClassesProvider: Provider<String>
+    val unpackClassesProvider: Provider<Boolean>
         get() = unpackClassesProperty
 
-    var unpackClasses: Boolean
-        get() = unpackClassesProperty.get().toBoolean()
-        set(value) = unpackClassesProperty.set(value.toString())
+    var unpackClasses by unpackClassesProperty
 
     /**
      * Specifies the service name to be code generated. If the service name is not specified,
@@ -174,12 +162,10 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
     /**
      * Generate an interface for the service skeleton.
      */
-    val serversideInterfaceProvider: Provider<String>
+    val serversideInterfaceProvider: Provider<Boolean>
         get() = serversideInterfaceProperty
 
-    var serversideInterface: Boolean
-        get() = serversideInterfaceProperty.get().toBoolean()
-        set(value) = serversideInterfaceProperty.set(value.toString())
+    var serversideInterface by serversideInterfaceProperty
 
     /**
      * WSDLExtension Version. Valid Options : 2, 2.0, 1.1
@@ -192,75 +178,59 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
     /**
      * Flattens the generated files
      */
-    val flattenFilesProvider: Provider<String>
+    val flattenFilesProvider: Provider<Boolean>
         get() = flattenFilesProperty
 
-    var flattenFiles: Boolean
-        get() = flattenFilesProperty.get().toBoolean()
-        set(value) = flattenFilesProperty.set(value.toString())
+    var flattenFiles by flattenFilesProperty
 
     /**
      * Switch on un-wrapping, if this value is true.
      */
-    val unwrapParamsProvider: Provider<String>
+    val unwrapParamsProvider: Provider<Boolean>
         get() = unwrapParamsProperty
 
-    var unwrapParams: Boolean
-        get() = unwrapParamsProperty.get().toBoolean()
-        set(value) {
-            unwrapParamsProperty.set(value.toString())
-        }
+    var unwrapParams by unwrapParamsProperty
 
     /**
      * Use XMLBeans .xsdconfig file if this value is true.
      * This is only valid if  databindingMethod is 'xmlbeans'.
      */
-    val xsdconfigProvider: Provider<String>
+    val xsdconfigProvider: Provider<Boolean>
         get() = xsdconfigProperty
 
-    var xsdconfig: Boolean
-        get() = xsdconfigProperty.get().toBoolean()
-        set(value) = xsdconfigProperty.set(value.toString())
+    var xsdconfig by xsdconfigProperty
 
     /**
      * Generate code for all ports
      */
-    val allPortsProvider: Provider<String>
+    val allPortsProvider: Provider<Boolean>
         get() = allPortsProperty
 
-    var allPorts: Boolean
-        get() = allPortsProperty.get().toBoolean()
-        set(value) = allPortsProperty.set(value.toString())
+    var allPorts by allPortsProperty
 
     /**
      * Generate Axis 1.x backword compatible code
      */
-    val backwordCompatibleProvider: Provider<String>
+    val backwordCompatibleProvider: Provider<Boolean>
         get() = backwordCompatibleProperty
 
-    var backwordCompatible: Boolean
-        get() = backwordCompatibleProperty.get().toBoolean()
-        set(value) = backwordCompatibleProperty.set(value.toString())
+    var backwordCompatible by backwordCompatibleProperty
 
     /**
      * Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
      */
-    val suppressPrefixesProvider: Provider<String>
+    val suppressPrefixesProvider: Provider<Boolean>
         get() = suppressPrefixesProperty
 
-    var suppressPrefixes: Boolean
-        get() = suppressPrefixesProperty.get().toBoolean()
-        set(value) = suppressPrefixesProperty.set(value.toString())
+    var suppressPrefixes by suppressPrefixesProperty
 
     /**
      * Don't generate a MessageReceiver in the generated sources
      */
-    val noMessageReceiverProvider: Provider<String>
+    val noMessageReceiverProvider: Provider<Boolean>
         get() = noMessageReceiverProperty
 
-    var noMessageReceiver: Boolean
-        get() = noMessageReceiverProperty.get().toBoolean()
-        set(value) = noMessageReceiverProperty.set(value.toString())
+    var noMessageReceiver by noMessageReceiverProperty
 
     /**
      * Output directory

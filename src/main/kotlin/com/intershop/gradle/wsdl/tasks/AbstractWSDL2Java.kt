@@ -23,12 +23,15 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.JavaForkOptions
 import java.io.File
+
+inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
 abstract class AbstractWSDL2Java : DefaultTask() {
 
@@ -109,14 +112,14 @@ abstract class AbstractWSDL2Java : DefaultTask() {
      * Like the generated implementation file, the generated test case file could be considered a template
      * that you may fill in.
      */
-    private val generateTestcaseProperty: Property<String> = project.objects.property(String::class.java)
+    private val generateTestcaseProperty = project.objects.property<Boolean>()
 
     @get:Input
     var generateTestcase: Boolean
-        get() = generateTestcaseProperty.getOrElse("false").toBoolean()
-        set(value)  = generateTestcaseProperty.set(value.toString())
+        get() = generateTestcaseProperty.getOrElse(false)
+        set(value)  = generateTestcaseProperty.set(value)
 
-    fun provideGenerateTestcase(generateTestcase: Provider<String>) = generateTestcaseProperty.set(generateTestcase)
+    fun provideGenerateTestcase(generateTestcase: Provider<Boolean>) = generateTestcaseProperty.set(generateTestcase)
 
     /**
      * If there are a number of namespaces in the WSDLExtension document, listing a mapping for them all could

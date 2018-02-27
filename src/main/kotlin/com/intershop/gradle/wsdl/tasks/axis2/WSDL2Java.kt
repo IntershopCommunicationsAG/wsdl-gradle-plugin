@@ -17,10 +17,11 @@ package com.intershop.gradle.wsdl.tasks.axis2
 
 import com.intershop.gradle.wsdl.extension.WSDLExtension
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
-import com.intershop.gradle.wsdl.tasks.axis2.WSDL2JavaRunner
+import com.intershop.gradle.wsdl.tasks.axis1.property
 import com.intershop.gradle.wsdl.utils.Databinding
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -33,62 +34,64 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
+inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
+
 open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java() {
 
     /**
      * Generate code only for async style. When this option is used the generated
      * stubs will have only the asynchronous invocation methods. Switched off by default.
      */
-    private val asyncProperty: Property<String> = project.objects.property(String::class.java)
+    private val asyncProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var async: Boolean
-        get() = asyncProperty.getOrElse("false").toBoolean()
-        set(value) = asyncProperty.set(value.toString())
+        get() = asyncProperty.getOrElse(false)
+        set(value) = asyncProperty.set(value)
 
-    fun provideAsync(async: Provider<String>) = asyncProperty.set(async)
+    fun provideAsync(async: Provider<Boolean>) = asyncProperty.set(async)
 
     /**
      * Generate code only for sync style . When this option is used the generated stubs
      * will have only the synchronous invocation methods. Switched off by default.
      * When async is set to true, this takes precedence.
      */
-    private val syncProperty: Property<String> = project.objects.property(String::class.java)
+    private val syncProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var sync: Boolean
-        get() = syncProperty.getOrElse("false").toBoolean()
-        set(value) = syncProperty.set(value.toString())
+        get() = syncProperty.getOrElse(false)
+        set(value) = syncProperty.set(value)
 
-    fun provideSync(sync: Provider<String>) = syncProperty.set(sync)
+    fun provideSync(sync: Provider<Boolean>) = syncProperty.set(sync)
 
     /**
      * Generates server side code (i.e. skeletons). Default is false.
      */
-    private val serverSideProperty: Property<String> = project.objects.property(String::class.java)
+    private val serverSideProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var serverSide: Boolean
-        get() = serverSideProperty.getOrElse("false").toBoolean()
-        set(value) = serverSideProperty.set(value.toString())
+        get() = serverSideProperty.getOrElse(false)
+        set(value) = serverSideProperty.set(value)
 
-    fun provideServerSide(serverSide: Provider<String>) = serverSideProperty.set(serverSide)
+    fun provideServerSide(serverSide: Provider<Boolean>) = serverSideProperty.set(serverSide)
     /**
      * Generates the service descriptor (i.e. server.xml). Default is false.
      * Only valid if serverSide is true, the server side code generation option.
      */
-    private val serviceDescriptionProperty: Property<String> = project.objects.property(String::class.java)
+    private val serviceDescriptionProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var serviceDescription: Boolean
-        get() = serviceDescriptionProperty.getOrElse("false").toBoolean()
-        set(value) = serviceDescriptionProperty.set(value.toString())
+        get() = serviceDescriptionProperty.getOrElse(false)
+        set(value) = serviceDescriptionProperty.set(value)
 
-    fun provideServiceDescription(serviceDescription: Provider<String>) = serviceDescriptionProperty.set(serviceDescription)
+    fun provideServiceDescription(serviceDescription: Provider<Boolean>) = serviceDescriptionProperty.set(serviceDescription)
 
     /**
      * Specifies the Databinding framework.
@@ -100,7 +103,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *  - none     -> NONE.
      *  Default is adb.
      */
-    private val databindingMethodProperty: Property<String> = project.objects.property(String::class.java)
+    private val databindingMethodProperty = project.objects.property(String::class.java)
 
     @get:Optional
     @get:Input
@@ -114,35 +117,35 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
      * the client code (stubs) will also be generated along with the skeleton.
      */
-    private val generateAllClassesProperty: Property<String> = project.objects.property(String::class.java)
+    private val generateAllClassesProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var generateAllClasses: Boolean
-        get() = generateAllClassesProperty.getOrElse("false").toBoolean()
-        set(value) = generateAllClassesProperty.set(value.toString())
+        get() = generateAllClassesProperty.getOrElse(false)
+        set(value) = generateAllClassesProperty.set(value)
 
-    fun provideGenerateAllClasses(generateAllClasses: Provider<String>) = generateAllClassesProperty.set(generateAllClasses)
+    fun provideGenerateAllClasses(generateAllClasses: Provider<Boolean>) = generateAllClassesProperty.set(generateAllClasses)
 
     /**
      * Unpack classes. This option specifies whether to unpack the classes and
      * generate separate classes for the databinders.
      */
-    private val unpackClassesProperty: Property<String> = project.objects.property(String::class.java)
+    private val unpackClassesProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var unpackClasses: Boolean
-        get() = unpackClassesProperty.getOrElse("false").toBoolean()
-        set(value) = unpackClassesProperty.set(value.toString())
+        get() = unpackClassesProperty.getOrElse(false)
+        set(value) = unpackClassesProperty.set(value)
 
-    fun provideUnpackClasses(unpackClasses: Provider<String>) = unpackClassesProperty.set(unpackClasses)
+    fun provideUnpackClasses(unpackClasses: Provider<Boolean>) = unpackClassesProperty.set(unpackClasses)
 
     /**
      * Specifies the service name to be code generated. If the service name is not specified,
      * then the first service will be picked.
      */
-    private val serviceNameProperty: Property<String> = project.objects.property(String::class.java)
+    private val serviceNameProperty = project.objects.property(String::class.java)
 
     @get:Optional
     @get:Input
@@ -156,7 +159,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      * Specifies the port name to be code generated. If the port name is not specified,
      * then the first port (of the selected service) will be picked.
      */
-    private val portNameProperty: Property<String> = project.objects.property(String::class.java)
+    private val portNameProperty = project.objects.property(String::class.java)
 
     @get:Optional
     @get:Input
@@ -169,20 +172,20 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     /**
      * Generate an interface for the service skeleton.
      */
-    private val serversideInterfaceProperty: Property<String> = project.objects.property(String::class.java)
+    private val serversideInterfaceProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var serversideInterface: Boolean
-        get() = serversideInterfaceProperty.getOrElse("false").toBoolean()
-        set(value) = serversideInterfaceProperty.set(value.toString())
+        get() = serversideInterfaceProperty.getOrElse(false)
+        set(value) = serversideInterfaceProperty.set(value)
 
-    fun provideServersideInterface(serversideInterface: Provider<String>) = serversideInterfaceProperty.set(serversideInterface)
+    fun provideServersideInterface(serversideInterface: Provider<Boolean>) = serversideInterfaceProperty.set(serversideInterface)
 
     /**
      * WSDLExtension Version. Valid Options : 2, 2.0, 1.1
      */
-    private val wsdlVersionProperty: Property<String> = project.objects.property(String::class.java)
+    private val wsdlVersionProperty = project.objects.property(String::class.java)
 
     @get:Optional
     @get:Input
@@ -195,96 +198,94 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     /**
      * Flattens the generated files
      */
-    private val flattenFilesProperty: Property<String> = project.objects.property(String::class.java)
+    private val flattenFilesProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var flattenFiles: Boolean
-        get() = flattenFilesProperty.getOrElse("false").toBoolean()
-        set(value) = flattenFilesProperty.set(value.toString())
+        get() = flattenFilesProperty.getOrElse(false)
+        set(value) = flattenFilesProperty.set(value)
 
-    fun provideFlattenFiles(flattenFiles: Provider<String>) = flattenFilesProperty.set(flattenFiles)
+    fun provideFlattenFiles(flattenFiles: Provider<Boolean>) = flattenFilesProperty.set(flattenFiles)
 
     /**
      * Switch on un-wrapping, if this value is true.
      */
-    private val unwrapParamsProperty: Property<String> = project.objects.property(String::class.java)
+    private val unwrapParamsProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var unwrapParams: Boolean
-        get() = unwrapParamsProperty.getOrElse("false").toBoolean()
-        set(value) = unwrapParamsProperty.set(value.toString())
+        get() = unwrapParamsProperty.getOrElse(false)
+        set(value) = unwrapParamsProperty.set(value)
 
-    fun provideUnwrapParams(unwrapParams: Provider<String>) {
-        unwrapParamsProperty.set(unwrapParams)
-    }
+    fun provideUnwrapParams(unwrapParams: Provider<Boolean>) = unwrapParamsProperty.set(unwrapParams)
 
     /**
      * Use XMLBeans .xsdconfig file if this value is true.
      * This is only valid if  databindingMethod is 'xmlbeans'.
      */
-    private val xsdconfigProperty: Property<String> = project.objects.property(String::class.java)
+    private val xsdconfigProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var xsdconfig: Boolean
-        get() = xsdconfigProperty.getOrElse("false").toBoolean()
-        set(value) = xsdconfigProperty.set(value.toString())
+        get() = xsdconfigProperty.getOrElse(false)
+        set(value) = xsdconfigProperty.set(value)
 
-    fun provideXsdconfig(xsdconfig: Provider<String>) = xsdconfigProperty.set(xsdconfig)
+    fun provideXsdconfig(xsdconfig: Provider<Boolean>) = xsdconfigProperty.set(xsdconfig)
 
     /**
      * Generate code for all ports
      */
-    private val allPortsProperty: Property<String> = project.objects.property(String::class.java)
+    private val allPortsProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var allPorts: Boolean
-        get() = allPortsProperty.getOrElse("false").toBoolean()
-        set(value) = allPortsProperty.set(value.toString())
+        get() = allPortsProperty.getOrElse(false)
+        set(value) = allPortsProperty.set(value)
 
-    fun provideAllPorts(allPorts: Provider<String>) = allPortsProperty.set(allPorts)
+    fun provideAllPorts(allPorts: Provider<Boolean>) = allPortsProperty.set(allPorts)
 
     /**
      * Generate Axis 1.x backword compatible code
      */
-    private val backwordCompatibleProperty: Property<String> = project.objects.property(String::class.java)
+    private val backwordCompatibleProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var backwordCompatible: Boolean
-        get() = backwordCompatibleProperty.getOrElse("false").toBoolean()
-        set(value) = backwordCompatibleProperty.set(value.toString())
+        get() = backwordCompatibleProperty.getOrElse(false)
+        set(value) = backwordCompatibleProperty.set(value)
 
-    fun provideBackwordCompatible(backwordCompatible: Provider<String>) = backwordCompatibleProperty.set(backwordCompatible)
+    fun provideBackwordCompatible(backwordCompatible: Provider<Boolean>) = backwordCompatibleProperty.set(backwordCompatible)
 
     /**
      * Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
      */
-    private val suppressPrefixesProperty: Property<String> = project.objects.property(String::class.java)
+    private val suppressPrefixesProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var suppressPrefixes: Boolean
-        get() = suppressPrefixesProperty.getOrElse("false").toBoolean()
-        set(value) = suppressPrefixesProperty.set(value.toString())
+        get() = suppressPrefixesProperty.getOrElse(false)
+        set(value) = suppressPrefixesProperty.set(value)
 
-    fun provideSuppressPrefixes(suppressPrefixes: Provider<String>) = suppressPrefixesProperty.set(suppressPrefixes)
+    fun provideSuppressPrefixes(suppressPrefixes: Provider<Boolean>) = suppressPrefixesProperty.set(suppressPrefixes)
 
     /**
      * Don't generate a MessageReceiver in the generated sources
      */
-    private val noMessageReceiverProperty: Property<String> = project.objects.property(String::class.java)
+    private val noMessageReceiverProperty = project.objects.property<Boolean>()
 
     @get:Optional
     @get:Input
     var noMessageReceiver: Boolean
-        get() = noMessageReceiverProperty.getOrElse("false").toBoolean()
-        set(value) = noMessageReceiverProperty.set(value.toString())
+        get() = noMessageReceiverProperty.getOrElse(false)
+        set(value) = noMessageReceiverProperty.set(value)
 
-    fun provideNoMessageReceiver(noMessageReceiver: Provider<String>) = noMessageReceiverProperty.set(noMessageReceiver)
+    fun provideNoMessageReceiver(noMessageReceiver: Provider<Boolean>) = noMessageReceiverProperty.set(noMessageReceiver)
 
     @get:InputFiles
     private val toolsclasspathfiles : FileCollection by lazy {

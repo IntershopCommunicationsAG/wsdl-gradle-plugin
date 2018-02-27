@@ -17,59 +17,56 @@ package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import groovy.lang.Closure
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
 
 open class Axis1(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
 
     // property is a string, because there are problems with Integer and Int for the property
-    private val timeoutProperty: Property<String> = project.objects.property(String::class.java)
+    private val timeoutProperty = project.objects.property<Int>()
     
     // properties will analyzed as Boolean
-    val noImportsProperty: Property<String> = project.objects.property(String::class.java)
-    val noWrappedProperty: Property<String> = project.objects.property(String::class.java)
-    private val serverSideProperty: Property<String> = project.objects.property(String::class.java)
-    val skeletonDeployProperty: Property<String> = project.objects.property(String::class.java)
-    val generateAllClassesProperty: Property<String> = project.objects.property(String::class.java)
-    val helperGenProperty: Property<String> = project.objects.property(String::class.java)
-    val wrapArraysProperty: Property<String> = project.objects.property(String::class.java)
-    val allowInvalidURLProperty: Property<String> = project.objects.property(String::class.java)
+    private val noImportsProperty = project.objects.property<Boolean>()
+    private val noWrappedProperty = project.objects.property<Boolean>()
+    private val serverSideProperty = project.objects.property<Boolean>()
+    private val skeletonDeployProperty = project.objects.property<Boolean>()
+    private val generateAllClassesProperty = project.objects.property<Boolean>()
+    private val helperGenProperty = project.objects.property<Boolean>()
+    private val wrapArraysProperty = project.objects.property<Boolean>()
+    private val allowInvalidURLProperty = project.objects.property<Boolean>()
 
     // Strings
-    val deployScopeProperty: Property<String> = project.objects.property(String::class.java)
-    val typeMappingVersionProperty: Property<String> = project.objects.property(String::class.java)
-    val factoryProperty: Property<String> = project.objects.property(String::class.java)
-    val userNameProperty: Property<String> = project.objects.property(String::class.java)
-    val passwordProperty: Property<String> = project.objects.property(String::class.java)
-    val implementationClassNameProperty: Property<String> = project.objects.property(String::class.java)
-    val nsIncludeProperty: Property<String> = project.objects.property(String::class.java)
-    val nsExcludeProperty: Property<String> = project.objects.property(String::class.java)
+    private val deployScopeProperty = project.objects.property(String::class.java)
+    private val typeMappingVersionProperty = project.objects.property(String::class.java)
+    private val factoryProperty = project.objects.property(String::class.java)
+    private val userNameProperty = project.objects.property(String::class.java)
+    private val passwordProperty = project.objects.property(String::class.java)
+    private val implementationClassNameProperty = project.objects.property(String::class.java)
+    private val nsIncludeProperty = project.objects.property(String::class.java)
+    private val nsExcludeProperty = project.objects.property(String::class.java)
 
-    private val outputDirProperty: DirectoryProperty = project.layout.directoryProperty()
+    private val outputDirProperty = project.layout.directoryProperty()
 
-    val wsdlPropertiesContainer : NamedDomainObjectContainer<WSDLProperty> = project.container(WSDLProperty::class.java)
+    val wsdlPropertiesContainer = project.container(WSDLProperty::class.java)
 
     init {
-        noImportsProperty.set("false")
-        timeoutProperty.set("240")
-        noWrappedProperty.set("false")
-        serverSideProperty.set("false")
-        skeletonDeployProperty.set("false")
+        noImportsProperty.set(false)
+        timeoutProperty.set(240)
+        noWrappedProperty.set(false)
+        serverSideProperty.set(false)
+        skeletonDeployProperty.set(false)
         deployScopeProperty.set("")
-        generateAllClassesProperty.set("false")
+        generateAllClassesProperty.set(false)
         typeMappingVersionProperty.set("1.2")
         factoryProperty.set("")
-        helperGenProperty.set("false")
+        helperGenProperty.set(false)
         userNameProperty.set("")
         passwordProperty.set("")
         implementationClassNameProperty.set("")
-        wrapArraysProperty.set("false")
-        allowInvalidURLProperty.set("false")
+        wrapArraysProperty.set(false)
+        allowInvalidURLProperty.set(false)
         nsIncludeProperty.set("")
         nsExcludeProperty.set("")
 
@@ -80,23 +77,19 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * Only generate code for the WSDLExtension document that appears on the command line if this value is true.
      * The default behaviour is to generate files for all WSDLExtension documents, the immediate one and all imported ones.
      */
-    val noImportsProvider: Provider<String>
+    val noImportsProvider: Provider<Boolean>
         get() = noImportsProperty
 
-    var noImports: Boolean
-        get() = noImportsProperty.get().toBoolean()
-        set(value) = noImportsProperty.set(value.toString())
+    var noImports by noImportsProperty
 
     /**
      * Timeout in seconds. The default is 240.
      * Use -1 to disable the timeout.
      */
-    val timeoutProvider: Provider<String>
+    val timeoutProvider: Provider<Int>
         get() = timeoutProperty
 
-    var timeout: Int
-        get() = timeoutProperty.get().toInt()
-        set(value) = timeoutProperty.set(value.toString())
+    var timeout by timeoutProperty
 
     /**
      * If this value is true, it turns off the special treatment of what is called "wrapped" document/literal
@@ -109,22 +102,18 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * the element as arguments to the operation. This type of WSDLExtension is the default for Microsoft .NET web services,
      * which wrap up RPC style arguments in this top level schema element.
      */
-    val noWrappedProvider: Provider<String>
+    val noWrappedProvider: Provider<Boolean>
         get() = noWrappedProperty
 
-    var noWrapped: Boolean
-        get() = noWrappedProperty.get().toBoolean()
-        set(value) = noWrappedProperty.set(value.toString())
+    var noWrapped by noWrappedProperty
 
     /**
      * Emit the server-side bindings for the web service.
      */
-    val serverSideProvider: Provider<String>
+    val serverSideProvider: Provider<Boolean>
         get() = serverSideProperty
 
-    var serverSide : Boolean
-        get()= serverSideProperty.get().toBoolean()
-        set(value) = serverSideProperty.set(value.toString())
+    var serverSide by serverSideProperty
 
     /**
      * Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd. In other words, for "true"
@@ -144,12 +133,10 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * </pre></blockquote></p>
      * If this configuration is used, serverSide is automatically set to true.
      */
-    val skeletonDeployProvider: Provider<String>
+    val skeletonDeployProvider: Provider<Boolean>
         get() = skeletonDeployProperty
 
-    var skeletonDeploy: Boolean
-        get()= skeletonDeployProperty.get().toBoolean()
-        set(value) = skeletonDeployProperty.set(value.toString())
+    var skeletonDeploy by skeletonDeployProperty
 
     /**
      * Add scope to deploy.wsdd:
@@ -185,12 +172,10 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * files. This allows one WSDLExtension file to import constructs defined in another WSDLExtension file without the nuisance of
      * having all the imported WSDLExtension file's constructs generated.
      */
-    val generateAllClassesProvider: Provider<String>
+    val generateAllClassesProvider: Provider<Boolean>
         get() = generateAllClassesProperty
 
-    var generateAllClasses: Boolean
-        get()= generateAllClassesProperty.get().toBoolean()
-        set(value) = generateAllClassesProperty.set(value.toString())
+    var generateAllClasses by generateAllClassesProperty
 
     /**
      * Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
@@ -212,12 +197,10 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     /**
      * Emits separate Helper classes for meta data.
      */
-    val helperGenProvider: Provider<String>
+    val helperGenProvider: Provider<Boolean>
         get() = helperGenProperty
 
-    var helperGen: Boolean
-        get()= helperGenProperty.get().toBoolean()
-        set(value) = helperGenProperty.set(value.toString())
+    var helperGen by helperGenProperty
 
     /**
      * This username is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
@@ -265,24 +248,20 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * array (String[]). If you would rather a specific JavaBean class (i.e. ArrayOfString) be
      * generated for these types of schemas, you may specify the -w or --wrapArrays option.
      */
-    val wrapArraysProvider: Provider<String>
+    val wrapArraysProvider: Provider<Boolean>
         get() = wrapArraysProperty
 
-    var wrapArrays: Boolean
-        get()= wrapArraysProperty.get().toBoolean()
-        set(value) = wrapArraysProperty.set(value.toString())
+    var wrapArrays by wrapArraysProperty
 
     /**
      * This flag is used to allow Stub generation even if WSDLExtension endpoint URL is not a valid URL.
      * It's the responsibility of the user to update the endpoint value before using generated classes
      * default=false
      */
-    val allowInvalidURLProvider: Provider<String>
+    val allowInvalidURLProvider: Provider<Boolean>
         get() = allowInvalidURLProperty
 
-    var allowInvalidURL: Boolean
-        get()= allowInvalidURLProperty.get().toBoolean()
-        set(value) = allowInvalidURLProperty.set(value.toString())
+    var allowInvalidURL by allowInvalidURLProperty
 
     /**
      * namescape to specifically include in the generated code (defaults to
