@@ -17,6 +17,7 @@ package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import groovy.lang.Closure
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
@@ -49,7 +50,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
 
     private val outputDirProperty = project.layout.directoryProperty()
 
-    val wsdlPropertiesContainer = project.container(WSDLProperty::class.java)
+    val wsdlPropertiesContainer: NamedDomainObjectContainer<WSDLProperty> = project.container(WSDLProperty::class.java)
 
     init {
         noImportsProperty.set(false)
@@ -149,7 +150,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val deployScopeProvider: Provider<String>
         get() = deployScopeProperty
 
-    var deployScope by deployScopeProperty
+    var deployScope: String by deployScopeProperty
 
     /**
      * Generate code for all elements, even unreferenced ones. By default,
@@ -183,7 +184,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val typeMappingVersionProvider: Provider<String>
         get() = typeMappingVersionProperty
 
-    var typeMappingVersion by typeMappingVersionProperty
+    var typeMappingVersion: String by typeMappingVersionProperty
 
     /**
      * Used to extend the functionality of the WSDL2Java emitter.
@@ -192,7 +193,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val factoryProvider: Provider<String>
         get() = factoryProperty
 
-    var factory by factoryProperty
+    var factory: String by factoryProperty
 
     /**
      * Emits separate Helper classes for meta data.
@@ -210,7 +211,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val userNameProvider: Provider<String>
         get() = userNameProperty
 
-    var userName by userNameProperty
+    var userName: String by userNameProperty
 
     /**
      * This password is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
@@ -219,7 +220,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val passwordProvider: Provider<String>
         get() = passwordProperty
 
-    var password by passwordProperty
+    var password: String by passwordProperty
 
     /**
      * Set the name of the implementation class. Especially useful when exporting an existing class as
@@ -231,7 +232,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val implementationClassNameProvider: Provider<String>
         get() = implementationClassNameProperty
 
-    var implementationClassName by implementationClassNameProperty
+    var implementationClassName: String by implementationClassNameProperty
 
     /**
      * When processing a schema like this:
@@ -270,7 +271,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val nsIncludeProvider: Provider<String>
         get() = nsIncludeProperty
 
-    var nsInclude by nsIncludeProperty
+    var nsInclude: String by nsIncludeProperty
 
     /*
      * namespace to specifically exclude from the generated code (defaults to
@@ -279,7 +280,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     val nsExcludeProvider: Provider<String>
         get() = nsExcludeProperty
 
-    var nsExclude by nsExcludeProperty
+    var nsExclude: String by nsExcludeProperty
 
     /*
      * names and values of a properties for use by the custom GeneratorFactory
