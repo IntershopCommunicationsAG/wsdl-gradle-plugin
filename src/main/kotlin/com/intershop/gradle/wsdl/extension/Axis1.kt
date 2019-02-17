@@ -48,7 +48,7 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
     private val nsIncludeProperty = project.objects.property(String::class.java)
     private val nsExcludeProperty = project.objects.property(String::class.java)
 
-    private val outputDirProperty = project.layout.directoryProperty()
+    private val outputDirProperty = project.objects.directoryProperty()
 
     val wsdlPropertiesContainer: NamedDomainObjectContainer<WSDLProperty> = project.container(WSDLProperty::class.java)
 

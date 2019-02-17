@@ -56,7 +56,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
 
     @get:Optional
     @get:Input
-    var timeout: Int
+    var timeoutConf: Int
         get() = timeoutProperty.getOrElse(240)
         set(value) = timeoutProperty.set(value)
 
@@ -383,7 +383,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
         addAttribute(parameters, outputDir.absolutePath, "--output")
 
         addFlag(parameters, noImports, "--noImports")
-        addAttribute(parameters, timeout.toString(), "--timeout")
+        addAttribute(parameters, timeoutConf.toString(), "--timeout")
         addFlag(parameters, noWrapped, "--noWrapped")
         addFlag(parameters, wrapArrays,"--wrapArrays")
         addFlag(parameters, serverSide, "--server-side")

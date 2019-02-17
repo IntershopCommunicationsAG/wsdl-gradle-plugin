@@ -47,7 +47,7 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
     val serviceNameProperty: Property<String> = project.objects.property(String::class.java)
     val portNameProperty: Property<String> = project.objects.property(String::class.java)
 
-    private val outputDirProperty: DirectoryProperty = project.layout.directoryProperty()
+    private val outputDirProperty: DirectoryProperty = project.objects.directoryProperty()
 
     init {
         asyncProperty.set(false)

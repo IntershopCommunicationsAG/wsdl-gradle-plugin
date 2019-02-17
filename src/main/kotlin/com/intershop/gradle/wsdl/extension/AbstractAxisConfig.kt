@@ -47,8 +47,8 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     private val sourceSetNameProperty: Property<String> = project.objects.property(String::class.java)
     private val packageNameProperty: Property<String?> = project.objects.property(String::class.java)
 
-    private val namespacePackageMappingFileProperty: RegularFileProperty = project.layout.fileProperty()
-    private val wsdlFileProperty: RegularFileProperty = project.layout.fileProperty()
+    private val namespacePackageMappingFileProperty: RegularFileProperty = project.objects.fileProperty()
+    private val wsdlFileProperty: RegularFileProperty = project.objects.fileProperty()
 
     private val argumentsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
 

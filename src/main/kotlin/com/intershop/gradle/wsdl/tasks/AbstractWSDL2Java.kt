@@ -139,7 +139,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
      * If an entry for a given mapping exists both with namespacePackageMapping and in this properties file,
      * the namespacePackageMapping entry takes precedence.
      */
-    private val namespacePackageMappingFileProperty: RegularFileProperty = this.newInputFile()
+    private val namespacePackageMappingFileProperty: RegularFileProperty = project.objects.fileProperty()
 
     @get:Optional
     @get:InputFile
@@ -173,7 +173,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
     /**
      * Output directory for generated sources
      */
-    private val outputDirProperty: DirectoryProperty = this.newOutputDirectory()
+    private val outputDirProperty: DirectoryProperty = project.objects.directoryProperty()
 
     @get:OutputDirectory
     var outputDir: File
@@ -185,7 +185,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
     /**
      * Input wsdl file
      */
-    private val wsdlFileProperty: RegularFileProperty = this.newInputFile()
+    private val wsdlFileProperty: RegularFileProperty = project.objects.fileProperty()
 
     @get:InputFile
     var wsdlFile: File
