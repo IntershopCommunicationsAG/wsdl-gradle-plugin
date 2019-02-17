@@ -16,18 +16,11 @@
 package com.intershop.gradle.wsdl.tasks.axis2
 
 import org.apache.axis2.wsdl.WSDL2Code
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 class WSDL2JavaRunner @Inject constructor(private val paramList: List<String>) : Runnable {
 
-    companion object {
-        val log: Logger = LoggerFactory.getLogger(WSDL2JavaRunner::class.java.name)
-    }
-
     override fun run() {
-        println(paramList)
         WSDL2Code.main(paramList.toTypedArray())
     }
 }

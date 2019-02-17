@@ -15,12 +15,12 @@
  */
 package com.intershop.gradle.wsdl
 
-import com.intershop.gradle.test.AbstractIntegrationSpec
+import com.intershop.gradle.test.AbstractIntegrationGroovySpec
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
-class Axis2IntegrationSpec extends AbstractIntegrationSpec {
+class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
 
     def 'Test code generation faulthandling'() {
         given:

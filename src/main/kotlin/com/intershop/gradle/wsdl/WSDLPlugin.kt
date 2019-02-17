@@ -106,13 +106,11 @@ class WSDLPlugin : Plugin<Project> {
                     wsdlProperties = axis1.wsdlPropertiesContainer
 
                     afterEvaluate {
-                        plugins.withType(JavaBasePlugin::class.java, {
+                        plugins.withType(JavaBasePlugin::class.java) {
                             val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
                             val sourceSet = javaPluginConvention.sourceSets.findByName(axis1.sourceSetName)
-                            if(sourceSet != null) {
-                                sourceSet.java.srcDir(this@apply.outputs)
-                            }
-                        })
+                            sourceSet?.java?.srcDir(this@apply.outputs)
+                        }
                     }
 
                     mainTask.dependsOn(this)
@@ -162,13 +160,11 @@ class WSDLPlugin : Plugin<Project> {
                     provideNoMessageReceiver(axis2.noMessageReceiverProvider)
 
                     afterEvaluate {
-                        plugins.withType(JavaBasePlugin::class.java, {
+                        plugins.withType(JavaBasePlugin::class.java) {
                             val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
                             val sourceSet = javaPluginConvention.sourceSets.findByName(axis2.sourceSetName)
-                            if(sourceSet != null) {
-                                sourceSet.java.srcDir(this@apply.outputs)
-                            }
-                        })
+                            sourceSet?.java?.srcDir(this@apply.outputs)
+                        }
                     }
 
                     mainTask.dependsOn(this)

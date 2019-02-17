@@ -31,6 +31,7 @@ import org.gradle.api.tasks.*
 import org.gradle.process.JavaForkOptions
 import java.io.File
 
+@Suppress("UnstableApiUsage")
 inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
 abstract class AbstractWSDL2Java : DefaultTask() {

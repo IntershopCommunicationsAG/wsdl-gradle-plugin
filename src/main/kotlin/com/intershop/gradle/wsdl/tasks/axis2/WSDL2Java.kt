@@ -298,7 +298,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     @TaskAction
     fun run() {
         // start runner
-        workerExecutor.submit(WSDL2JavaRunner::class.java, {
+        workerExecutor.submit(WSDL2JavaRunner::class.java) {
             it.displayName = "WSDL2Java Axis2 code generation runner."
             it.setParams(calculateParameters())
             it.classpath(toolsclasspathfiles)
@@ -308,12 +308,12 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
                 project.logger.debug("Add configured JavaForkOptions to WSDL2Java Axis2 code generation runner.")
                 (internalForkOptionsAction as Action<in JavaForkOptions>).execute(it.forkOptions)
             }
-        })
+        }
 
         workerExecutor.await()
     }
 
-    fun calculateParameters() : List<String> {
+    private fun calculateParameters() : List<String> {
         val parameters: MutableList<String> = mutableListOf()
 
         addAttribute(parameters, wsdlFile.absolutePath, "-uri")

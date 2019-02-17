@@ -2,7 +2,7 @@
 :latestRevision: 2.0.0
 :icons: font
 
-NOTE: Version 2 of this plugin will only work with Gradle 4 and JDK 8.
+NOTE: Version 2 of this plugin will only work with Gradle 5 and JDK 8.
 
 == Summary
 This plugin generates Java code from WSDL files based on Apache Axis 1 (see http://axis.apache.org/axis/)

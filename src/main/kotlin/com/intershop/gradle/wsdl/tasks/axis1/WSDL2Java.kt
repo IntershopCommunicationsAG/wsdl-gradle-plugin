@@ -368,16 +368,16 @@ open class WSDL2Java : AbstractWSDL2Java(){
             (internalForkOptionsAction as Action<in JavaForkOptions>).execute(javaOptions)
         }
 
-        project.javaexec({
+        project.javaexec {
             it.classpath = toolsclasspathfiles
             it.main = "org.apache.axis.wsdl.WSDL2Java"
             it.args = calculateParameters()
             javaOptions.copyTo(it)
-        })
+        }
     }
 
 
-    fun calculateParameters() : List<String> {
+    private fun calculateParameters() : List<String> {
         val parameters: MutableList<String> = mutableListOf()
 
         addAttribute(parameters, outputDir.absolutePath, "--output")
