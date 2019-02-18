@@ -45,6 +45,9 @@ plugins {
     // documentation
     id("org.jetbrains.dokka") version "0.9.17"
 
+    // code analysis for kotlin
+    id("io.gitlab.arturbosch.detekt") version "1.0.0-RC13"
+
     // plugin for publishing to Gradle Portal
     id("com.gradle.plugin-publish") version "0.10.1"
 
@@ -75,8 +78,9 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    val pluginURL = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    website = pluginURL
+    vcsUrl = pluginURL
     tags = listOf("intershop", "gradle", "plugin", "build", "wsdl")
 }
 
@@ -88,6 +92,14 @@ java {
 // set correct project status
 if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
+}
+
+detekt {
+    version = "1.0.0-RC13"
+
+    input = files("src/main/kotlin")
+    config = files("detekt.yml")
+    filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
 }
 
 configure<AsciidoctorExtension> {

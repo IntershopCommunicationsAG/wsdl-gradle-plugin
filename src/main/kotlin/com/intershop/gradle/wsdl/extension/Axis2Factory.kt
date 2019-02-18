@@ -18,6 +18,11 @@ package com.intershop.gradle.wsdl.extension
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 
+/**
+ * Factory class for Axis 2 configuration extension.
+ *
+ * @constructor default constructor
+ */
 class Axis2Factory(private val project: Project) : NamedDomainObjectFactory<Axis2> {
     override fun create(name: String) : Axis2 {
         return Axis2(project, name)

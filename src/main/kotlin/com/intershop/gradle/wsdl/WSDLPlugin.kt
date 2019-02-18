@@ -25,7 +25,7 @@ import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java as axis1WSDL2Java
 import com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java as axis2WSDL2Java
 
 /**
- * Plugin Class
+ * Plugin Class implementation.
  */
 class WSDLPlugin : Plugin<Project> {
 
@@ -37,7 +37,10 @@ class WSDLPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
             logger.info("WSDL plugin adds extension {} to {}", WSDLExtension.WSDL_EXTENSION_NAME, name)
-            val extension = extensions.findByType(WSDLExtension::class.java) ?: extensions.create(WSDLExtension.WSDL_EXTENSION_NAME, WSDLExtension::class.java, this)
+            val extension = extensions.findByType(
+                    WSDLExtension::class.java) ?: extensions.create(
+                        WSDLExtension.WSDL_EXTENSION_NAME, WSDLExtension::class.java, this
+                    )
 
             addWsdlAxis1Configuration(this)
             addWsdlAxis2Configuration(this)
@@ -46,7 +49,7 @@ class WSDLPlugin : Plugin<Project> {
         }
     }
 
-    /**
+    /*
      * Configure tasks for WSDL code generation
      *
      * @param project       project to configure
@@ -64,7 +67,7 @@ class WSDLPlugin : Plugin<Project> {
         }
     }
 
-    /**
+    /*
      * Configure tasks for WSDL code generation
      *
      * @param project       project to configure
@@ -119,7 +122,7 @@ class WSDLPlugin : Plugin<Project> {
         }
     }
 
-    /**
+    /*
      * Configure tasks for WSDL code generation
      *
      * @param project       project to configure
@@ -173,7 +176,7 @@ class WSDLPlugin : Plugin<Project> {
         }
     }
 
-    /**
+    /*
      * Adds the dependencies for the AXIS1 code generation. It is possible to override this.
      *
      * @param project
@@ -197,7 +200,7 @@ class WSDLPlugin : Plugin<Project> {
                 }
     }
 
-    /**
+    /*
      * Adds the dependencies for the AXIS2 code generation. It is possible to override this.
      *
      * @param project

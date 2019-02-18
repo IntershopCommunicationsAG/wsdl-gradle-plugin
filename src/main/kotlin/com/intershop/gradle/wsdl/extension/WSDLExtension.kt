@@ -15,10 +15,15 @@
  */
 package com.intershop.gradle.wsdl.extension
 
+import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.util.ConfigureUtil
 
+/**
+ * Main extension of the WSDL plugin.
+ */
 open class WSDLExtension (project: Project) {
 
     companion object {
@@ -34,20 +39,40 @@ open class WSDLExtension (project: Project) {
     }
 
     /**
-     * Container for axis1 generation configurations
+     * Container for axis1 generation configurations.
      */
     val axis1: NamedDomainObjectContainer<Axis1> = project.container(Axis1::class.java, Axis1Factory(project))
 
+    /**
+     * Configures a container for axis1 generation configurations with an action.
+     */
     fun axis1(configureAction: Action<in NamedDomainObjectContainer<Axis1>>) {
         configureAction.execute(axis1)
     }
 
     /**
-     * Container for axis2 generation configurations
+     * Configures a container for axis1 generation configurations with a closure.
+     */
+    fun axis1(closure: Closure<NamedDomainObjectContainer<Axis1>>) {
+        ConfigureUtil.configure(closure, axis1)
+    }
+
+    /**
+     * Container for axis2 generation configurations.
      */
     val axis2: NamedDomainObjectContainer<Axis2> = project.container(Axis2::class.java, Axis2Factory(project))
 
+    /**
+     * Configures a container for axis1 generation configurations with an action.
+     */
     fun axis2(configureAction: Action<in NamedDomainObjectContainer<Axis2>>) {
         configureAction.execute(axis2)
+    }
+
+    /**
+     * Configures a container for axis1 generation configurations with an action.
+     */
+    fun axis2(closure: Closure<NamedDomainObjectContainer<Axis2>>) {
+        ConfigureUtil.configure(closure, axis2)
     }
 }

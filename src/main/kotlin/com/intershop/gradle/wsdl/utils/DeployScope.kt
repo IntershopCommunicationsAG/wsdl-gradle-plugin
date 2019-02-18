@@ -15,6 +15,9 @@
  */
 package com.intershop.gradle.wsdl.utils
 
+/**
+ * Enumation for the deploy scope configuration.
+ */
 enum class DeployScope(val scope: String) {
 
     APPLICATION("Application"),

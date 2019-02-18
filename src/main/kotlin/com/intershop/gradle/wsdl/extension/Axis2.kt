@@ -23,7 +23,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
 
-open class Axis2(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
+/**
+ * Axis 2 Configuration container.
+ *
+ * @constructur default constructor with project and configuration name.
+ */
+open class Axis2(project: Project, private val confname: String) : AbstractAxisConfig(project, confname) {
 
     // properties will analyzed as Boolean
     private val asyncProperty = project.objects.property<Boolean>()
@@ -69,44 +74,72 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
         suppressPrefixesProperty.set(false)
         noMessageReceiverProperty.set(false)
 
-        outputDirProperty.set(project.layout.buildDirectory.dir("${WSDLExtension.CODEGEN_OUTPUTPATH}/axis2/${name.replace(' ', '_')}"))
+        outputDirProperty.set(project.layout.buildDirectory.dir(
+                "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis2/${name.replace(' ', '_')}"
+        ))
     }
 
     /**
-     * Generate code only for async style. When this option is used the generated
-     * stubs will have only the asynchronous invocation methods. Switched off by default.
+     * Provider for async property.
      */
     val asyncProvider: Provider<Boolean>
         get() = asyncProperty
 
+    /**
+     * Generate code only for async style. When this option is used the generated
+     * stubs will have only the asynchronous invocation methods. Switched off by default.
+     *
+     * @property async
+     */
     var async by asyncProperty
+
+    /**
+     * Provider for sync property.
+     */
+    val syncProvider: Provider<Boolean>
+        get() = syncProperty
 
     /**
      * Generate code only for sync style . When this option is used the generated stubs
      * will have only the synchronous invocation methods. Switched off by default.
      * When async is set to true, this takes precedence.
+     *
+     * @property sync
      */
-    val syncProvider: Provider<Boolean>
-        get() = syncProperty
-
     var sync by syncProperty
 
     /**
-     * Generates server side code (i.e. skeletons). Default is false.
+     * Provider for serverSide property.
      */
     val serverSideProvider: Provider<Boolean>
         get() = serverSideProperty
 
+    /**
+     * Generates server side code (i.e. skeletons). Default is false.
+     *
+     * @property serverSide
+     */
     var serverSide by serverSideProperty
 
     /**
-     * Generates the service descriptor (i.e. server.xml). Default is false.
-     * Only valid if serverSide is true, the server side code generation option.
+     * Provider for serviceDescription property.
      */
     val serviceDescriptionProvider: Provider<Boolean>
         get() = serviceDescriptionProperty
 
+    /**
+     * Generates the service descriptor (i.e. server.xml). Default is false.
+     * Only valid if serverSide is true, the server side code generation option.
+     *
+     * @property serviceDescription
+     */
     var serviceDescription by serviceDescriptionProperty
+
+    /**
+     * Provider for databindingMethod property.
+     */
+    val databindingMethodProvider: Provider<String>
+        get() = databindingMethodProperty
 
     /**
      * Specifies the Databinding framework.
@@ -117,134 +150,203 @@ open class Axis2(project: Project, private val confname: String) : AbbstractAxis
      *  - jibx     -> JIBX, and
      *  - none     -> NONE.
      *  Default is adb.
+     *
+     *  @property databindingMethod
      */
-    val databindingMethodProvider: Provider<String>
-        get() = databindingMethodProperty
-
     var databindingMethod by databindingMethodProperty
 
     /**
-     * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
-     * the client code (stubs) will also be generated along with the skeleton.
+     * Provider for generateAllClasses property.
      */
     val generateAllClassesProvider: Provider<Boolean>
         get() = generateAllClassesProperty
 
+    /**
+     * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
+     * the client code (stubs) will also be generated along with the skeleton.
+     *
+     * @property generateAllClasses
+     */
     var generateAllClasses by generateAllClassesProperty
 
     /**
-     * Unpack classes. This option specifies whether to unpack the classes and
-     * generate separate classes for the databinders.
+     * Provider for unpackClasses property.
      */
     val unpackClassesProvider: Provider<Boolean>
         get() = unpackClassesProperty
 
+    /**
+     * Unpack classes. This option specifies whether to unpack the classes and
+     * generate separate classes for the databinders.
+     *
+     * @property unpackClasses
+     */
     var unpackClasses by unpackClassesProperty
 
     /**
-     * Specifies the service name to be code generated. If the service name is not specified,
-     * then the first service will be picked.
+     * Provider for serviceName property.
      */
     val serviceNameProvider: Provider<String>
         get() = serviceNameProperty
 
+    /**
+     * Specifies the service name to be code generated. If the service name is not specified,
+     * then the first service will be picked.
+     *
+     * @property serviceName
+     */
     var serviceName by serviceNameProperty
 
     /**
-     * Specifies the port name to be code generated. If the port name is not specified,
-     * then the first port (of the selected service) will be picked.
+     * Provider for portName property.
      */
     val portNameProvider: Provider<String>
         get() = portNameProperty
 
+    /**
+     * Specifies the port name to be code generated. If the port name is not specified,
+     * then the first port (of the selected service) will be picked.
+     *
+     * @property portName
+     */
     var portName by portNameProperty
 
     /**
-     * Generate an interface for the service skeleton.
+     * Provider for serversideInterface property.
      */
     val serversideInterfaceProvider: Provider<Boolean>
         get() = serversideInterfaceProperty
 
+    /**
+     * Generate an interface for the service skeleton.
+     *
+     * @property serversideInterface
+     */
     var serversideInterface by serversideInterfaceProperty
 
     /**
-     * WSDLExtension Version. Valid Options : 2, 2.0, 1.1
+     * Provider for wsdlVersion property.
      */
     val wsdlVersionProvider: Provider<String>
         get() = wsdlVersionProperty
 
+    /**
+     * WSDLExtension Version. Valid Options : 2, 2.0, 1.1
+     *
+     * @property wsdlVersion
+     */
     var wsdlVersion by wsdlVersionProperty
 
     /**
-     * Flattens the generated files
+     * Provider for flattenFiles property.
      */
     val flattenFilesProvider: Provider<Boolean>
         get() = flattenFilesProperty
 
+    /**
+     * Flattens the generated files.
+     *
+     * @property flattenFiles
+     */
     var flattenFiles by flattenFilesProperty
 
     /**
-     * Switch on un-wrapping, if this value is true.
+     * Provider for unwrapParams property.
      */
     val unwrapParamsProvider: Provider<Boolean>
         get() = unwrapParamsProperty
 
+    /**
+     * Switch on un-wrapping, if this value is true.
+     *
+     * @property unwrapParams
+     */
     var unwrapParams by unwrapParamsProperty
 
     /**
-     * Use XMLBeans .xsdconfig file if this value is true.
-     * This is only valid if  databindingMethod is 'xmlbeans'.
+     * Provider for xsdconfig property.
      */
     val xsdconfigProvider: Provider<Boolean>
         get() = xsdconfigProperty
 
+    /**
+     * Use XMLBeans .xsdconfig file if this value is true.
+     * This is only valid if  databindingMethod is 'xmlbeans'.
+     *
+     * @property xsdconfig
+     */
     var xsdconfig by xsdconfigProperty
 
     /**
-     * Generate code for all ports
+     * Provider for allPorts property.
      */
     val allPortsProvider: Provider<Boolean>
         get() = allPortsProperty
 
+    /**
+     * Generate code for all ports.
+     *
+     * @property allPorts
+     */
     var allPorts by allPortsProperty
 
     /**
-     * Generate Axis 1.x backword compatible code
+     * Provider for backwordCompatible property.
      */
     val backwordCompatibleProvider: Provider<Boolean>
         get() = backwordCompatibleProperty
 
+    /**
+     * Generate Axis 1.x backword compatible code.
+     *
+     * @property backwordCompatible
+     */
     var backwordCompatible by backwordCompatibleProperty
 
     /**
-     * Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
+     * Provider for suppressPrefixes property.
      */
     val suppressPrefixesProvider: Provider<Boolean>
         get() = suppressPrefixesProperty
 
+    /**
+     * Suppress namespace prefixes (Optimzation that reduces size of soap request/response).
+     *
+     * @property suppressPrefixes
+     */
     var suppressPrefixes by suppressPrefixesProperty
 
     /**
-     * Don't generate a MessageReceiver in the generated sources
+     * Provider for noMessageReceiver property.
      */
     val noMessageReceiverProvider: Provider<Boolean>
         get() = noMessageReceiverProperty
 
+    /**
+     * Don't generate a MessageReceiver in the generated sources.
+     *
+     * @property noMessageReceiver
+     */
     var noMessageReceiver by noMessageReceiverProperty
 
     /**
-     * Output directory
+     * Provider for outputDir property.
      */
     val outputDirProvider: Provider<Directory>
         get() = outputDirProperty
 
+    /**
+     * Output directory for the generated code.
+     *
+     * @return file for output directory.
+     */
     var outputDir: File
         get() = outputDirProperty.get().asFile
         set(value) = this.outputDirProperty.set(value)
 
     /**
-     * Calculate the task name
-     * @return
+     * Calculate the task name for the task.
+     * @return task name for configuration
      */
     fun getTaskName(): String {
         return "axis2Wsdl2java${confname.toCamelCase()}"

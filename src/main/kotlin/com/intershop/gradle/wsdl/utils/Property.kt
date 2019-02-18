@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 package com.intershop.gradle.wsdl.utils
 
 import kotlin.reflect.KProperty
 
-@Suppress("UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage", "UnstableApiUsage")
+/**
+ * Property interface.
+ */
+@Suppress("UnstableApiUsage")
 interface Property<T> : org.gradle.api.provider.Property<T>{
+
+    /**
+     * A property has a get value method.
+     */
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = get()
+
+    /**
+     * A property has a set value method.
+     */
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = set(value)
 }

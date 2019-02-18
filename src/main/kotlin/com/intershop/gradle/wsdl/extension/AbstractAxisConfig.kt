@@ -30,15 +30,35 @@ import org.gradle.api.tasks.SourceSet
 import java.io.File
 import kotlin.reflect.KProperty
 
+/**
+ * Add a set function to a String property.
+ */
 operator fun <T> Property<T>.setValue(receiver: Any?, property: KProperty<*>, value: T) = set(value)
+/**
+ * Add a get function to a String property.
+ */
 operator fun <T> Property<T>.getValue(receiver: Any?, property: KProperty<*>): T = get()
 
+/**
+ * Add function property to provider.
+ */
 inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
-operator fun org.gradle.api.file.RegularFileProperty.setValue(receiver: Any?, property: KProperty<*>, value: File) = set(value)
-operator fun org.gradle.api.file.RegularFileProperty.getValue(receiver: Any?, property: KProperty<*>): File = get().asFile
+/**
+ * Add a set function to a File property.
+ */
+operator fun RegularFileProperty.setValue(receiver: Any?, property: KProperty<*>, value: File) = set(value)
+/**
+ * Add a get function to a File property.
+ */
+operator fun RegularFileProperty.getValue(receiver: Any?, property: KProperty<*>): File = get().asFile
 
-abstract class AbbstractAxisConfig(val project: Project, private val confname: String) : Named {
+/**
+ * Class with configuration for Axis 1 and 2.
+ *
+ * @constructur default constructor with project and a configuration name.
+ */
+abstract class AbstractAxisConfig(val project: Project, private val confname: String) : Named {
 
     override fun getName() : String {
         return confname
@@ -55,7 +75,8 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     // will be analyzed as Boolean
     private val generateTestcaseProperty = project.objects.property<Boolean>()
 
-    val namespacePackageMappingsContainer: NamedDomainObjectContainer<NamespacePackageMapping> = project.container(NamespacePackageMapping::class.java)
+    val namespacePackageMappingsContainer: NamedDomainObjectContainer<NamespacePackageMapping> =
+            project.container(NamespacePackageMapping::class.java)
 
     init {
         sourceSetNameProperty.set(SourceSet.MAIN_SOURCE_SET_NAME)
@@ -63,15 +84,20 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     }
 
     /**
+     * Provider for packageName.
+     */
+    val packageNameProvider: Provider<String?>
+        get() = packageNameProperty
+
+    /**
      * This is a shorthand option to map all namespaces in a WSDLExtension document to the same
      * Java package name. This can be useful, but dangerous. You must make sure that you
      * understand the effects of doing this. For instance there may be multiple types
      * with the same name in different namespaces.
      * Only for Axis1: It is an error to use the --NStoPkg switch and --package at the same time.
+     *
+     * @property packageName
      */
-    val packageNameProvider: Provider<String?>
-        get() = packageNameProperty
-
     var packageName by packageNameProperty
 
     /**
@@ -90,15 +116,26 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     }
 
     /**
-     * Generate a client-side JUnit test case. This test case can stand on its own, but it doesn't
-     * really do anything except pass default values (null for objects, 0 or false for primitive types).
-     * Like the generated implementation file, the generated test case file could be considered a template
-     * that you may fill in.
+     * Provider for generateTestcase.
      */
     val generateTestcaseProvider: Provider<Boolean>
         get() = generateTestcaseProperty
 
+    /**
+     * Generate a client-side JUnit test case. This test case can stand on its own, but it doesn't
+     * really do anything except pass default values (null for objects, 0 or false for primitive types).
+     * Like the generated implementation file, the generated test case file could be considered a template
+     * that you may fill in.
+     *
+     * @property generateTestcase
+     */
     var generateTestcase by generateTestcaseProperty
+
+    /**
+     * Provider for namespacePackageMappingFile.
+     */
+    val namespacePackageMappingFileProvider: Provider<RegularFile>
+        get() = namespacePackageMappingFileProperty
 
     /**
      * If there are a number of namespaces in the WSDLExtension document, listing a mapping for them all could
@@ -117,26 +154,40 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
      *
      * If an entry for a given mapping exists both with namespacePackageMapping and in this properties file,
      * the namespacePackageMapping entry takes precedence.
+     *
+     * @property namespacePackageMappingFile
      */
-    val namespacePackageMappingFileProvider: Provider<RegularFile>
-        get() = namespacePackageMappingFileProperty
-
     var namespacePackageMappingFile by namespacePackageMappingFileProperty
 
     /**
-     * Additional arguments
+     * Provider for additional arguments.
      */
     val argumentsProvider: Provider<List<String>>
         get() = argumentsProperty
 
+    /**
+     * Additional arguments for WSDL code configuration.
+     *
+     * @property args
+     */
     var args: List<String>
         get() = argumentsProperty.get()
         set(value) = this.argumentsProperty.set(value)
 
+    /**
+     * Add argument to list of additional arguments.
+     *
+     * @property argument
+     */
     fun addArg(argument: String) {
         argumentsProperty.add(argument)
     }
 
+    /**
+     * Add a list of arguments to list of additional arguments.
+     *
+     * @property args
+     */
     fun addArgs(args: List<String>) {
         for(arg in args) {
             argumentsProperty.add(arg)
@@ -144,18 +195,24 @@ abstract class AbbstractAxisConfig(val project: Project, private val confname: S
     }
 
     /**
-     * WSDLExtension file for processing.
+     * Provider for wsdlFile property.
      */
     val wsdlFileProvider: Provider<RegularFile>
         get() = wsdlFileProperty
 
+    /**
+     * WSDLExtension file for processing.
+     */
     var wsdlFile by wsdlFileProperty
 
     /**
-     * SourceSet for Java files
+     * Provider for source set name property.
      */
     val sourceSetNameProvider: Provider<String?>
         get() = sourceSetNameProperty
 
+    /**
+     * SourceSet name for Java files.
+     */
     var sourceSetName by sourceSetNameProperty
 }

@@ -23,7 +23,12 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import java.io.File
 
-open class Axis1(project: Project, private val confname: String) : AbbstractAxisConfig(project, confname) {
+/**
+ * Axis 1 Configuration container.
+ *
+ * @constructur default constructor with project and configuration name.
+ */
+open class Axis1(project: Project, private val confname: String) : AbstractAxisConfig(project, confname) {
 
     // property is a string, because there are problems with Integer and Int for the property
     private val timeoutProperty = project.objects.property<Int>()
@@ -71,26 +76,45 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
         nsIncludeProperty.set("")
         nsExcludeProperty.set("")
 
-        outputDirProperty.set(project.layout.buildDirectory.dir("${WSDLExtension.CODEGEN_OUTPUTPATH}/axis1/${name.replace(' ', '_')}"))
+        outputDirProperty.set(project.layout.buildDirectory.dir(
+                "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis1/${name.replace(' ', '_')}"
+        ))
     }
 
     /**
-     * Only generate code for the WSDLExtension document that appears on the command line if this value is true.
-     * The default behaviour is to generate files for all WSDLExtension documents, the immediate one and all imported ones.
+     * Provider for noImports property.
      */
     val noImportsProvider: Provider<Boolean>
         get() = noImportsProperty
 
+    /**
+     * Only generate code for the WSDLExtension document that appears on the command line if this
+     * value is true. The default behaviour is to generate files for all WSDLExtension documents,
+     * the immediate one and all imported ones.
+     *
+     * @property noImports
+     */
     var noImports by noImportsProperty
 
     /**
-     * Timeout in seconds. The default is 240.
-     * Use -1 to disable the timeout.
+     * Provider for timeout property.
      */
     val timeoutProvider: Provider<Int>
         get() = timeoutProperty
 
+    /**
+     * Timeout in seconds. The default is 240.
+     * Use -1 to disable the timeout.
+     *
+     * @property timeout
+     */
     var timeout by timeoutProperty
+
+    /**
+     * Provider for noWrapped property.
+     */
+    val noWrappedProvider: Provider<Boolean>
+        get() = noWrappedProperty
 
     /**
      * If this value is true, it turns off the special treatment of what is called "wrapped" document/literal
@@ -99,22 +123,32 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      *  - The part is an element.
      *  - The element has the same name as the operation
      *  - The element's complex type has no attributes
-     * If this value is true, WSDL2Java will 'unwrap' the top level element, and treat each of the components of
-     * the element as arguments to the operation. This type of WSDLExtension is the default for Microsoft .NET web services,
-     * which wrap up RPC style arguments in this top level schema element.
+     * If this value is true, WSDL2Java will 'unwrap' the top level element, and treat each of the
+     * components of the element as arguments to the operation. This type of WSDLExtension is the
+     * default for Microsoft .NET web services, which wrap up RPC style arguments in this top level schema element.
+     *
+     * @property noWrapped
      */
-    val noWrappedProvider: Provider<Boolean>
-        get() = noWrappedProperty
-
     var noWrapped by noWrappedProperty
 
     /**
-     * Emit the server-side bindings for the web service.
+     * Provider for serverSide property.
      */
     val serverSideProvider: Provider<Boolean>
         get() = serverSideProperty
 
+    /**
+     * Emit the server-side bindings for the web service.
+     *
+     * @property serverSide
+     */
     var serverSide by serverSideProperty
+
+    /**
+     * Provider for skeletonDeploy property.
+     */
+    val skeletonDeployProvider: Provider<Boolean>
+        get() = skeletonDeployProperty
 
     /**
      * Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd. In other words, for "true"
@@ -133,11 +167,16 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * </service>
      * </pre></blockquote></p>
      * If this configuration is used, serverSide is automatically set to true.
+     *
+     * @property skeletonDeploy
      */
-    val skeletonDeployProvider: Provider<Boolean>
-        get() = skeletonDeployProperty
-
     var skeletonDeploy by skeletonDeployProperty
+
+    /**
+     * Provider for deployScope property.
+     */
+    val deployScopeProvider: Provider<String>
+        get() = deployScopeProperty
 
     /**
      * Add scope to deploy.wsdd:
@@ -146,11 +185,16 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      *   - SESSION     -> "Session".
      *   If this option does not appear, no scope tag appears in deploy.wsdd,
      *   which the Axis runtime defaults to "Request".
+     *
+     *   @property deployScope
      */
-    val deployScopeProvider: Provider<String>
-        get() = deployScopeProperty
-
     var deployScope: String by deployScopeProperty
+
+    /**
+     * Provider for generateAllClasses property.
+     */
+    val generateAllClassesProvider: Provider<Boolean>
+        get() = generateAllClassesProperty
 
     /**
      * Generate code for all elements, even unreferenced ones. By default,
@@ -169,58 +213,89 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * But if a WSDLExtension file contained types and a portType, then that portType will be generated and only those
      * types that are referenced by that portType.
      *
-     * Note that the anchor is searched for in the WSDLExtension file appearing on the command line, not in imported WSDLExtension
-     * files. This allows one WSDLExtension file to import constructs defined in another WSDLExtension file without the nuisance of
-     * having all the imported WSDLExtension file's constructs generated.
+     * Note that the anchor is searched for in the WSDLExtension file appearing on the command line, not
+     * in imported WSDLExtension files. This allows one WSDLExtension file to import constructs defined
+     * in another WSDLExtension file without the nuisance of having all the imported WSDLExtension file's
+     * constructs generated.
+     *
+     * @property generateAllClasses
      */
-    val generateAllClassesProvider: Provider<Boolean>
-        get() = generateAllClassesProperty
-
     var generateAllClasses by generateAllClassesProperty
 
     /**
-     * Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+     * Provider for typeMappingVersion property.
      */
     val typeMappingVersionProvider: Provider<String>
         get() = typeMappingVersionProperty
 
+    /**
+     * Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+     *
+     * @property typeMappingVersion
+     */
     var typeMappingVersion: String by typeMappingVersionProperty
 
     /**
-     * Used to extend the functionality of the WSDL2Java emitter.
-     * The argument is the name of a class which extends JavaWriterFactory.
+     * Provider for factory property.
      */
     val factoryProvider: Provider<String>
         get() = factoryProperty
 
+    /**
+     * Used to extend the functionality of the WSDL2Java emitter.
+     * The argument is the name of a class which extends JavaWriterFactory.
+     *
+     * @property factory
+     */
     var factory: String by factoryProperty
 
     /**
-     * Emits separate Helper classes for meta data.
+     * Provider for helperGen property.
      */
     val helperGenProvider: Provider<Boolean>
         get() = helperGenProperty
 
+    /**
+     * Emits separate Helper classes for meta data.
+     *
+     * @property helperGen
+     */
     var helperGen by helperGenProperty
+
+    /**
+     * Provider for userName property.
+     */
+    val userNameProvider: Provider<String>
+        get() = userNameProperty
 
     /**
      * This username is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
      * If the URI contains a username, this will override the command line switch. An example
      * of a URL with a username and password is: http://user:password@hostname:port/path/to/service?WSDL
+     *
+     * @property userName
      */
-    val userNameProvider: Provider<String>
-        get() = userNameProperty
-
     var userName: String by userNameProperty
 
     /**
-     * This password is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
-     * If the URI contains a password, this will override the command line switch.
+     * Provider for password property.
      */
     val passwordProvider: Provider<String>
         get() = passwordProperty
 
+    /**
+     * This password is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
+     * If the URI contains a password, this will override the command line switch.
+     *
+     * @property password
+     */
     var password: String by passwordProperty
+
+    /**
+     * Provider for implementationClassName property.
+     */
+    val implementationClassNameProvider: Provider<String>
+        get() = implementationClassNameProperty
 
     /**
      * Set the name of the implementation class. Especially useful when exporting an existing class as
@@ -228,11 +303,16 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * you must make sure, after generation, that your implementation class implements the port type name
      * interface generated by wsdl2java. You should also make sure that all your exported methods throws
      * java.lang.RemoteException.
+     *
+     * @property implementationClassName
      */
-    val implementationClassNameProvider: Provider<String>
-        get() = implementationClassNameProperty
-
     var implementationClassName: String by implementationClassNameProperty
+
+    /**
+     * Provider for wrapArrays property.
+     */
+    val wrapArraysProvider: Provider<Boolean>
+        get() = wrapArraysProperty
 
     /**
      * When processing a schema like this:
@@ -248,60 +328,79 @@ open class Axis1(project: Project, private val confname: String) : AbbstractAxis
      * The default behavior (as of Axis 1.2 final) is to map this XML construct to a Java String
      * array (String[]). If you would rather a specific JavaBean class (i.e. ArrayOfString) be
      * generated for these types of schemas, you may specify the -w or --wrapArrays option.
+     *
+     * @property wrapArrays
      */
-    val wrapArraysProvider: Provider<Boolean>
-        get() = wrapArraysProperty
-
     var wrapArrays by wrapArraysProperty
+
+    /**
+     * Provider for allowInvalidURL property.
+     */
+    val allowInvalidURLProvider: Provider<Boolean>
+        get() = allowInvalidURLProperty
 
     /**
      * This flag is used to allow Stub generation even if WSDLExtension endpoint URL is not a valid URL.
      * It's the responsibility of the user to update the endpoint value before using generated classes
      * default=false
+     *
+     * @property allowInvalidURL
      */
-    val allowInvalidURLProvider: Provider<Boolean>
-        get() = allowInvalidURLProperty
-
     var allowInvalidURL by allowInvalidURLProperty
 
     /**
-     * namescape to specifically include in the generated code (defaults to
-     * all namespaces unless specifically excluded with the -x option)
+     * Provider for nsInclude property.
      */
     val nsIncludeProvider: Provider<String>
         get() = nsIncludeProperty
 
+    /**
+     * Namespace to specifically exclude from the generated code (defaults to
+     * none excluded until first namespace included with -i option).
+     *
+     * @property nsInclude
+     */
     var nsInclude: String by nsIncludeProperty
 
-    /*
-     * namespace to specifically exclude from the generated code (defaults to
-     * none excluded until first namespace included with -i option)
+    /**
+     * Provider for nsExclude property.
      */
     val nsExcludeProvider: Provider<String>
         get() = nsExcludeProperty
 
+    /**
+     * Namescape to specifically include in the generated code (defaults to
+     * all namespaces unless specifically excluded with the -x option).
+     *
+     * @property nsExclude
+     */
     var nsExclude: String by nsExcludeProperty
 
-    /*
-     * names and values of a properties for use by the custom GeneratorFactory
+    /**
+     * Names and values of a properties for use by the custom GeneratorFactory.
      */
     fun wsdlProperties(c: Closure<WSDLProperty>) {
         wsdlPropertiesContainer.configure(c)
     }
 
     /**
-     * Output directory
+     * Provider for outputDir property.
      */
     val outputDirProvider: Provider<Directory>
         get() = outputDirProperty
 
+    /**
+     * Output directory for the generated code.
+     *
+     * @return file for output directory.
+     */
     var outputDir: File
         get() = outputDirProperty.get().asFile
         set(value) = this.outputDirProperty.set(value)
 
     /**
-     * Calculate the task name
-     * @return
+     * Calculate the task name for the task.
+     * @return task name for configuration
      */
     fun getTaskName(): String {
         return "axis1Wsdl2java${confname.toCamelCase()}"

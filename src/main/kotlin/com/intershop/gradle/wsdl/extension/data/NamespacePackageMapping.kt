@@ -17,12 +17,29 @@ package com.intershop.gradle.wsdl.extension.data
 
 import org.gradle.api.Named
 
+/**
+ * Container for namespace package mapping configuration.
+ *
+ * @constructor default constructor with configuration name.
+ */
 class NamespacePackageMapping(private val confname: String) : Named {
 
+    /**
+     * Default methode for named objects.
+     *
+     * @return name of this configuration
+     */
     override fun getName() : String {
         return confname
     }
 
+    /**
+     * Name space configuration.
+     */
     var namespace: String = ""
+
+    /**
+     * Package name configuration.
+     */
     var packageName: String = ""
 }

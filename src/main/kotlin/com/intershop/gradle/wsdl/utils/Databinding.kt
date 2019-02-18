@@ -15,6 +15,9 @@
  */
 package com.intershop.gradle.wsdl.utils
 
+/**
+ * Enumation for the data binding configuration.
+ */
 enum class Databinding(val binding: String) {
     ADB("adb"),
     XMLBEANS("xmlbeans"),

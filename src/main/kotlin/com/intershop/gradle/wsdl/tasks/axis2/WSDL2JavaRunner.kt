@@ -18,6 +18,11 @@ package com.intershop.gradle.wsdl.tasks.axis2
 import org.apache.axis2.wsdl.WSDL2Code
 import javax.inject.Inject
 
+/**
+ * This is the task runner for WSDL2Java.
+ *
+ * @constructor standard constructor of a runner.
+ */
 class WSDL2JavaRunner @Inject constructor(private val paramList: List<String>) : Runnable {
 
     override fun run() {

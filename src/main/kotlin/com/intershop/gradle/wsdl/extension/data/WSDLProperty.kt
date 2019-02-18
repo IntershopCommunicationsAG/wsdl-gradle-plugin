@@ -17,12 +17,25 @@ package com.intershop.gradle.wsdl.extension.data
 
 import org.gradle.api.Named
 
+/**
+ * Container for WSDL property configuration.
+ *
+ * @constructor default constructor with configuration name.
+ */
 class WSDLProperty (private val propname: String) : Named {
 
+    /**
+     * Default methode for named objects.
+     *
+     * @return property name of this configuration
+     */
     override fun getName() : String {
         return propname
     }
 
+    /**
+     * Value of the configured property.
+     */
     var value: String = ""
 
 }

@@ -19,48 +19,72 @@ import com.intershop.gradle.wsdl.extension.WSDLExtension
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.DeployScope
-import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
 
+/**
+ * Funcion to declare a property.
+ */
 inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
+/**
+ * This task generates the source code from existing WSDL with axis1 files with a specific configuration.
+ *
+ * @constructor constructor initialize a WSDL2Java task with a worker executtor.
+ */
 open class WSDL2Java : AbstractWSDL2Java(){
 
-    /**
-     * Only generate code for the WSDLExtension document that appears on the command line if this value is true.
-     * The default behaviour is to generate files for all WSDLExtension documents, the immediate one and all imported ones.
-     */
     private val noImportsProperty = project.objects.property<Boolean>()
 
+    /**
+     * Only generate code for the WSDLExtension document that appears on the command line
+     * if this value is true. The default behaviour is to generate files for all WSDLExtension
+     * documents, the immediate one and all imported ones.
+     *
+     * @property noImports default value is false
+     */
     @get:Optional
     @get:Input
     var noImports: Boolean
         get() = noImportsProperty.getOrElse(false)
         set(value) = noImportsProperty.set(value)
 
+    /**
+     * Add provider for noImports.
+     */
     fun provideNoImports(noImports: Provider<Boolean>) = noImportsProperty.set(noImports)
+
+    private val timeoutProperty = project.objects.property<Int>()
 
     /**
      * Timeout in seconds. The default is 240.
      * Use -1 to disable the timeout.
+     *
+     * @property timeoutConf default value is 240
      */
-    private val timeoutProperty = project.objects.property<Int>()
-
     @get:Optional
     @get:Input
     var timeoutConf: Int
         get() = timeoutProperty.getOrElse(240)
         set(value) = timeoutProperty.set(value)
 
+    /**
+     * Add provider for timeoutConf.
+     */
     fun provideTimeout(timeout: Provider<Int>) = timeoutProperty.set(timeout)
+
+    private val noWrappedProperty = project.objects.property<Boolean>()
 
     /**
      * If this value is true, it turns off the special treatment of what is called "wrapped" document/literal
@@ -69,36 +93,46 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *  - The part is an element.
      *  - The element has the same name as the operation
      *  - The element's complex type has no attributes
-     * If this value is true, WSDL2Java will 'unwrap' the top level element, and treat each of the components of
-     * the element as arguments to the operation. This type of WSDLExtension is the default for Microsoft .NET web services,
+     * If this value is true, WSDL2Java will 'unwrap' the top level element, and treat each of the
+     * components of the element as arguments to the operation. This type of WSDLExtension is the
+     * default for Microsoft .NET web services,
      * which wrap up RPC style arguments in this top level schema element.
+     *
+     * @property noWrapped default value is false.
      */
-    private val noWrappedProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var noWrapped: Boolean
         get() = noWrappedProperty.getOrElse(false)
         set(value) = noWrappedProperty.set(value)
 
+    /**
+     * Add provider for noWrapped.
+     */
     fun provideNoWrapped(noWrapped: Provider<Boolean>) = noWrappedProperty.set(noWrapped)
+
+    private val serverSideProperty = project.objects.property<Boolean>()
 
     /**
      * Emit the server-side bindings for the web service:
      *  - a skeleton class named <bindingName>Skeleton. This may or may not be emitted (see skeletonDeploy).
-     *  - an implementation template class named <bindingName>Impl. Note that, if this class already exists, then it is not emitted.
-     * deploy.wsdd
-     * undeploy.wsdd
+     *  - an implementation template class named <bindingName>Impl. Note that, if this class already exists,
+     *  then it is not emitted. (deploy.wsdd and undeploy.wsdd)
+     *
+     * @property serverSide default value is false
      */
-    private val serverSideProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var serverSide: Boolean
         get() = serverSideProperty.getOrElse(false)
         set(value) = serverSideProperty.set(value)
 
+    /**
+     * Add provider for serverSide.
+     */
     fun provideServerSide(serverSide: Provider<Boolean>) = serverSideProperty.set(serverSide)
+
+    private val skeletonDeployProperty = project.objects.property<Boolean>()
 
     /**
      * Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd. In other words, for "true"
@@ -117,16 +151,21 @@ open class WSDL2Java : AbstractWSDL2Java(){
      * </service>
      * </pre></blockquote></p>
      * If this configuration is used, serverSide is automatically set to true.
+     *
+     * @property skeletonDeploy default value is false
      */
-    private val skeletonDeployProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var skeletonDeploy: Boolean
         get() = skeletonDeployProperty.getOrElse(false)
         set(value) = skeletonDeployProperty.set(value)
 
+    /**
+     * Add provider for skeletonDeploy.
+     */
     fun provideSkeletonDeploy(skeletonDeploy: Provider<Boolean>) = skeletonDeployProperty.set(skeletonDeploy)
+
+    private val deployScopeProperty = project.objects.property(String::class.java)
 
     /**
      * Add scope to deploy.wsdd:
@@ -135,16 +174,21 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *   - SESSION     -> "Session".
      *   If this option does not appear, no scope tag appears in deploy.wsdd,
      *   which the Axis runtime defaults to "Request".
+     *
+     *   @property deployScope default falue is 'Request'.
      */
-    private val deployScopeProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var deployScope: String
         get() = deployScopeProperty.getOrElse(DeployScope.REQUEST.scope)
         set(value) = deployScopeProperty.set(value)
 
+    /**
+     * Add provider for deployScope.
+     */
     fun provideDeployScope(deployScope: Provider<String>) = deployScopeProperty.set(deployScope)
+
+    private val generateAllClassesProperty = project.objects.property<Boolean>()
 
     /**
      * Generate code for all elements, even unreferenced ones. By default,
@@ -163,88 +207,120 @@ open class WSDL2Java : AbstractWSDL2Java(){
      * But if a WSDLExtension file contained types and a portType, then that portType will be generated and only those
      * types that are referenced by that portType.
      *
-     * Note that the anchor is searched for in the WSDLExtension file appearing on the command line, not in imported WSDLExtension
-     * files. This allows one WSDLExtension file to import constructs defined in another WSDLExtension file without the nuisance of
-     * having all the imported WSDLExtension file's constructs generated.
+     * Note that the anchor is searched for in the WSDLExtension file appearing on the command line, not in
+     * imported WSDLExtension files. This allows one WSDLExtension file to import constructs defined in another
+     * WSDLExtension file without the nuisance of having all the imported WSDLExtension file's constructs generated.
+     *
+     * @property generateAllClasses default value is false
      */
-    private val generateAllClassesProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var generateAllClasses: Boolean
         get() = generateAllClassesProperty.getOrElse(false)
         set(value) = generateAllClassesProperty.set(value)
 
-    fun provideGenerateAllClasses(generateAllClasses: Provider<Boolean>) = generateAllClassesProperty.set(generateAllClasses)
+    /**
+     * Add provider for generateAllClasses.
+     */
+    fun provideGenerateAllClasses(generateAllClasses: Provider<Boolean>) =
+            generateAllClassesProperty.set(generateAllClasses)
+
+    private val typeMappingVersionProperty = project.objects.property(String::class.java)
 
     /**
      * Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+     *
+     * @property typeMappingVersion default value is '1.2'
      */
-    private val typeMappingVersionProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var typeMappingVersion: String
         get() = typeMappingVersionProperty.getOrElse("1.2")
         set(value) = typeMappingVersionProperty.set(value)
 
-    fun provideTypeMappingVersion(typeMappingVersion: Provider<String>) = typeMappingVersionProperty.set(typeMappingVersion)
+    /**
+     * Add provider for typeMappingVersion.
+     */
+    fun provideTypeMappingVersion(typeMappingVersion: Provider<String>) =
+            typeMappingVersionProperty.set(typeMappingVersion)
+
+    private val factoryProperty = project.objects.property(String::class.java)
 
     /**
      * Used to extend the functionality of the WSDL2Java emitter.
      * The argument is the name of a class which extends JavaWriterFactory.
+     *
+     * @property factory default value is ""
      */
-    private val factoryProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var factory: String
         get() = factoryProperty.getOrElse("")
         set(value) = factoryProperty.set(value)
 
+    /**
+     * Add provider for factory.
+     */
     fun provideFactory(factory: Provider<String>) = factoryProperty.set(factory)
+
+    private val helperGenProperty = project.objects.property<Boolean>()
 
     /**
      * Emits separate Helper classes for meta data.
+     *
+     * @property helperGen default value is false
      */
-    private val helperGenProperty = project.objects.property<Boolean>()
-    
     @get:Optional
     @get:Input
     var helperGen: Boolean
         get() = helperGenProperty.getOrElse(false)
         set(value) = helperGenProperty.set(value)
 
+    /**
+     * Add provider for helperGen.
+     */
     fun provideHelperGen(helperGen: Provider<Boolean>) = helperGenProperty.set(helperGen)
+
+    private val userNameProperty = project.objects.property(String::class.java)
 
     /**
      * This username is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
      * If the URI contains a username, this will override the command line switch. An example
      * of a URL with a username and password is: http://user:password@hostname:port/path/to/service?WSDL
+     *
+     * @property userName default value is ""
      */
-    private val userNameProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var userName: String
         get() = userNameProperty.getOrElse("")
         set(value) = userNameProperty.set(value)
 
+    /**
+     * Add provider for userName.
+     */
     fun provideUserName(userName: Provider<String>) = userNameProperty.set(userName)
+
+    private val passwordProperty = project.objects.property(String::class.java)
 
     /**
      * This password is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
      * If the URI contains a password, this will override the command line switch.
+     *
+     * @property password default value is ""
      */
-    private val passwordProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var password: String
         get() = passwordProperty.getOrElse("")
         set(value) = passwordProperty.set(value)
 
+    /**
+     * Add provider for password.
+     */
     fun providePassword(password: Provider<String>) = passwordProperty.set(password)
+
+    private val implementationClassNameProperty = project.objects.property(String::class.java)
 
     /**
      * Set the name of the implementation class. Especially useful when exporting an existing class as
@@ -252,17 +328,22 @@ open class WSDL2Java : AbstractWSDL2Java(){
      * you must make sure, after generation, that your implementation class implements the port type name
      * interface generated by wsdl2java. You should also make sure that all your exported methods throws
      * java.lang.RemoteException.
+     *
+     * @property implementationClassName default value is ""
      */
-    private val implementationClassNameProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var implementationClassName: String
         get() = implementationClassNameProperty.getOrElse("")
         set(value) = implementationClassNameProperty.set(value)
 
+    /**
+     * Add provider for implementationClassName.
+     */
     fun provideImplementationClassName(implementationClassName: Provider<String>)
             = implementationClassNameProperty.set(implementationClassName)
+
+    private val wrapArraysProperty = project.objects.property<Boolean>()
 
     /**
      * When processing a schema like this:
@@ -278,51 +359,66 @@ open class WSDL2Java : AbstractWSDL2Java(){
      * The default behavior (as of Axis 1.2 final) is to map this XML construct to a Java String
      * array (String[]). If you would rather a specific JavaBean class (i.e. ArrayOfString) be
      * generated for these types of schemas, you may specify the -w or --wrapArrays option.
+     *
+     * @property wrapArrays default value is false
      */
-    private val wrapArraysProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var wrapArrays: Boolean
         get() = wrapArraysProperty.getOrElse(false)
         set(value) = wrapArraysProperty.set(value)
 
+    /**
+     * Add provider for wrapArrays.
+     */
     fun provideWrapArrays(wrapArrays: Provider<Boolean>) = wrapArraysProperty.set(wrapArrays)
+
+    private val nsIncludeProperty = project.objects.property(String::class.java)
 
     /**
      * namescape to specifically include in the generated code (defaults to
-     * all namespaces unless specifically excluded with the -x option)
+     * all namespaces unless specifically excluded with the -x option).
+     *
+     * @property nsInclude default value is ""
      */
-    private val nsIncludeProperty = project.objects.property(String::class.java)
-
     @get:Optional
     @get:Input
     var nsInclude: String
         get() = nsIncludeProperty.getOrElse("")
         set(value) = nsIncludeProperty.set(value)
 
+    /**
+     * Add provider for nsInclude.
+     */
     fun provideNsInclude(nsInclude: Provider<String>) = nsIncludeProperty.set(nsInclude)
 
-    /*
-     * namespace to specifically exclude from the generated code (defaults to
-     * none excluded until first namespace included with -i option)
-     */
     private val nsExcludeProperty = project.objects.property(String::class.java)
 
+    /**
+     * namespace to specifically exclude from the generated code (defaults to
+     * none excluded until first namespace included with -i option).
+     *
+     * @property nsExclude default value is ""
+     */
     @get:Optional
     @get:Input
     var nsExclude: String
         get() = nsExcludeProperty.getOrElse("")
         set(value) = nsExcludeProperty.set(value)
 
+    /**
+     * Add provider for nsExclude.
+     */
     fun provideNsExclude(nsExclude: Provider<String>) = nsExcludeProperty.set(nsExclude)
 
-    /*
-     * Names and values of a properties for use by the custom GeneratorFactory
-     */
     @Internal
     var wsdlProperties: NamedDomainObjectContainer<WSDLProperty>? = null
 
+    /**
+     * Names and values of a properties for use by the custom GeneratorFactory.
+     *
+     * @property wsdlPropertiesList list of WSDL properties
+     */
     @get:Input
     val wsdlPropertiesList: List<String>
         get() {
@@ -335,19 +431,24 @@ open class WSDL2Java : AbstractWSDL2Java(){
             return properties.toList()
         }
 
+    private val allowInvalidURLProperty = project.objects.property<Boolean>()
+
     /**
      * This flag is used to allow Stub generation even if WSDLExtension endpoint URL is not a valid URL.
      * It's the responsibility of the user to update the endpoint value before using generated classes
      * default=false
+     *
+     * @property allowInvalidURL default value is false
      */
-    private val allowInvalidURLProperty = project.objects.property<Boolean>()
-
     @get:Optional
     @get:Input
     var allowInvalidURL: Boolean
         get() = allowInvalidURLProperty.getOrElse(false)
         set(value) = allowInvalidURLProperty.set(value)
 
+    /**
+     * Add provider for allowInvalidURL.
+     */
     fun provideAllowInvalidURL(allowInvalidURL: Provider<Boolean>) = allowInvalidURLProperty.set(allowInvalidURL)
 
     @get:InputFiles
@@ -360,12 +461,15 @@ open class WSDL2Java : AbstractWSDL2Java(){
 
     private var javaOptions: JavaForkOptions = DefaultJavaForkOptions((project as ProjectInternal).fileResolver)
 
+    /**
+     * This is the task action and generates Java source files.
+     */
     @TaskAction
     fun run() {
 
         if (internalForkOptionsAction != null) {
             project.logger.debug("Add configured JavaForkOptions to WSDL2Java Axis2 code generation runner.")
-            (internalForkOptionsAction as Action<in JavaForkOptions>).execute(javaOptions)
+            (internalForkOptionsAction)?.execute(javaOptions)
         }
 
         project.javaexec {

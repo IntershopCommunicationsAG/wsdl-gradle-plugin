@@ -27,13 +27,23 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.process.JavaForkOptions
 import java.io.File
 
+/**
+ * Funcion to declare a property.
+ */
 @Suppress("UnstableApiUsage")
 inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
+/**
+ * Abbstract class for axis 1 and axis2 code generator.
+ */
 abstract class AbstractWSDL2Java : DefaultTask() {
 
     companion object {
@@ -64,22 +74,32 @@ abstract class AbstractWSDL2Java : DefaultTask() {
         }
     }
 
+    private val packageNameProperty: Property<String> = project.objects.property(String::class.java)
+
     /**
      * This is a shorthand option to map all namespaces in a WSDLExtension document to the same
      * Java package name. This can be useful, but dangerous. You must make sure that you
      * understand the effects of doing this. For instance there may be multiple types
      * with the same name in different namespaces.
      * Only for Axis1: It is an error to use the --NStoPkg switch and --package at the same time.
+     *
+     * @property packageName default value is ""
      */
-    private val packageNameProperty: Property<String> = project.objects.property(String::class.java)
-
     @get:Input
     var packageName: String
         get() = packageNameProperty.getOrElse("")
         set(value) = packageNameProperty.set(value)
 
+    /**
+     * Add provider for packageName.
+     */
     fun providePackageName(packageName: Provider<String?>) = packageNameProperty.set(packageName)
 
+    /**
+     * List of namespace mappings.
+     */
+    @Internal
+    var namespacePackageMappings: NamedDomainObjectContainer<NamespacePackageMapping>? = null
 
     /**
      * By default, package names are generated from the namespace strings in the WSDLExtension document in a
@@ -91,10 +111,9 @@ abstract class AbstractWSDL2Java : DefaultTask() {
      * <p><blockquote><pre>
      * urn:AddressFetcher2=samples.addr
      * </pre></blockquote></p>
+     *
+     * @property namespacePackageMappingList list of namespace mappings
      */
-    @Internal
-    var namespacePackageMappings: NamedDomainObjectContainer<NamespacePackageMapping>? = null
-
     @get:Input
     val namespacePackageMappingList: List<String>
         get() {
@@ -107,20 +126,27 @@ abstract class AbstractWSDL2Java : DefaultTask() {
             return mappings.toList()
         }
 
+    private val generateTestcaseProperty = project.objects.property<Boolean>()
+
     /**
      * Generate a client-side JUnit test case. This test case can stand on its own, but it doesn't
      * really do anything except pass default values (null for objects, 0 or false for primitive types).
      * Like the generated implementation file, the generated test case file could be considered a template
      * that you may fill in.
+     *
+     * @property generateTestcase default value is false
      */
-    private val generateTestcaseProperty = project.objects.property<Boolean>()
-
     @get:Input
     var generateTestcase: Boolean
         get() = generateTestcaseProperty.getOrElse(false)
         set(value)  = generateTestcaseProperty.set(value)
 
+    /**
+     * Add provider for generateTestcase.
+     */
     fun provideGenerateTestcase(generateTestcase: Provider<Boolean>) = generateTestcaseProperty.set(generateTestcase)
+
+    private val namespacePackageMappingFileProperty: RegularFileProperty = project.objects.fileProperty()
 
     /**
      * If there are a number of namespaces in the WSDLExtension document, listing a mapping for them all could
@@ -139,9 +165,9 @@ abstract class AbstractWSDL2Java : DefaultTask() {
      *
      * If an entry for a given mapping exists both with namespacePackageMapping and in this properties file,
      * the namespacePackageMapping entry takes precedence.
+     *
+     * @property namespacePackageMappingFile name space mapping file
      */
-    private val namespacePackageMappingFileProperty: RegularFileProperty = project.objects.fileProperty()
-
     @get:Optional
     @get:InputFile
     var namespacePackageMappingFile: File?
@@ -152,47 +178,64 @@ abstract class AbstractWSDL2Java : DefaultTask() {
             }
         }
 
+    /**
+     * Add provider for namespacePackageMappingFile.
+     */
     fun provideNamespacePackageMappingFile(namespacePackageMappingFile: Provider<RegularFile>)
             = namespacePackageMappingFileProperty.set(namespacePackageMappingFile)
 
-    /**
-     * Additional parameters for WSDL Command Line Client
-     */
     private val argumentsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
 
+    /**
+     * Additional parameters for WSDL Command Line Client.
+     *
+     * @property args a list of arguments.
+     */
     @get:Input
     var args: List<String>
         get() = argumentsProperty.get()
         set(value) = argumentsProperty.set(value)
 
+    /**
+     * Add additional arguments for args.
+     */
     fun args(arg: String) {
         argumentsProperty.add(arg)
     }
 
+    /**
+     * Add provider for args.
+     */
     fun provideArguments(arguments: Provider<List<String>>) = argumentsProperty.set(arguments)
 
-    /**
-     * Output directory for generated sources
-     */
     private val outputDirProperty: DirectoryProperty = project.objects.directoryProperty()
 
+    /**
+     * Output directory for generated sources.
+     */
     @get:OutputDirectory
     var outputDir: File
         get() = outputDirProperty.get().asFile
         set(value) = outputDirProperty.set(value)
 
+    /**
+     * Add provider for outputDir.
+     */
     fun provideOutputDir(outputDir: Provider<Directory>) = outputDirProperty.set(outputDir)
 
-    /**
-     * Input wsdl file
-     */
     private val wsdlFileProperty: RegularFileProperty = project.objects.fileProperty()
 
+    /**
+     * Input wsdl file.
+     */
     @get:InputFile
     var wsdlFile: File
         get() = wsdlFileProperty.get().asFile
         set(value) = wsdlFileProperty.set(value)
 
+    /**
+     * Add provider for wsdlFile.
+     */
     fun provideWsdlFile(wsdlFile: Provider<RegularFile>) = wsdlFileProperty.set(wsdlFile)
 
     /**
@@ -200,6 +243,9 @@ abstract class AbstractWSDL2Java : DefaultTask() {
      */
     protected var internalForkOptionsAction: Action<in JavaForkOptions>? = null
 
+    /**
+     * Adds additional fork options.
+     */
     fun forkOptions(forkOptionsAction: Action<in JavaForkOptions>) {
         internalForkOptionsAction = forkOptionsAction
     }
