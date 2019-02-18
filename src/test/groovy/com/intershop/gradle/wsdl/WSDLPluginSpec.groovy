@@ -17,6 +17,7 @@ package com.intershop.gradle.wsdl
 
 import com.intershop.gradle.test.AbstractProjectSpec
 import com.intershop.gradle.wsdl.extension.WSDLExtension
+import com.intershop.gradle.wsdl.utils.DeployScope
 import org.gradle.api.Plugin
 
 class WSDLPluginSpec extends AbstractProjectSpec {
@@ -77,36 +78,49 @@ class WSDLPluginSpec extends AbstractProjectSpec {
                 sourceSetName = 'test'
                 packageName = 'com.test'
                 generateTestcase = true
-                namespacePackageMapping = ["a": "com.intershop.a", "b": "com.intershop.b", "c": "com.intershop.c"]
+                namespacePackageMappings {
+                    conf1 {
+                        namespace = "a"
+                        packageName = "com.intershop.a"
+                    }
+                    conf2 {
+                        namespace = "b"
+                        packageName = "com.intershop.b"
+                    }
+                    conf3 {
+                        namespace = "c"
+                        packageName = "com.intershop.c"
+                    }
+                }
                 namespacePackageMappingFile = project.file('wsdl/package.mapping')
                 wsdlFile = project.file('MyFile.wsdl')
                 args = ['-Dtest=test', '-Dtest1=test1'] as List<String>
             }
         }
-        com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration")
+        com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java task = project.tasks.findByName("axis1Wsdl2javaTestconfiguration") as com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java
 
         then:
         task
-        task.noImports == true
-        task.timeout == 360
-        task.noWrapped == true
-        task.serverSide == true
-        task.skeletonDeploy == true
-        task.deployScope == com.intershop.gradle.wsdl.utils.DeployScope.APPLICATION.toString()
-        task.generateAllClasses == true
+        task.noImports
+        task.timeoutConf == 360
+        task.noWrapped
+        task.serverSide
+        task.skeletonDeploy
+        task.deployScope == DeployScope.APPLICATION.scope
+        task.generateAllClasses
         task.typeMappingVersion == '1.2'
         task.factory == 'TestFactory'
-        task.helperGen == true
+        task.helperGen
         task.userName == 'test'
         task.password == 'testp'
         task.implementationClassName == 'BlaClassName'
-        task.wrapArrays == true
+        task.wrapArrays
         task.packageName == 'com.test'
-        task.generateTestcase == true
-        task.namespacePackageMapping == ["a" : "com.intershop.a", "b" : "com.intershop.b", "c" : "com.intershop.c"]
+        task.generateTestcase
+        task.namespacePackageMappingList.contains("a=com.intershop.a")
         task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
         task.wsdlFile == project.file('MyFile.wsdl')
-        task.addArgs ==  ['-Dtest=test', '-Dtest1=test1'] as List<String>
+        task.args ==  ['-Dtest=test', '-Dtest1=test1'] as List<String>
     }
 
     def 'should set all parameters in task axis2'() {
@@ -116,25 +130,37 @@ class WSDLPluginSpec extends AbstractProjectSpec {
             testconfiguration {
                 wsdlFile = project.file('MyFile.wsdl')
                 packageName = 'com.intershop.wsdl'
-                namespacePackageMapping = ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
+                namespacePackageMappings {
+                    conf1 {
+                        namespace = "a"
+                        packageName = "com.intershop.a"
+                    }
+                    conf2 {
+                        namespace = "b"
+                        packageName = "com.intershop.b"
+                    }
+                    conf3 {
+                        namespace = "c"
+                        packageName = "com.intershop.c"
+                    }
+                }
                 namespacePackageMappingFile = project.file('wsdl/package.mapping')
                 unwrapParams = true
                 generateAllClasses = true
-                arg('testParameter')
+                addArg('testParameter')
 
             }
         }
-        com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.tasks.findByName("axis2Wsdl2javaTestconfiguration")
+        com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java task = project.tasks.findByName("axis2Wsdl2javaTestconfiguration") as com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java
 
         then:
         task
         task.wsdlFile == project.file('MyFile.wsdl')
         task.packageName == 'com.intershop.wsdl'
-        task.namespacePackageMapping == ['a' : 'com.intershop.a', 'b' : 'com.intershop.b', 'c' : 'com.intershop.c']
         task.namespacePackageMappingFile == project.file('wsdl/package.mapping')
-        task.unwrapParams == true
-        task.generateAllClasses == true
-        task.wsdlVersion == null
-        task.addArgs == ['testParameter' ] as List<String>
+        task.unwrapParams
+        task.generateAllClasses
+        task.wsdlVersion == ""
+        task.args == ['testParameter'] as List<String>
     }
 }

@@ -15,11 +15,12 @@
  */
 package com.intershop.gradle.wsdl
 
-import com.intershop.gradle.test.AbstractIntegrationSpec
+import com.intershop.gradle.test.AbstractIntegrationGroovySpec
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
-class Axis1IntegrationSpec extends AbstractIntegrationSpec {
+class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
 
     def 'Test simple code generation'() {
         given:
@@ -53,14 +54,24 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
         when:
         List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
 
-        def result = getPreparedGradleRunner()
+        def result1 = getPreparedGradleRunner()
                 .withArguments(args)
                 .withGradleVersion(gradleVersion)
                 .build()
 
         then:
-        result.task(':axis1Wsdl2javaAddressBook').outcome == SUCCESS
-        result.task(':compileJava').outcome == SUCCESS
+        result1.task(':axis1Wsdl2javaAddressBook').outcome == SUCCESS
+        result1.task(':compileJava').outcome == SUCCESS
+
+        when:
+        def result2 = getPreparedGradleRunner()
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result2.task(':axis1Wsdl2javaAddressBook').outcome == UP_TO_DATE
+        result2.task(':compileJava').outcome == UP_TO_DATE
 
         where:
         gradleVersion << supportedGradleVersions
@@ -79,10 +90,16 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
                 axis1 {
                     echo {
                         wsdlFile = file('staticfiles/wsdl/InteropTest.wsdl')
-                        namespacePackageMapping = [
-                            'http://soapinterop.org/':'samples.echo',
-                            'http://soapinterop.org/xsd':'samples.echo'
-                        ]
+                        namespacePackageMappings {
+                            sample1 {
+                                namespace = 'http://soapinterop.org/'
+                                packageName = 'samples.echo'
+                            }
+                            sample2 {
+                                namespace = 'http://soapinterop.org/xsd'
+                                packageName = 'samples.echo'                           
+                            }
+                        }
                     }
                 }
             }
@@ -182,10 +199,16 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
                         typeMappingVersion = '1.1'
                         deployScope = 'Session'
                         allowInvalidURL = true
-                        namespacePackageMapping = [
-                            'urn:xmltoday-delayed-quotes':'samples.jms.stub.xmltoday_delayed_quotes',
-                            'urn:xmltoday-delayed-quotes':'samples.jms.stub.xmltoday_delayed_quotes'
-                        ]
+                        namespacePackageMappings {
+                            sample1 {
+                                namespace = 'urn:xmltoday-delayed-quotes'
+                                packageName = 'samples.jms.stub.xmltoday_delayed_quotes'
+                            }
+                            sample2 {
+                                namespace = 'urn:xmltoday-delayed-quotes'
+                                packageName = 'samples.jms.stub.xmltoday_delayed_quotes'                     
+                            }
+                        }
                     }
                 }
             }
@@ -236,12 +259,14 @@ class Axis1IntegrationSpec extends AbstractIntegrationSpec {
             }
             
             tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java) {
-                javaOptions.jvmArgs += ["-XX:-UseSerialGC"]  
-                
-                javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
-                javaOptions.systemProperty 'http.proxyPort', '8081'
-                javaOptions.systemProperty 'https.proxyHost', 'test.host.com' 
-                javaOptions.systemProperty 'https.proxyPort', '4081'
+                forkOptions { JavaForkOptions options ->
+                    options.setMaxHeapSize('64m')
+                    options.jvmArgs += ["-XX:-UseSerialGC"]  
+                    options.systemProperty('http.proxyHost', 'test.host.com')
+                    options.systemProperty('http.proxyPort', '8081')
+                    options.systemProperty('https.proxyHost', 'test.host.com')
+                    options.systemProperty('https.proxyPort', '4081')
+                }
             }
             
             repositories {

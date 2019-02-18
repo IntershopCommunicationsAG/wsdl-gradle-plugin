@@ -1,6 +1,8 @@
 = WSDL Gradle Plugin
-:latestRevision: 1.1.0
-:toc:
+:latestRevision: 2.0.0
+:icons: font
+
+NOTE: Version 2 of this plugin will only work with Gradle 5 and JDK 8.
 
 == Summary
 This plugin generates Java code from WSDL files based on Apache Axis 1 (see http://axis.apache.org/axis/)
@@ -22,10 +24,16 @@ wsdl {
         genNameAxis1 {
             wsdlFile = file('staticfiles/wsdl/axis1File.wsdl')
             serverSide = true
-            namespacePackageMapping = [
-                'http://soapinterop.org/':'samples.axis1',
-                'http://soapinterop.org/xsd':'samples.axis1'
-            ]
+            namespacePackageMappings {
+                soap {
+                    namespace = 'http://soapinterop.org/'
+                    packageName = 'samples.axis1'
+                }
+                soapxsd {
+                    namespace = 'http://soapinterop.org/xsd'
+                    packageName = 'samples.axis1'
+                }
+            }
             // more parameters are possible
         }
     }
@@ -43,14 +51,17 @@ wsdl {
 
     // set special JVM configuration parameter for code generation tasks of Axis1
     tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java) {
-        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
-        javaOptions.systemProperty 'http.proxyPort', '8081'
+        forkOptions { JavaForkOptions options ->
+            options.setMaxHeapSize('64m')
+            options.jvmArgs += ['-Dhttp.proxyHost=10.0.0.100', '-Dhttp.proxyPort=8800']
+        }
     }
 
-    // set special JVM configuration parameter for code generation tasks of Axis2
-    tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
-        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
-        javaOptions.systemProperty 'http.proxyPort', '8081'
+    tasks.withType(om.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
+        forkOptions { JavaForkOptions options ->
+            options.setMaxHeapSize('64m')
+            options.jvmArgs += ['-Dhttp.proxyHost=10.0.0.100', '-Dhttp.proxyPort=8800']
+        }
     }
 ----
 
@@ -143,7 +154,7 @@ WSDL2Java Parameter: --allowInvalidURL
 Java package name. This can be useful, but dangerous. You must make sure that you understand the effects of doing this. For instance there may be multiple types
 with the same name in different namespaces. It is an error to use the --NStoPkg switch and --package at the same time. +
 WSDL2Java Parameter: -p, --package
-| *namespacePackageMapping* | `Map<String, String>` | | By default, package names are generated from the namespace strings in the WSDL document in a
+| *namespacePackageMappings* | `NamedDomainObjectContainer<NamespacePackageMapping>` | | By default, package names are generated from the namespace strings in the WSDL document in a
 magical manner (typically, if the namespace is of the form "http://x.y.com" or "urn:x.y.com" the corresponding package will be "com.y.x"). If this magic is not what you want, you can provide your
 own mapping using the this maps argument. For example, if there is a namespace in the WSDL document called "urn:AddressFetcher2", and you want files generated from the objects within this namespace
 to reside in the package samples.addr. +
@@ -165,6 +176,8 @@ WSDL2Java Parameter: -x, --nsExclude
 WSDL2Java Parameter: -p, --property
 | *outputDir* | `File` | | Output directory for emitted files +
 WSDL2Java Parameter: -o, --output
+| *wsdlProperties* | `NamedDomainObjectContainer<WSDLProperty>` | | List of additional properties for WSDL2Java command line tool. +
+WSDL2Java Parameter: --property
 | *args* | `List<String>` | | List of additional arguments for WSDL2Java command line tool.
 | *wsdlFile* | `File` | | Input WSDL file
 |===
@@ -176,7 +189,8 @@ The default output dir is `<project build dir>/generated/wsdl2java/axis1/<config
 [cols="17%,17%,66%", width="90%, options="header"]
 |===
 |Method | Parameter | Description
-|*arg* | `String` | Add an additional command line arguments passed to the XJC
+|*addAarg* | `String` | Add an additional command line argument passed to the WSDL2Java command
+|*addAargs* | `List<String>` | Add additional command line arguments passed to the WSDL2Java command
 |===
 
 ==== [[axis1]]Object 'axis2' (com.intershop.gradle.wsdl.extension.Axis2)
@@ -229,7 +243,7 @@ WSDL2Java Parameter: --noMessageReceiver
 | *sourceSetName* | `String` | `main` | Name of the source set for generated Java code default value is 'main'
 | *packageName* | `String` | | The target package name. If omitted, a default package (formed using the target namespace of the WSDL) will be used. +
 WSDL2Java Parameter: -p, --package
-| *namespacePackageMapping* | `Map<String, String>` | | Specifies a comma separated list of namespaces and packages where the given package will be used in the place of the auto generated package for the relevant namespace. The list will be the format of ns1=pkg1,ns2=pkg2. +
+| *namespacePackageMappings* | `NamedDomainObjectContainer<NamespacePackageMapping>` | | Specifies a comma separated list of namespaces and packages where the given package will be used in the place of the auto generated package for the relevant namespace. The list will be the format of ns1=pkg1,ns2=pkg2. +
 WSDL2Java Parameter: -ns2p, --namespace2package
 | *generateTestcase* | `boolean` | `false` | Generates a test case. In the case of Java it would be a JUnit test case.  +
 WSDL2Java Parameter: -t, --test-case
@@ -248,35 +262,14 @@ The default output dir is `<project build dir>/generated/wsdl2java/axis2/<config
 [cols="17%,17%,66%", width="90%, options="header"]
 |===
 |Method | Parameter | Description
-|*arg* | `String` | Add an additional command line arguments passed to the XJC
+|*addAarg* | `String` | Add an additional command line argument passed to the WSDL2Java command
+|*addAargs* | `List<String>` | Add additional command line arguments passed to the WSDL2Java command
 |===
 
 == WSDL2Java Command Line Tool / Additonal Java VM configuration
 
 The code generator task uses the WSDL2Java commandline tool of Axis 1 or Axis 2. It is possible to add additional environment variables to these JVM.
-
-This configuration adds a https proxy configuration to all Axis1 WSDL2Java tasks
-[source,groovy]
-[subs=+attributes]
-.build.gradle
-----
-    tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java) {
-        javaOptions.systemProperty 'http.proxyHost', 'test.host.com'
-        javaOptions.systemProperty 'http.proxyPort', '8081'
-    }
-----
-
-This configuration adds a https proxy configuration to all Axis2 WSDL2Java tasks
-
-[source,groovy]
-[subs=+attributes]
-.build.gradle
-----
-    tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
-        javaOptions.systemProperty 'https.proxyHost', 'test.host.com'
-        javaOptions.systemProperty 'https.proxyPort', '4081'
-    }
-----
+See main example.
 
 == Version Configuration for WSDL2Java tasks
 
@@ -302,16 +295,17 @@ The base configuration uses dependencies of Axis 1 with version 1.4.
 It is possible to change the configuration / version of the used dependencies.
 
 === Axis 2
-The base configuration uses dependencies of Axis 2 with version 1.7.3
+The base configuration uses dependencies of Axis 1 with version 1.7.7
 
 [source,groovy]
 [subs=+attributes]
 .build.gradle
 ----
-'org.apache.axis2:axis2-kernel:1.7.3'
-'org.apache.axis2:axis2-codegen:1.7.3'
-'org.apache.axis2:axis2-adb:1.7.3'
-'org.apache.axis2:axis2-adb-codegen:1.7.3'
+'org.apache.axis2:axis2-kernel:1.7.7'
+'org.apache.axis2:axis2-codegen:1.7.7'
+'org.apache.axis2:axis2-adb:1.7.7'
+'org.apache.axis2:axis2-adb-codegen:1.7.7'
+'org.apache.axis2:axis2-jaxbri:1.7.7'
 'com.sun.xml.ws:jaxws-tools:2.2.10'
 'wsdl4j:wsdl4j:1.6.3'
 'commons-logging:commons-logging:1.2'
@@ -351,7 +345,7 @@ This configuration is used for a different databinding 'XMLBeans'.
 
 == License
 
-Copyright 2014-2016 Intershop Communications.
+Copyright 2014-2018 Intershop Communications.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
