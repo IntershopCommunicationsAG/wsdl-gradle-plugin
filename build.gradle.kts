@@ -95,8 +95,6 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 }
 
 detekt {
-    version = "1.0.0-RC13"
-
     input = files("src/main/kotlin")
     config = files("detekt.yml")
     filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
