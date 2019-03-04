@@ -22,6 +22,9 @@ import java.util.*
  * limitations under the License.
  */
 plugins {
+    // build performance
+    id("com.gradle.build-scan") version "2.2.1"
+
     // project plugins
     `java-gradle-plugin`
     groovy
@@ -53,6 +56,11 @@ plugins {
 
     // plugin for publishing to jcenter
     id("com.jfrog.bintray") version "1.8.4"
+}
+
+buildScan {
+    termsOfServiceUrl   = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 }
 
 scm {
