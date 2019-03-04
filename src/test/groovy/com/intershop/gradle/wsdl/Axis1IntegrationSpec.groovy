@@ -339,6 +339,8 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
         """.stripIndent()
 
+        File resultBindDir = new File(testProjectDir, 'build/generated/wsdl2java/axis1/wsrpservice/oasis/names/tc/wsrp/v1/bind')
+
         when:
         List<String> args = ['compileJava']
         def result = getPreparedGradleRunner()
@@ -349,6 +351,8 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
         then:
         result.task(':axis1Wsdl2javaWsrpservice').outcome == SUCCESS
         result.task(':compileJava').outcome == SUCCESS
+        resultBindDir.exists()
+        resultBindDir.listFiles().length == 4
 
         where:
         gradleVersion << supportedGradleVersions
