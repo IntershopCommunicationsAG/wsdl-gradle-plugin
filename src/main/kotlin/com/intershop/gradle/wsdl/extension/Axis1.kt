@@ -37,7 +37,7 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
     private val noImportsProperty = project.objects.property<Boolean>()
     private val noWrappedProperty = project.objects.property<Boolean>()
     private val serverSideProperty = project.objects.property<Boolean>()
-    private val skeletonDeployProperty = project.objects.property<Boolean>()
+    private val skeletonDeployProperty = project.objects.property<String>()
     private val generateAllClassesProperty = project.objects.property<Boolean>()
     private val helperGenProperty = project.objects.property<Boolean>()
     private val wrapArraysProperty = project.objects.property<Boolean>()
@@ -62,7 +62,7 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
         timeoutProperty.set(240)
         noWrappedProperty.set(false)
         serverSideProperty.set(false)
-        skeletonDeployProperty.set(false)
+        skeletonDeployProperty.set("")
         deployScopeProperty.set("")
         generateAllClassesProperty.set(false)
         typeMappingVersionProperty.set("1.2")
@@ -147,7 +147,7 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
     /**
      * Provider for skeletonDeploy property.
      */
-    val skeletonDeployProvider: Provider<Boolean>
+    val skeletonDeployProvider: Provider<String>
         get() = skeletonDeployProperty
 
     /**

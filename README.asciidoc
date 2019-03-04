@@ -116,8 +116,8 @@ in this top level schema element. +
 WSDL2Java Parameter: -W, --noWrapped
 | *serverSide* | `boolean` | `false` | Emit the server-side bindings for the web service. +
 WSDL2Java Parameter: -s, --server-side
-| *skeletonDeploy* | `boolean` | `false` | Deploy skeleton (true) or implementation (false) in deploy.wsdd. Default is false. Assumes server-side="true". +
-WSDL2Java Parameter: -S, --skeletonDeploy
+| *skeletonDeploy* | `String` | `""` | If this property is defined, the parameter is added. If deploy skeleton (true) or implementation (false) in deploy.wsdd. +
+Default is an empty string. Assumes server-side="true". WSDL2Java Parameter: -S, --skeletonDeploy <true|false>
 | *deployScope* | `String` | | Add scope to deploy.wsdd: +
 - APPLICATION -> "Application", +
 - REQUEST     -> "Request", or +

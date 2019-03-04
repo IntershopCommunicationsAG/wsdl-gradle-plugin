@@ -132,7 +132,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideServerSide(serverSide: Provider<Boolean>) = serverSideProperty.set(serverSide)
 
-    private val skeletonDeployProperty = project.objects.property<Boolean>()
+    private val skeletonDeployProperty = project.objects.property<String>()
 
     /**
      * Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd. In other words, for "true"
@@ -156,14 +156,14 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     @get:Optional
     @get:Input
-    var skeletonDeploy: Boolean
-        get() = skeletonDeployProperty.getOrElse(false)
+    var skeletonDeploy: String
+        get() = skeletonDeployProperty.getOrElse("")
         set(value) = skeletonDeployProperty.set(value)
 
     /**
      * Add provider for skeletonDeploy.
      */
-    fun provideSkeletonDeploy(skeletonDeploy: Provider<Boolean>) = skeletonDeployProperty.set(skeletonDeploy)
+    fun provideSkeletonDeploy(skeletonDeploy: Provider<String>) = skeletonDeployProperty.set(skeletonDeploy)
 
     private val deployScopeProperty = project.objects.property(String::class.java)
 
@@ -494,10 +494,12 @@ open class WSDL2Java : AbstractWSDL2Java(){
         addAttribute(parameters, nsInclude, "--nsInclude")
         addAttribute(parameters, nsExclude, "--nsInclude")
 
-        if(skeletonDeploy) {
-            addAttribute(parameters, "true", "--skeletonDeploy")
-        } else {
-            addAttribute(parameters, "false", "--skeletonDeploy")
+        if(skeletonDeploy.isNotEmpty()) {
+            if(skeletonDeploy.toBoolean()) {
+                addAttribute(parameters, "true", "--skeletonDeploy")
+            } else {
+                addAttribute(parameters, "false", "--skeletonDeploy")
+            }
         }
 
         namespacePackageMappingList.forEach {
