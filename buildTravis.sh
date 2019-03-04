@@ -7,17 +7,17 @@ export GRADLE_OPTS="-Dorg.gradle.daemon=true"
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     if [ "$TRAVIS_TAG" == "" ]; then
         echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH'] and without Tag'
-        ./gradlew test build -s
+        ./gradlew test build -s --scan
     else
         echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH'] Tag ['$TRAVIS_TAG']'
-        ./gradlew -PrunOnCI=true test build :bintrayUpload :publishPlugins -s
+        ./gradlew -PrunOnCI=true test build :bintrayUpload :publishPlugins -s --scan
     fi
 else
     if [ "$TRAVIS_TAG" == "" ]; then
         echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH'] and without Tag'
-        ./gradlew test build -s
+        ./gradlew test build -s --scan
     else
         echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH'] Tag ['$TRAVIS_TAG']'
-        ./gradlew -PrunOnCI=true test build :bintrayUpload :publishPlugins -s
+        ./gradlew -PrunOnCI=true test build :bintrayUpload :publishPlugins -s --scan
     fi
 fi
