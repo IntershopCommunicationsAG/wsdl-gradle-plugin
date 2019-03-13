@@ -305,7 +305,7 @@ class WSDL2Java extends AbstractWSDL2Java {
         // Add debug logging
         addFlag(args, logger.debugEnabled || logger.traceEnabled, '--Debug')
 
-        addArgs.each {
+        getAddArgs().each {
             args << it
         }
 

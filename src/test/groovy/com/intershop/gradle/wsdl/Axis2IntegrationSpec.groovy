@@ -372,6 +372,8 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
                         serverSide = true
                         serviceDescription = true
                         packageName = 'sample.bank.service'
+                        
+                        args = ['-http-proxy-user', 'foo', '-http-proxy-password', 'bar']
                     }
                 }
             }
@@ -409,6 +411,7 @@ class Axis2IntegrationSpec extends AbstractIntegrationSpec {
         result.output.contains('-Dhttp.proxyPort=8081')
         result.output.contains('-Dhttps.proxyHost=test.host.com')
         result.output.contains('-Dhttps.proxyPort=4081')
+        result.output.contains('-http-proxy-user')
 
         where:
         gradleVersion << supportedGradleVersions
