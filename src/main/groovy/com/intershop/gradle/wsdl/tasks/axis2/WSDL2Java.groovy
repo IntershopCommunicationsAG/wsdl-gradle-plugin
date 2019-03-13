@@ -253,7 +253,7 @@ class WSDL2Java extends AbstractWSDL2Java {
         addFlag(args, true, '--noWSDL')
         addFlag(args, getNoMessageReceiver(), '--noMessageReceiver')
 
-        addArgs.each {
+        getAddArgs().each {
             args << it
         }
 
