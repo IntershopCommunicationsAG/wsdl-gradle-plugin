@@ -1,5 +1,5 @@
 = WSDL Gradle Plugin
-:latestRevision: 2.0.0
+:latestRevision: 2.1.0
 :icons: font
 
 NOTE: Version 2 of this plugin will only work with Gradle 5 and JDK 8.
