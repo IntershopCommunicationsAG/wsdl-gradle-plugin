@@ -33,6 +33,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
 import org.gradle.api.internal.file.FileCollectionFactory
+import org.gradle.process.JavaDebugOptions
+import org.gradle.process.internal.DefaultJavaDebugOptions
 
 
 
@@ -462,7 +464,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
         returnFiles
     }
 
-    private var javaOptions: JavaForkOptions = DefaultJavaForkOptions((project as ProjectInternal).fileResolver, (project as ProjectInternal).services.get(FileCollectionFactory::class.java))
+    private var javaOptions: JavaForkOptions = DefaultJavaForkOptions((project as ProjectInternal).fileResolver, (project as ProjectInternal).services.get(FileCollectionFactory::class.java), DefaultJavaDebugOptions())
 
     /**
      * This is the task action and generates Java source files.

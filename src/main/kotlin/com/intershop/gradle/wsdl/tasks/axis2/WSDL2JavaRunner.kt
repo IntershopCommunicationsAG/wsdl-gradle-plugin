@@ -16,6 +16,7 @@
 package com.intershop.gradle.wsdl.tasks.axis2
 
 import org.apache.axis2.wsdl.WSDL2Code
+import org.gradle.workers.WorkAction
 import javax.inject.Inject
 
 /**
@@ -23,9 +24,9 @@ import javax.inject.Inject
  *
  * @constructor standard constructor of a runner.
  */
-class WSDL2JavaRunner @Inject constructor(private val paramList: List<String>) : Runnable {
+abstract class WSDL2JavaRunner : WorkAction<WSDL2JavaParameters> {
 
-    override fun run() {
-        WSDL2Code.main(paramList.toTypedArray())
+    override fun execute() {
+        WSDL2Code.main(getParameters().paramList.get().toTypedArray())
     }
 }

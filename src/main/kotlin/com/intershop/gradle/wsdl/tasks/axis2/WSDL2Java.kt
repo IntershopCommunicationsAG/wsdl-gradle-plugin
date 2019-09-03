@@ -404,16 +404,17 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     @TaskAction
     fun run() {
         // start runner
-        workerExecutor.submit(WSDL2JavaRunner::class.java) {
-            it.displayName = "WSDL2Java Axis2 code generation runner."
-            it.setParams(calculateParameters())
-            it.classpath(toolsclasspathfiles)
-            it.isolationMode = IsolationMode.CLASSLOADER
-            it.forkMode = ForkMode.AUTO
+        val workQueue = workerExecutor.processIsolation() {
+            it.classpath.setFrom(toolsclasspathfiles)
+
             if(internalForkOptionsAction != null) {
-                project.logger.debug("Add configured JavaForkOptions to WSDL2Java Axis2 code generation runner.")
-                (internalForkOptionsAction)?.execute(it.forkOptions)
+                project.logger.debug("WSDL2Java runner adds configured JavaForkOptions.")
+                internalForkOptionsAction?.execute(it.forkOptions)
             }
+        }
+
+        workQueue.submit(WSDL2JavaRunner::class.java) {
+            it.paramList.set(calculateParameters())
         }
 
         workerExecutor.await()
