@@ -25,7 +25,7 @@ plugins {
     // project plugins
     `java-gradle-plugin`
     groovy
-    id("nebula.kotlin") version "1.3.30"
+    id("nebula.kotlin") version "1.3.31"
 
     // test coverage
     jacoco
@@ -37,7 +37,7 @@ plugins {
     `maven-publish`
 
     // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "4.1.1"
+    id("com.intershop.gradle.scmversion") version "5.0.0"
 
     // plugin for documentation
     id("org.asciidoctor.jvm.convert") version "2.0.0"
@@ -107,7 +107,7 @@ detekt {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "5.4")
+        systemProperty("intershop.gradle.versions", "5.6")
 
         dependsOn("jar")
     }
