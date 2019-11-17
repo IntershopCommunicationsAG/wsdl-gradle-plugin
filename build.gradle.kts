@@ -19,13 +19,10 @@ import java.util.Date
  * limitations under the License.
  */
 plugins {
-    // build performance
-    id("com.gradle.build-scan") version "2.2.1"
-
     // project plugins
     `java-gradle-plugin`
     groovy
-    id("nebula.kotlin") version "1.3.31"
+    id("nebula.kotlin") version "1.3.50"
 
     // test coverage
     jacoco
@@ -37,27 +34,22 @@ plugins {
     `maven-publish`
 
     // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "5.0.0"
+    id("com.intershop.gradle.scmversion") version "6.0.0"
 
     // plugin for documentation
     id("org.asciidoctor.jvm.convert") version "2.0.0"
 
     // documentation
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.0"
 
     // code analysis for kotlin
-    id("io.gitlab.arturbosch.detekt") version "1.0.0-RC14"
+    id("io.gitlab.arturbosch.detekt") version "1.1.1"
 
     // plugin for publishing to Gradle Portal
     id("com.gradle.plugin-publish") version "0.10.1"
 
     // plugin for publishing to jcenter
     id("com.jfrog.bintray") version "1.8.4"
-}
-
-buildScan {
-    termsOfServiceUrl   = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }
 
 scm {
@@ -107,7 +99,7 @@ detekt {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "5.6")
+        systemProperty("intershop.gradle.versions", "5.6.4, 6.0")
 
         dependsOn("jar")
     }
@@ -116,9 +108,10 @@ tasks {
         includeEmptyDirs = false
 
         val outputDir = file("$buildDir/tmp/asciidoctorSrc")
-        val inputFiles = fileTree(mapOf("dir" to rootDir,
-                "include" to listOf("**/*.asciidoc"),
-                "exclude" to listOf("build/**")))
+        val inputFiles = fileTree(rootDir) {
+            include("**/*.asciidoc")
+            exclude("build/**")
+        }
 
         inputs.files.plus( inputFiles )
         outputs.dir( outputDir )
@@ -177,7 +170,6 @@ tasks {
     }
 
     val dokka by existing(DokkaTask::class) {
-        reportUndocumented = false
         outputFormat = "javadoc"
         outputDirectory = "$buildDir/javadoc"
 
@@ -274,7 +266,7 @@ dependencies {
     compileOnly("org.apache.axis2:axis2-codegen:1.7.7")
 
     testCompile("commons-io:commons-io:2.2")
-    testImplementation("com.intershop.gradle.test:test-gradle-plugin:3.1.0-dev.2")
+    testImplementation("com.intershop.gradle.test:test-gradle-plugin:3.4.0")
     testImplementation(gradleTestKit())
 }
 
