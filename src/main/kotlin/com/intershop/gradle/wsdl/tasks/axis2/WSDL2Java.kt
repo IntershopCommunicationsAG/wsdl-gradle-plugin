@@ -19,10 +19,12 @@ import com.intershop.gradle.wsdl.extension.WSDLExtension
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.tasks.axis1.property
 import com.intershop.gradle.wsdl.utils.Databinding
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
@@ -53,7 +55,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property async default value is false
      */
-    @get:Optional
     @get:Input
     var async: Boolean
         get() = asyncProperty.getOrElse(false)
@@ -73,7 +74,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property sync default value is false
      */
-    @get:Optional
     @get:Input
     var sync: Boolean
         get() = syncProperty.getOrElse(false)
@@ -91,7 +91,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property serverSide default value is false
      */
-    @get:Optional
     @get:Input
     var serverSide: Boolean
         get() = serverSideProperty.getOrElse(false)
@@ -110,7 +109,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property serviceDescription default value is false
      */
-    @get:Optional
     @get:Input
     var serviceDescription: Boolean
         get() = serviceDescriptionProperty.getOrElse(false)
@@ -155,7 +153,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property generateAllClasses default value is false
      */
-    @get:Optional
     @get:Input
     var generateAllClasses: Boolean
         get() = generateAllClassesProperty.getOrElse(false)
@@ -175,7 +172,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property unpackClasses default value is false
      */
-    @get:Optional
     @get:Input
     var unpackClasses: Boolean
         get() = unpackClassesProperty.getOrElse(false)
@@ -231,7 +227,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property serversideInterface default value is false
      */
-    @get:Optional
     @get:Input
     var serversideInterface: Boolean
         get() = serversideInterfaceProperty.getOrElse(false)
@@ -268,7 +263,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property flattenFiles default value is false
      */
-    @get:Optional
     @get:Input
     var flattenFiles: Boolean
         get() = flattenFilesProperty.getOrElse(false)
@@ -286,7 +280,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property unwrapParams default value is false
      */
-    @get:Optional
     @get:Input
     var unwrapParams: Boolean
         get() = unwrapParamsProperty.getOrElse(false)
@@ -305,7 +298,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property xsdconfig default value is false
      */
-    @get:Optional
     @get:Input
     var xsdconfig: Boolean
         get() = xsdconfigProperty.getOrElse(false)
@@ -323,7 +315,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property allPorts default value is false
      */
-    @get:Optional
     @get:Input
     var allPorts: Boolean
         get() = allPortsProperty.getOrElse(false)
@@ -341,7 +332,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property backwordCompatible default value is false
      */
-    @get:Optional
     @get:Input
     var backwordCompatible: Boolean
         get() = backwordCompatibleProperty.getOrElse(false)
@@ -360,7 +350,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property suppressPrefixes default value is false
      */
-    @get:Optional
     @get:Input
     var suppressPrefixes: Boolean
         get() = suppressPrefixesProperty.getOrElse(false)
@@ -378,7 +367,6 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      *
      * @property noMessageReceiver default value is false
      */
-    @get:Optional
     @get:Input
     var noMessageReceiver: Boolean
         get() = noMessageReceiverProperty.getOrElse(false)
@@ -390,13 +378,13 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun provideNoMessageReceiver(noMessageReceiver: Provider<Boolean>) =
             noMessageReceiverProperty.set(noMessageReceiver)
 
-    @get:InputFiles
-    private val toolsclasspathfiles : FileCollection by lazy {
-        val returnFiles = project.files()
-        // find files of original JASPER and Eclipse compiler
-        returnFiles.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS2_CONFIGURATION_NAME))
-        returnFiles
-    }
+    /**
+     * Classpath for Axis 2 files stored in a configuration
+     *
+     * @property toolsClasspath file collection of libraries
+     */
+    @get:Classpath
+    val toolsClasspath : ConfigurableFileCollection = project.files()
 
     /**
      * This is the task action and generates Java source files.
@@ -405,7 +393,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun run() {
         // start runner
         val workQueue = workerExecutor.processIsolation() {
-            it.classpath.setFrom(toolsclasspathfiles)
+            it.classpath.setFrom(toolsClasspath)
 
             if(internalForkOptionsAction != null) {
                 project.logger.debug("WSDL2Java runner adds configured JavaForkOptions.")

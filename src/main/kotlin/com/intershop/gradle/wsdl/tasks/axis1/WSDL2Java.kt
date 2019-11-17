@@ -15,28 +15,25 @@
  */
 package com.intershop.gradle.wsdl.tasks.axis1
 
-import com.intershop.gradle.wsdl.extension.WSDLExtension
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.DeployScope
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.file.FileCollectionFactory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
-import org.gradle.process.internal.DefaultJavaForkOptions
-import org.gradle.api.internal.file.FileCollectionFactory
-import org.gradle.process.JavaDebugOptions
 import org.gradle.process.internal.DefaultJavaDebugOptions
-
-
+import org.gradle.process.internal.DefaultJavaForkOptions
 
 /**
  * Funcion to declare a property.
@@ -59,7 +56,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property noImports default value is false
      */
-    @get:Optional
     @get:Input
     var noImports: Boolean
         get() = noImportsProperty.getOrElse(false)
@@ -78,7 +74,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property timeoutConf default value is 240
      */
-    @get:Optional
     @get:Input
     var timeoutConf: Int
         get() = timeoutProperty.getOrElse(240)
@@ -105,7 +100,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property noWrapped default value is false.
      */
-    @get:Optional
     @get:Input
     var noWrapped: Boolean
         get() = noWrappedProperty.getOrElse(false)
@@ -126,7 +120,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property serverSide default value is false
      */
-    @get:Optional
     @get:Input
     var serverSide: Boolean
         get() = serverSideProperty.getOrElse(false)
@@ -218,7 +211,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property generateAllClasses default value is false
      */
-    @get:Optional
     @get:Input
     var generateAllClasses: Boolean
         get() = generateAllClassesProperty.getOrElse(false)
@@ -275,7 +267,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property helperGen default value is false
      */
-    @get:Optional
     @get:Input
     var helperGen: Boolean
         get() = helperGenProperty.getOrElse(false)
@@ -367,7 +358,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property wrapArrays default value is false
      */
-    @get:Optional
     @get:Input
     var wrapArrays: Boolean
         get() = wrapArraysProperty.getOrElse(false)
@@ -445,7 +435,6 @@ open class WSDL2Java : AbstractWSDL2Java(){
      *
      * @property allowInvalidURL default value is false
      */
-    @get:Optional
     @get:Input
     var allowInvalidURL: Boolean
         get() = allowInvalidURLProperty.getOrElse(false)
@@ -456,13 +445,13 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideAllowInvalidURL(allowInvalidURL: Provider<Boolean>) = allowInvalidURLProperty.set(allowInvalidURL)
 
-    @get:InputFiles
-    private val toolsclasspathfiles : FileCollection by lazy {
-        val returnFiles = project.files()
-        // find files of original JASPER and Eclipse compiler
-        returnFiles.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS1_CONFIGURATION_NAME))
-        returnFiles
-    }
+    /**
+     * Classpath for Axis 2 files stored in a configuration
+     *
+     * @property toolsClasspath file collection of libraries
+     */
+    @get:Classpath
+    val toolsClasspath : ConfigurableFileCollection = project.files()
 
     private var javaOptions: JavaForkOptions = DefaultJavaForkOptions((project as ProjectInternal).fileResolver, (project as ProjectInternal).services.get(FileCollectionFactory::class.java), DefaultJavaDebugOptions())
 
@@ -478,7 +467,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
         }
 
         project.javaexec {
-            it.classpath = toolsclasspathfiles
+            it.classpath = toolsClasspath
             it.main = "org.apache.axis.wsdl.WSDL2Java"
             it.args = calculateParameters()
             javaOptions.copyTo(it)

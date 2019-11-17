@@ -106,6 +106,7 @@ class WSDLPlugin : Plugin<Project> {
                     provideNsInclude(axis1.nsIncludeProvider)
                     provideNsExclude(axis1.nsExcludeProvider)
 
+                    toolsClasspath.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS1_CONFIGURATION_NAME))
                     wsdlProperties = axis1.wsdlPropertiesContainer
 
                     afterEvaluate {
@@ -161,6 +162,8 @@ class WSDLPlugin : Plugin<Project> {
                     provideBackwordCompatible(axis2.backwordCompatibleProvider)
                     provideSuppressPrefixes(axis2.suppressPrefixesProvider)
                     provideNoMessageReceiver(axis2.noMessageReceiverProvider)
+
+                    toolsClasspath.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS2_CONFIGURATION_NAME))
 
                     afterEvaluate {
                         plugins.withType(JavaBasePlugin::class.java) {

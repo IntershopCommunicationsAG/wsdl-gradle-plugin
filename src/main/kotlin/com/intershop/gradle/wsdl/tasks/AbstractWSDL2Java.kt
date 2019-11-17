@@ -241,6 +241,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
     /**
      * Java fork options for the Java task.
      */
+    @Internal
     protected var internalForkOptionsAction: Action<in JavaForkOptions>? = null
 
     /**
