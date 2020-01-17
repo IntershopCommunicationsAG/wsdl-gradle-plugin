@@ -15,8 +15,6 @@
  */
 package com.intershop.gradle.wsdl.extension.data
 
-import org.gradle.api.Named
-
 /**
  * Container for namespace package mapping configuration.
  *

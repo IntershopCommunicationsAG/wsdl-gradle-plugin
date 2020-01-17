@@ -19,10 +19,6 @@ import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
 import com.intershop.gradle.wsdl.utils.getValue
 import com.intershop.gradle.wsdl.utils.property
 import com.intershop.gradle.wsdl.utils.setValue
-import groovy.lang.Closure
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -40,6 +36,9 @@ import javax.inject.Inject
  */
 abstract class AbstractAxisConfig(val name: String) {
 
+    /**
+     * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
+     */
     @get:Inject
     abstract val objectFactory: ObjectFactory
 
@@ -71,7 +70,7 @@ abstract class AbstractAxisConfig(val name: String) {
      * </pre></blockquote></p>
      */
     val namespacePackageMappings = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
-    
+
     /**
      * Provider for packageName.
      */

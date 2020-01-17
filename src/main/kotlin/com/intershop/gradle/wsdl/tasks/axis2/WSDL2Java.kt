@@ -374,7 +374,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
             noMessageReceiverProperty.set(noMessageReceiver)
 
     /**
-     * Classpath for Axis 2 files stored in a configuration
+     * Classpath for Axis 2 files stored in a configuration.
      *
      * @property toolsClasspath file collection of libraries
      */

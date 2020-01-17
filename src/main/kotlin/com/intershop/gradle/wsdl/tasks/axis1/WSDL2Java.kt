@@ -29,6 +29,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
@@ -406,7 +407,12 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideNsExclude(nsExclude: Provider<String>) = nsExcludeProperty.set(nsExclude)
 
-    @Internal
+    /**
+     *  Additional wsdl properties for code generation collected in a container.
+     *
+     *  @properties wsdlProperties
+     */
+    @Nested
     var wsdlProperties: NamedDomainObjectContainer<WSDLProperty>? = null
 
     /**
@@ -446,7 +452,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
     fun provideAllowInvalidURL(allowInvalidURL: Provider<Boolean>) = allowInvalidURLProperty.set(allowInvalidURL)
 
     /**
-     * Classpath for Axis 2 files stored in a configuration
+     * Classpath for Axis 1 files stored in a configuration.
      *
      * @property toolsClasspath file collection of libraries
      */
@@ -540,3 +546,4 @@ open class WSDL2Java : AbstractWSDL2Java(){
         return parameters
     }
 }
+

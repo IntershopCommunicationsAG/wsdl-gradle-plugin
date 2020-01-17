@@ -15,7 +15,7 @@
  */
 package com.intershop.gradle.wsdl.extension.data
 
-import org.gradle.api.Named
+import org.gradle.api.tasks.Input
 
 /**
  * Container for WSDL property configuration.
@@ -27,5 +27,6 @@ open class WSDLProperty (val name: String) {
     /**
      * Value of the configured property.
      */
+    @Input
     var value: String = ""
 }
