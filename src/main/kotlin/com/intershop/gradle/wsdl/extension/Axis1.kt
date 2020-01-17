@@ -16,50 +16,59 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
+import com.intershop.gradle.wsdl.utils.getValue
+import com.intershop.gradle.wsdl.utils.property
+import com.intershop.gradle.wsdl.utils.setValue
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Axis 1 Configuration container.
  *
  * @constructur default constructor with project and configuration name.
  */
-open class Axis1(project: Project, private val confname: String) : AbstractAxisConfig(project, confname) {
+abstract class Axis1(name: String) : AbstractAxisConfig(name) {
+
+    companion object {
+        const val TIMEOUT = 240
+    }
+
+    @get:Inject
+    abstract val layout: ProjectLayout
 
     // property is a string, because there are problems with Integer and Int for the property
-    private val timeoutProperty = project.objects.property<Int>()
+    private val timeoutProperty = objectFactory.property<Int>()
     
     // properties will analyzed as Boolean
-    private val noImportsProperty = project.objects.property<Boolean>()
-    private val noWrappedProperty = project.objects.property<Boolean>()
-    private val serverSideProperty = project.objects.property<Boolean>()
-    private val skeletonDeployProperty = project.objects.property<String>()
-    private val generateAllClassesProperty = project.objects.property<Boolean>()
-    private val helperGenProperty = project.objects.property<Boolean>()
-    private val wrapArraysProperty = project.objects.property<Boolean>()
-    private val allowInvalidURLProperty = project.objects.property<Boolean>()
+    private val noImportsProperty = objectFactory.property<Boolean>()
+    private val noWrappedProperty = objectFactory.property<Boolean>()
+    private val serverSideProperty = objectFactory.property<Boolean>()
+    private val skeletonDeployProperty = objectFactory.property<String>()
+    private val generateAllClassesProperty = objectFactory.property<Boolean>()
+    private val helperGenProperty = objectFactory.property<Boolean>()
+    private val wrapArraysProperty = objectFactory.property<Boolean>()
+    private val allowInvalidURLProperty = objectFactory.property<Boolean>()
 
     // Strings
-    private val deployScopeProperty = project.objects.property(String::class.java)
-    private val typeMappingVersionProperty = project.objects.property(String::class.java)
-    private val factoryProperty = project.objects.property(String::class.java)
-    private val userNameProperty = project.objects.property(String::class.java)
-    private val passwordProperty = project.objects.property(String::class.java)
-    private val implementationClassNameProperty = project.objects.property(String::class.java)
-    private val nsIncludeProperty = project.objects.property(String::class.java)
-    private val nsExcludeProperty = project.objects.property(String::class.java)
+    private val deployScopeProperty = objectFactory.property(String::class.java)
+    private val typeMappingVersionProperty = objectFactory.property(String::class.java)
+    private val factoryProperty = objectFactory.property(String::class.java)
+    private val userNameProperty = objectFactory.property(String::class.java)
+    private val passwordProperty = objectFactory.property(String::class.java)
+    private val implementationClassNameProperty = objectFactory.property(String::class.java)
+    private val nsIncludeProperty = objectFactory.property(String::class.java)
+    private val nsExcludeProperty = objectFactory.property(String::class.java)
 
-    private val outputDirProperty = project.objects.directoryProperty()
-
-    val wsdlPropertiesContainer: NamedDomainObjectContainer<WSDLProperty> = project.container(WSDLProperty::class.java)
+    private val outputDirProperty = objectFactory.directoryProperty()
 
     init {
         noImportsProperty.set(false)
-        timeoutProperty.set(240)
+        timeoutProperty.set(TIMEOUT)
         noWrappedProperty.set(false)
         serverSideProperty.set(false)
         skeletonDeployProperty.set("")
@@ -76,10 +85,15 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
         nsIncludeProperty.set("")
         nsExcludeProperty.set("")
 
-        outputDirProperty.set(project.layout.buildDirectory.dir(
+        outputDirProperty.set(layout.buildDirectory.dir(
                 "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis1/${name.replace(' ', '_')}"
         ))
     }
+
+    /**
+     * Names and values of a properties for use by the custom GeneratorFactory.
+     */
+    val wsdlProperties = objectFactory.domainObjectContainer(WSDLProperty::class.java)
 
     /**
      * Provider for noImports property.
@@ -377,13 +391,6 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
     var nsExclude: String by nsExcludeProperty
 
     /**
-     * Names and values of a properties for use by the custom GeneratorFactory.
-     */
-    fun wsdlProperties(c: Closure<WSDLProperty>) {
-        wsdlPropertiesContainer.configure(c)
-    }
-
-    /**
      * Provider for outputDir property.
      */
     val outputDirProvider: Provider<Directory>
@@ -403,7 +410,7 @@ open class Axis1(project: Project, private val confname: String) : AbstractAxisC
      * @return task name for configuration
      */
     fun getTaskName(): String {
-        return "axis1Wsdl2java${confname.toCamelCase()}"
+        return "axis1Wsdl2java${name.toCamelCase()}"
     }
 
     private fun String.toCamelCase() : String {

@@ -15,12 +15,12 @@
  */
 package com.intershop.gradle.wsdl.tasks.axis1
 
+import com.intershop.gradle.wsdl.extension.Axis1.Companion.TIMEOUT
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.DeployScope
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileCollectionFactory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
@@ -76,7 +76,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     @get:Input
     var timeoutConf: Int
-        get() = timeoutProperty.getOrElse(240)
+        get() = timeoutProperty.getOrElse(TIMEOUT)
         set(value) = timeoutProperty.set(value)
 
     /**
@@ -453,7 +453,10 @@ open class WSDL2Java : AbstractWSDL2Java(){
     @get:Classpath
     val toolsClasspath : ConfigurableFileCollection = project.files()
 
-    private var javaOptions: JavaForkOptions = DefaultJavaForkOptions((project as ProjectInternal).fileResolver, (project as ProjectInternal).services.get(FileCollectionFactory::class.java), DefaultJavaDebugOptions())
+    private var javaOptions: JavaForkOptions = DefaultJavaForkOptions(
+            (project as ProjectInternal).fileResolver,
+            (project as ProjectInternal).services.get(FileCollectionFactory::class.java),
+            DefaultJavaDebugOptions())
 
     /**
      * This is the task action and generates Java source files.

@@ -16,43 +16,50 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.utils.Databinding
-import org.gradle.api.Project
+import com.intershop.gradle.wsdl.utils.getValue
+import com.intershop.gradle.wsdl.utils.property
+import com.intershop.gradle.wsdl.utils.setValue
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Axis 2 Configuration container.
  *
  * @constructur default constructor with project and configuration name.
  */
-open class Axis2(project: Project, private val confname: String) : AbstractAxisConfig(project, confname) {
+abstract class Axis2(name: String) : AbstractAxisConfig(name) {
+
+    @get:Inject
+    abstract val layout: ProjectLayout
 
     // properties will analyzed as Boolean
-    private val asyncProperty = project.objects.property<Boolean>()
-    private val syncProperty = project.objects.property<Boolean>()
-    private val serverSideProperty = project.objects.property<Boolean>()
-    private val serviceDescriptionProperty = project.objects.property<Boolean>()
-    private val generateAllClassesProperty = project.objects.property<Boolean>()
-    private val unpackClassesProperty = project.objects.property<Boolean>()
-    private val serversideInterfaceProperty = project.objects.property<Boolean>()
-    private val flattenFilesProperty = project.objects.property<Boolean>()
-    private val unwrapParamsProperty = project.objects.property<Boolean>()
-    private val xsdconfigProperty = project.objects.property<Boolean>()
-    private val allPortsProperty = project.objects.property<Boolean>()
-    private val backwordCompatibleProperty = project.objects.property<Boolean>()
-    private val suppressPrefixesProperty = project.objects.property<Boolean>()
-    private val noMessageReceiverProperty = project.objects.property<Boolean>()
+    private val asyncProperty = objectFactory.property<Boolean>()
+    private val syncProperty = objectFactory.property<Boolean>()
+    private val serverSideProperty = objectFactory.property<Boolean>()
+    private val serviceDescriptionProperty = objectFactory.property<Boolean>()
+    private val generateAllClassesProperty = objectFactory.property<Boolean>()
+    private val unpackClassesProperty = objectFactory.property<Boolean>()
+    private val serversideInterfaceProperty = objectFactory.property<Boolean>()
+    private val flattenFilesProperty = objectFactory.property<Boolean>()
+    private val unwrapParamsProperty = objectFactory.property<Boolean>()
+    private val xsdconfigProperty = objectFactory.property<Boolean>()
+    private val allPortsProperty = objectFactory.property<Boolean>()
+    private val backwordCompatibleProperty = objectFactory.property<Boolean>()
+    private val suppressPrefixesProperty = objectFactory.property<Boolean>()
+    private val noMessageReceiverProperty = objectFactory.property<Boolean>()
     
     // Strings
-    private val databindingMethodProperty: Property<String> = project.objects.property(String::class.java)
-    private val wsdlVersionProperty: Property<String> = project.objects.property(String::class.java)
-    private val serviceNameProperty: Property<String> = project.objects.property(String::class.java)
-    private val portNameProperty: Property<String> = project.objects.property(String::class.java)
+    private val databindingMethodProperty: Property<String> = objectFactory.property(String::class.java)
+    private val wsdlVersionProperty: Property<String> = objectFactory.property(String::class.java)
+    private val serviceNameProperty: Property<String> = objectFactory.property(String::class.java)
+    private val portNameProperty: Property<String> = objectFactory.property(String::class.java)
 
-    private val outputDirProperty: DirectoryProperty = project.objects.directoryProperty()
+    private val outputDirProperty: DirectoryProperty = objectFactory.directoryProperty()
 
     init {
         asyncProperty.set(false)
@@ -74,7 +81,7 @@ open class Axis2(project: Project, private val confname: String) : AbstractAxisC
         suppressPrefixesProperty.set(false)
         noMessageReceiverProperty.set(false)
 
-        outputDirProperty.set(project.layout.buildDirectory.dir(
+        outputDirProperty.set(layout.buildDirectory.dir(
                 "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis2/${name.replace(' ', '_')}"
         ))
     }
@@ -349,7 +356,7 @@ open class Axis2(project: Project, private val confname: String) : AbstractAxisC
      * @return task name for configuration
      */
     fun getTaskName(): String {
-        return "axis2Wsdl2java${confname.toCamelCase()}"
+        return "axis2Wsdl2java${name.toCamelCase()}"
     }
 
     private fun String.toCamelCase() : String {

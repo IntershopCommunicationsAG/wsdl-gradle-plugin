@@ -16,6 +16,7 @@
 package com.intershop.gradle.wsdl.tasks
 
 import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
+import com.intershop.gradle.wsdl.utils.property
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
@@ -23,7 +24,6 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -34,12 +34,6 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.process.JavaForkOptions
 import java.io.File
-
-/**
- * Funcion to declare a property.
- */
-@Suppress("UnstableApiUsage")
-inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
 
 /**
  * Abbstract class for axis 1 and axis2 code generator.
@@ -247,8 +241,8 @@ abstract class AbstractWSDL2Java : DefaultTask() {
     /**
      * Adds additional fork options.
      */
-    fun forkOptions(forkOptionsAction: Action<in JavaForkOptions>) {
-        internalForkOptionsAction = forkOptionsAction
+    fun forkOptions(forkOptions: Action<in JavaForkOptions>) {
+        internalForkOptionsAction = forkOptions
     }
 
 }

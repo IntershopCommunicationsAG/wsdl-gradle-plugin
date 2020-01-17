@@ -16,6 +16,7 @@
 package com.intershop.gradle.wsdl
 
 import com.intershop.gradle.wsdl.extension.WSDLExtension
+import com.intershop.gradle.wsdl.extension.WSDLExtension.Companion.WSDL_EXTENSION_NAME
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -36,11 +37,9 @@ class WSDLPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         with(project) {
-            logger.info("WSDL plugin adds extension {} to {}", WSDLExtension.WSDL_EXTENSION_NAME, name)
+            logger.info("WSDL plugin adds extension {} to {}", WSDL_EXTENSION_NAME, name)
             val extension = extensions.findByType(
-                    WSDLExtension::class.java) ?: extensions.create(
-                        WSDLExtension.WSDL_EXTENSION_NAME, WSDLExtension::class.java, this
-                    )
+                    WSDLExtension::class.java) ?: extensions.create(WSDL_EXTENSION_NAME, WSDLExtension::class.java)
 
             addWsdlAxis1Configuration(this)
             addWsdlAxis2Configuration(this)
@@ -81,7 +80,7 @@ class WSDLPlugin : Plugin<Project> {
                     group = WSDLExtension.WSDL_GROUP_NAME
 
                     providePackageName(axis1.packageNameProvider)
-                    namespacePackageMappings = axis1.namespacePackageMappingsContainer
+                    namespacePackageMappings = axis1.namespacePackageMappings
                     provideGenerateTestcase(axis1.generateTestcaseProvider)
                     provideNamespacePackageMappingFile(axis1.namespacePackageMappingFileProvider)
                     provideArguments(axis1.argumentsProvider)
@@ -107,7 +106,7 @@ class WSDLPlugin : Plugin<Project> {
                     provideNsExclude(axis1.nsExcludeProvider)
 
                     toolsClasspath.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS1_CONFIGURATION_NAME))
-                    wsdlProperties = axis1.wsdlPropertiesContainer
+                    wsdlProperties = axis1.wsdlProperties
 
                     afterEvaluate {
                         plugins.withType(JavaBasePlugin::class.java) {
@@ -137,7 +136,7 @@ class WSDLPlugin : Plugin<Project> {
                     group = WSDLExtension.WSDL_GROUP_NAME
 
                     providePackageName(axis2.packageNameProvider)
-                    namespacePackageMappings = axis2.namespacePackageMappingsContainer
+                    namespacePackageMappings = axis2.namespacePackageMappings
                     provideGenerateTestcase(axis2.generateTestcaseProvider)
                     provideNamespacePackageMappingFile(axis2.namespacePackageMappingFileProvider)
                     provideArguments(axis2.argumentsProvider)

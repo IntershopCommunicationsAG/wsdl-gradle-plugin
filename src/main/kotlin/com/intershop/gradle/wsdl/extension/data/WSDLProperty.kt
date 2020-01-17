@@ -22,20 +22,10 @@ import org.gradle.api.Named
  *
  * @constructor default constructor with configuration name.
  */
-class WSDLProperty (private val propname: String) : Named {
-
-    /**
-     * Default methode for named objects.
-     *
-     * @return property name of this configuration
-     */
-    override fun getName() : String {
-        return propname
-    }
+open class WSDLProperty (val name: String) {
 
     /**
      * Value of the configured property.
      */
     var value: String = ""
-
 }
