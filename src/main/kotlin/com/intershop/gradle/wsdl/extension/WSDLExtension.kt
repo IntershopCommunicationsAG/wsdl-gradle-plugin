@@ -15,16 +15,14 @@
  */
 package com.intershop.gradle.wsdl.extension
 
-import groovy.lang.Closure
-import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.model.ObjectFactory
+import javax.inject.Inject
 
 /**
  * Main extension of the WSDL plugin.
  */
-open class WSDLExtension (project: Project) {
+abstract class WSDLExtension {
 
     companion object {
         // names for the plugin
@@ -38,41 +36,17 @@ open class WSDLExtension (project: Project) {
         const val CODEGEN_OUTPUTPATH = "generated/wsdl2java"
     }
 
+    @get:Inject
+    abstract val objectFactory: ObjectFactory
+
     /**
      * Container for axis1 generation configurations.
      */
-    val axis1: NamedDomainObjectContainer<Axis1> = project.container(Axis1::class.java, Axis1Factory(project))
-
-    /**
-     * Configures a container for axis1 generation configurations with an action.
-     */
-    fun axis1(configureAction: Action<in NamedDomainObjectContainer<Axis1>>) {
-        configureAction.execute(axis1)
-    }
-
-    /**
-     * Configures a container for axis1 generation configurations with a closure.
-     */
-    fun axis1(closure: Closure<NamedDomainObjectContainer<Axis1>>) {
-        ConfigureUtil.configure(closure, axis1)
-    }
+    val axis1: NamedDomainObjectContainer<Axis1> = objectFactory.domainObjectContainer(Axis1::class.java)
 
     /**
      * Container for axis2 generation configurations.
      */
-    val axis2: NamedDomainObjectContainer<Axis2> = project.container(Axis2::class.java, Axis2Factory(project))
+    val axis2: NamedDomainObjectContainer<Axis2> = objectFactory.domainObjectContainer(Axis2::class.java)
 
-    /**
-     * Configures a container for axis1 generation configurations with an action.
-     */
-    fun axis2(configureAction: Action<in NamedDomainObjectContainer<Axis2>>) {
-        configureAction.execute(axis2)
-    }
-
-    /**
-     * Configures a container for axis1 generation configurations with an action.
-     */
-    fun axis2(closure: Closure<NamedDomainObjectContainer<Axis2>>) {
-        ConfigureUtil.configure(closure, axis2)
-    }
 }

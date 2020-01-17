@@ -17,7 +17,6 @@ package com.intershop.gradle.wsdl.tasks.axis2
 
 import org.apache.axis2.wsdl.WSDL2Code
 import org.gradle.workers.WorkAction
-import javax.inject.Inject
 
 /**
  * This is the task runner for WSDL2Java.

@@ -16,6 +16,9 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
+import com.intershop.gradle.wsdl.utils.getValue
+import com.intershop.gradle.wsdl.utils.property
+import com.intershop.gradle.wsdl.utils.setValue
 import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
@@ -28,61 +31,47 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import java.io.File
-import kotlin.reflect.KProperty
-
-/**
- * Add a set function to a String property.
- */
-operator fun <T> Property<T>.setValue(receiver: Any?, property: KProperty<*>, value: T) = set(value)
-/**
- * Add a get function to a String property.
- */
-operator fun <T> Property<T>.getValue(receiver: Any?, property: KProperty<*>): T = get()
-
-/**
- * Add function property to provider.
- */
-inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
-
-/**
- * Add a set function to a File property.
- */
-operator fun RegularFileProperty.setValue(receiver: Any?, property: KProperty<*>, value: File) = set(value)
-/**
- * Add a get function to a File property.
- */
-operator fun RegularFileProperty.getValue(receiver: Any?, property: KProperty<*>): File = get().asFile
+import javax.inject.Inject
 
 /**
  * Class with configuration for Axis 1 and 2.
  *
  * @constructur default constructor with project and a configuration name.
  */
-abstract class AbstractAxisConfig(val project: Project, private val confname: String) : Named {
+abstract class AbstractAxisConfig(val name: String) {
 
-    override fun getName() : String {
-        return confname
-    }
+    @get:Inject
+    abstract val objectFactory: ObjectFactory
 
-    private val sourceSetNameProperty: Property<String> = project.objects.property(String::class.java)
-    private val packageNameProperty: Property<String?> = project.objects.property(String::class.java)
+    private val sourceSetNameProperty: Property<String> = objectFactory.property(String::class.java)
+    private val packageNameProperty: Property<String?> = objectFactory.property(String::class.java)
 
-    private val namespacePackageMappingFileProperty: RegularFileProperty = project.objects.fileProperty()
-    private val wsdlFileProperty: RegularFileProperty = project.objects.fileProperty()
+    private val namespacePackageMappingFileProperty: RegularFileProperty = objectFactory.fileProperty()
+    private val wsdlFileProperty: RegularFileProperty = objectFactory.fileProperty()
 
-    private val argumentsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
+    private val argumentsProperty: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     // will be analyzed as Boolean
-    private val generateTestcaseProperty = project.objects.property<Boolean>()
-
-    val namespacePackageMappingsContainer: NamedDomainObjectContainer<NamespacePackageMapping> =
-            project.container(NamespacePackageMapping::class.java)
+    private val generateTestcaseProperty = objectFactory.property<Boolean>()
 
     init {
         sourceSetNameProperty.set(SourceSet.MAIN_SOURCE_SET_NAME)
         generateTestcaseProperty.set(false)
     }
 
+    /**
+     * By default, package names are generated from the namespace strings in the WSDLExtension document in a
+     * magical manner (typically, if the namespace is of the form "http://x.y.com" or "urn:x.y.com"
+     * the corresponding package will be "com.y.x"). If this magic is not what you want, you can provide your
+     * own mapping using the this maps argument. For example, if there is a namespace in the WSDLExtension document
+     * called "urn:AddressFetcher2", and you want files generated from the objects within this namespace
+     * to reside in the package samples.addr, you would provide the following option:
+     * <p><blockquote><pre>
+     * urn:AddressFetcher2=samples.addr
+     * </pre></blockquote></p>
+     */
+    val namespacePackageMappings = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
+    
     /**
      * Provider for packageName.
      */
@@ -99,21 +88,6 @@ abstract class AbstractAxisConfig(val project: Project, private val confname: St
      * @property packageName
      */
     var packageName by packageNameProperty
-
-    /**
-     * By default, package names are generated from the namespace strings in the WSDLExtension document in a
-     * magical manner (typically, if the namespace is of the form "http://x.y.com" or "urn:x.y.com"
-     * the corresponding package will be "com.y.x"). If this magic is not what you want, you can provide your
-     * own mapping using the this maps argument. For example, if there is a namespace in the WSDLExtension document
-     * called "urn:AddressFetcher2", and you want files generated from the objects within this namespace
-     * to reside in the package samples.addr, you would provide the following option:
-     * <p><blockquote><pre>
-     * urn:AddressFetcher2=samples.addr
-     * </pre></blockquote></p>
-     */
-    fun namespacePackageMappings(c: Closure<NamespacePackageMapping>) {
-        namespacePackageMappingsContainer.configure(c)
-    }
 
     /**
      * Provider for generateTestcase.
@@ -157,7 +131,9 @@ abstract class AbstractAxisConfig(val project: Project, private val confname: St
      *
      * @property namespacePackageMappingFile
      */
-    var namespacePackageMappingFile by namespacePackageMappingFileProperty
+    var namespacePackageMappingFile: File
+        get() = namespacePackageMappingFileProperty.get().asFile
+        set(value) = namespacePackageMappingFileProperty.set(value)
 
     /**
      * Provider for additional arguments.
@@ -203,7 +179,9 @@ abstract class AbstractAxisConfig(val project: Project, private val confname: St
     /**
      * WSDLExtension file for processing.
      */
-    var wsdlFile by wsdlFileProperty
+    var wsdlFile: File
+        get() = wsdlFileProperty.get().asFile
+        set(value) = wsdlFileProperty.set(value)
 
     /**
      * Provider for source set name property.

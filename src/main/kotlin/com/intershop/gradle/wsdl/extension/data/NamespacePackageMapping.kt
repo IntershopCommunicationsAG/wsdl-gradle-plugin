@@ -22,16 +22,7 @@ import org.gradle.api.Named
  *
  * @constructor default constructor with configuration name.
  */
-class NamespacePackageMapping(private val confname: String) : Named {
-
-    /**
-     * Default methode for named objects.
-     *
-     * @return name of this configuration
-     */
-    override fun getName() : String {
-        return confname
-    }
+open class NamespacePackageMapping(val name: String) {
 
     /**
      * Name space configuration.
