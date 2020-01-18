@@ -23,12 +23,10 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.file.FileCollectionFactory
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
@@ -36,18 +34,13 @@ import org.gradle.process.internal.DefaultJavaDebugOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
 
 /**
- * Funcion to declare a property.
- */
-inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
-
-/**
  * This task generates the source code from existing WSDL with axis1 files with a specific configuration.
  *
  * @constructor constructor initialize a WSDL2Java task with a worker executtor.
  */
-open class WSDL2Java : AbstractWSDL2Java(){
-
-    private val noImportsProperty = project.objects.property<Boolean>()
+abstract class WSDL2Java : AbstractWSDL2Java(){
+    
+    private val noImportsProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Only generate code for the WSDLExtension document that appears on the command line
@@ -66,7 +59,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideNoImports(noImports: Provider<Boolean>) = noImportsProperty.set(noImports)
 
-    private val timeoutProperty = project.objects.property<Int>()
+    private val timeoutProperty = objectFactory.property(Int::class.java)
 
     /**
      * Timeout in seconds. The default is 240.
@@ -84,7 +77,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideTimeout(timeout: Provider<Int>) = timeoutProperty.set(timeout)
 
-    private val noWrappedProperty = project.objects.property<Boolean>()
+    private val noWrappedProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * If this value is true, it turns off the special treatment of what is called "wrapped" document/literal
@@ -110,7 +103,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideNoWrapped(noWrapped: Provider<Boolean>) = noWrappedProperty.set(noWrapped)
 
-    private val serverSideProperty = project.objects.property<Boolean>()
+    private val serverSideProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Emit the server-side bindings for the web service:
@@ -130,7 +123,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideServerSide(serverSide: Provider<Boolean>) = serverSideProperty.set(serverSide)
 
-    private val skeletonDeployProperty = project.objects.property<String>()
+    private val skeletonDeployProperty = objectFactory.property(String::class.java)
 
     /**
      * Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd. In other words, for "true"
@@ -163,7 +156,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideSkeletonDeploy(skeletonDeploy: Provider<String>) = skeletonDeployProperty.set(skeletonDeploy)
 
-    private val deployScopeProperty = project.objects.property(String::class.java)
+    private val deployScopeProperty = objectFactory.property(String::class.java)
 
     /**
      * Add scope to deploy.wsdd:
@@ -186,7 +179,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideDeployScope(deployScope: Provider<String>) = deployScopeProperty.set(deployScope)
 
-    private val generateAllClassesProperty = project.objects.property<Boolean>()
+    private val generateAllClassesProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate code for all elements, even unreferenced ones. By default,
@@ -222,7 +215,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
     fun provideGenerateAllClasses(generateAllClasses: Provider<Boolean>) =
             generateAllClassesProperty.set(generateAllClasses)
 
-    private val typeMappingVersionProperty = project.objects.property(String::class.java)
+    private val typeMappingVersionProperty = objectFactory.property(String::class.java)
 
     /**
      * Indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
@@ -241,7 +234,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
     fun provideTypeMappingVersion(typeMappingVersion: Provider<String>) =
             typeMappingVersionProperty.set(typeMappingVersion)
 
-    private val factoryProperty = project.objects.property(String::class.java)
+    private val factoryProperty = objectFactory.property(String::class.java)
 
     /**
      * Used to extend the functionality of the WSDL2Java emitter.
@@ -260,7 +253,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideFactory(factory: Provider<String>) = factoryProperty.set(factory)
 
-    private val helperGenProperty = project.objects.property<Boolean>()
+    private val helperGenProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Emits separate Helper classes for meta data.
@@ -277,7 +270,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideHelperGen(helperGen: Provider<Boolean>) = helperGenProperty.set(helperGen)
 
-    private val userNameProperty = project.objects.property(String::class.java)
+    private val userNameProperty = objectFactory.property(String::class.java)
 
     /**
      * This username is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
@@ -297,7 +290,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideUserName(userName: Provider<String>) = userNameProperty.set(userName)
 
-    private val passwordProperty = project.objects.property(String::class.java)
+    private val passwordProperty = objectFactory.property(String::class.java)
 
     /**
      * This password is used in resolving the WSDLExtension-URI provided as the input to WSDL2Java.
@@ -316,7 +309,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun providePassword(password: Provider<String>) = passwordProperty.set(password)
 
-    private val implementationClassNameProperty = project.objects.property(String::class.java)
+    private val implementationClassNameProperty = objectFactory.property(String::class.java)
 
     /**
      * Set the name of the implementation class. Especially useful when exporting an existing class as
@@ -339,7 +332,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
     fun provideImplementationClassName(implementationClassName: Provider<String>)
             = implementationClassNameProperty.set(implementationClassName)
 
-    private val wrapArraysProperty = project.objects.property<Boolean>()
+    private val wrapArraysProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * When processing a schema like this:
@@ -368,7 +361,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideWrapArrays(wrapArrays: Provider<Boolean>) = wrapArraysProperty.set(wrapArrays)
 
-    private val nsIncludeProperty = project.objects.property(String::class.java)
+    private val nsIncludeProperty = objectFactory.property(String::class.java)
 
     /**
      * namescape to specifically include in the generated code (defaults to
@@ -387,7 +380,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideNsInclude(nsInclude: Provider<String>) = nsIncludeProperty.set(nsInclude)
 
-    private val nsExcludeProperty = project.objects.property(String::class.java)
+    private val nsExcludeProperty = objectFactory.property(String::class.java)
 
     /**
      * namespace to specifically exclude from the generated code (defaults to
@@ -406,7 +399,12 @@ open class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideNsExclude(nsExclude: Provider<String>) = nsExcludeProperty.set(nsExclude)
 
-    @Internal
+    /**
+     *  Additional wsdl properties for code generation collected in a container.
+     *
+     *  @properties wsdlProperties
+     */
+    @Nested
     var wsdlProperties: NamedDomainObjectContainer<WSDLProperty>? = null
 
     /**
@@ -426,7 +424,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
             return properties.toList()
         }
 
-    private val allowInvalidURLProperty = project.objects.property<Boolean>()
+    private val allowInvalidURLProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * This flag is used to allow Stub generation even if WSDLExtension endpoint URL is not a valid URL.
@@ -446,7 +444,7 @@ open class WSDL2Java : AbstractWSDL2Java(){
     fun provideAllowInvalidURL(allowInvalidURL: Provider<Boolean>) = allowInvalidURLProperty.set(allowInvalidURL)
 
     /**
-     * Classpath for Axis 2 files stored in a configuration
+     * Classpath for Axis 1 files stored in a configuration.
      *
      * @property toolsClasspath file collection of libraries
      */
@@ -540,3 +538,4 @@ open class WSDL2Java : AbstractWSDL2Java(){
         return parameters
     }
 }
+

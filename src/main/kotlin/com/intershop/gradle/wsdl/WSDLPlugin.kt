@@ -31,10 +31,22 @@ import com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java as axis2WSDL2Java
 class WSDLPlugin : Plugin<Project> {
 
     companion object {
+        /**
+         * Description for main task.
+         */
         const val TASKDESCRIPTION = "Generate Java code for Axis 1 and Axis2 WSDL files"
+        /**
+         * Taskname for main task.
+         */
         const val TASKNAME = "wsdl2java"
     }
 
+    /**
+     * Applies the extension and calls the
+     * task initialization for this plugin.
+     *
+     * @param project current project
+     */
     override fun apply(project: Project) {
         with(project) {
             logger.info("WSDL plugin adds extension {} to {}", WSDL_EXTENSION_NAME, name)

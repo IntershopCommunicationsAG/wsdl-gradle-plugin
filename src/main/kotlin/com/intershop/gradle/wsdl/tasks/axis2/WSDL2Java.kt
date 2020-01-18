@@ -16,11 +16,8 @@
 package com.intershop.gradle.wsdl.tasks.axis2
 
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
-import com.intershop.gradle.wsdl.tasks.axis1.property
 import com.intershop.gradle.wsdl.utils.Databinding
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
@@ -30,19 +27,13 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 /**
- * Funcion to declare a property.
- */
-inline fun <reified T> ObjectFactory.property(): Property<T> = property(T::class.java)
-
-/**
  * This task generates the source code from existing WSDL with axis2 files with a specific configuration.
  *
  * @constructor constructor initialize a WSDL2Java task with a worker executtor.
  */
-open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java() {
+abstract class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java() {
 
-
-    private val asyncProperty = project.objects.property<Boolean>()
+    private val asyncProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate code only for async style. When this option is used the generated
@@ -60,7 +51,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideAsync(async: Provider<Boolean>) = asyncProperty.set(async)
 
-    private val syncProperty = project.objects.property<Boolean>()
+    private val syncProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate code only for sync style . When this option is used the generated stubs
@@ -79,7 +70,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideSync(sync: Provider<Boolean>) = syncProperty.set(sync)
 
-    private val serverSideProperty = project.objects.property<Boolean>()
+    private val serverSideProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generates server side code (i.e. skeletons).
@@ -96,7 +87,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideServerSide(serverSide: Provider<Boolean>) = serverSideProperty.set(serverSide)
 
-    private val serviceDescriptionProperty = project.objects.property<Boolean>()
+    private val serviceDescriptionProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generates the service descriptor (i.e. server.xml). Default is false.
@@ -115,7 +106,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun provideServiceDescription(serviceDescription: Provider<Boolean>) =
             serviceDescriptionProperty.set(serviceDescription)
 
-    private val databindingMethodProperty = project.objects.property(String::class.java)
+    private val databindingMethodProperty = objectFactory.property(String::class.java)
 
     /**
      * Specifies the Databinding framework.
@@ -140,7 +131,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideDatabindingMethod(databindingMethod: Provider<String>) = databindingMethodProperty.set(databindingMethod)
 
-    private val generateAllClassesProperty = project.objects.property<Boolean>()
+    private val generateAllClassesProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generates all the classes. This option is valid only if serverSide otpion is true. If the value is true,
@@ -159,7 +150,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun provideGenerateAllClasses(generateAllClasses: Provider<Boolean>) =
             generateAllClassesProperty.set(generateAllClasses)
 
-    private val unpackClassesProperty = project.objects.property<Boolean>()
+    private val unpackClassesProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Unpack classes. This option specifies whether to unpack the classes and
@@ -177,7 +168,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideUnpackClasses(unpackClasses: Provider<Boolean>) = unpackClassesProperty.set(unpackClasses)
 
-    private val serviceNameProperty = project.objects.property(String::class.java)
+    private val serviceNameProperty = objectFactory.property(String::class.java)
 
     /**
      * Specifies the service name to be code generated. If the service name is not specified,
@@ -196,7 +187,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideServiceName(serviceName: Provider<String>) = serviceNameProperty.set(serviceName)
 
-    private val portNameProperty = project.objects.property(String::class.java)
+    private val portNameProperty = objectFactory.property(String::class.java)
 
     /**
      * Specifies the port name to be code generated. If the port name is not specified,
@@ -215,7 +206,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun providePortName(portName: Provider<String>) = portNameProperty.set(portName)
 
-    private val serversideInterfaceProperty = project.objects.property<Boolean>()
+    private val serversideInterfaceProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate an interface for the service skeleton.
@@ -233,7 +224,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun provideServersideInterface(serversideInterface: Provider<Boolean>) =
             serversideInterfaceProperty.set(serversideInterface)
 
-    private val wsdlVersionProperty = project.objects.property(String::class.java)
+    private val wsdlVersionProperty = objectFactory.property(String::class.java)
 
     /**
      * WSDLExtension Version. Valid Options : 2, 2.0, 1.1
@@ -251,7 +242,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideWsdlVersion(wsdlVersion: Provider<String>) = wsdlVersionProperty.set(wsdlVersion)
 
-    private val flattenFilesProperty = project.objects.property<Boolean>()
+    private val flattenFilesProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Flattens the generated files if the value of the property is true.
@@ -268,7 +259,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideFlattenFiles(flattenFiles: Provider<Boolean>) = flattenFilesProperty.set(flattenFiles)
 
-    private val unwrapParamsProperty = project.objects.property<Boolean>()
+    private val unwrapParamsProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Switch on un-wrapping, if this value is true.
@@ -285,7 +276,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideUnwrapParams(unwrapParams: Provider<Boolean>) = unwrapParamsProperty.set(unwrapParams)
 
-    private val xsdconfigProperty = project.objects.property<Boolean>()
+    private val xsdconfigProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Use XMLBeans .xsdconfig file if this value is true.
@@ -303,7 +294,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideXsdconfig(xsdconfig: Provider<Boolean>) = xsdconfigProperty.set(xsdconfig)
 
-    private val allPortsProperty = project.objects.property<Boolean>()
+    private val allPortsProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate code for all ports.
@@ -320,7 +311,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideAllPorts(allPorts: Provider<Boolean>) = allPortsProperty.set(allPorts)
 
-    private val backwordCompatibleProperty = project.objects.property<Boolean>()
+    private val backwordCompatibleProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate Axis 1.x backword compatible code.
@@ -338,7 +329,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
     fun provideBackwordCompatible(backwordCompatible: Provider<Boolean>) =
             backwordCompatibleProperty.set(backwordCompatible)
 
-    private val suppressPrefixesProperty = project.objects.property<Boolean>()
+    private val suppressPrefixesProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Suppress namespace prefixes (Optimzation that reduces size of soap request/response).
@@ -355,7 +346,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
      */
     fun provideSuppressPrefixes(suppressPrefixes: Provider<Boolean>) = suppressPrefixesProperty.set(suppressPrefixes)
 
-    private val noMessageReceiverProperty = project.objects.property<Boolean>()
+    private val noMessageReceiverProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Don't generate a MessageReceiver in the generated sources.
@@ -374,7 +365,7 @@ open class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecu
             noMessageReceiverProperty.set(noMessageReceiver)
 
     /**
-     * Classpath for Axis 2 files stored in a configuration
+     * Classpath for Axis 2 files stored in a configuration.
      *
      * @property toolsClasspath file collection of libraries
      */

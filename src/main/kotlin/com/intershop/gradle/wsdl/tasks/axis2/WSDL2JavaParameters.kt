@@ -18,7 +18,14 @@ package com.intershop.gradle.wsdl.tasks.axis2
 import org.gradle.api.provider.ListProperty
 import org.gradle.workers.WorkParameters
 
+/**
+ * Parameters container for task worker.
+ */
 interface WSDL2JavaParameters : WorkParameters {
 
+    /**
+     * List of all parameters of wsdl code
+     * generation.
+     */
     val paramList: ListProperty<String>
 }

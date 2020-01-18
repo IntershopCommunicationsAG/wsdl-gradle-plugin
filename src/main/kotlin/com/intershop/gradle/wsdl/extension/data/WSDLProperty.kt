@@ -15,17 +15,19 @@
  */
 package com.intershop.gradle.wsdl.extension.data
 
-import org.gradle.api.Named
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 
 /**
  * Container for WSDL property configuration.
  *
  * @constructor default constructor with configuration name.
  */
-open class WSDLProperty (val name: String) {
+open class WSDLProperty (@get:Internal val name: String) {
 
     /**
      * Value of the configured property.
      */
+    @get:Input
     var value: String = ""
 }

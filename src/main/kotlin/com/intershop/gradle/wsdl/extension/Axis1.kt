@@ -19,8 +19,6 @@ import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.utils.getValue
 import com.intershop.gradle.wsdl.utils.property
 import com.intershop.gradle.wsdl.utils.setValue
-import groovy.lang.Closure
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
@@ -35,9 +33,15 @@ import javax.inject.Inject
 abstract class Axis1(name: String) : AbstractAxisConfig(name) {
 
     companion object {
+        /**
+         * Default timeout configuration value.
+         */
         const val TIMEOUT = 240
     }
 
+    /**
+     * Inject service of ProjectLayout (See "Service injection" in Gradle documentation.
+     */
     @get:Inject
     abstract val layout: ProjectLayout
 

@@ -34,6 +34,9 @@ import javax.inject.Inject
  */
 abstract class Axis2(name: String) : AbstractAxisConfig(name) {
 
+    /**
+     * Inject service of ProjectLayout (See "Service injection" in Gradle documentation.
+     */
     @get:Inject
     abstract val layout: ProjectLayout
 

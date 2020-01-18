@@ -25,17 +25,35 @@ import javax.inject.Inject
 abstract class WSDLExtension {
 
     companion object {
-        // names for the plugin
+        /**
+         * Extension name of plugin.
+         */
         const val WSDL_EXTENSION_NAME = "wsdl"
+
+        /**
+         * Task group name of WSDL code generation.
+         */
         const val WSDL_GROUP_NAME = "WSDL Code Generation"
 
-        // Dependency configuration names
+        /**
+         * Configuration name of Axis 1.
+         */
         const val WSDL_AXIS1_CONFIGURATION_NAME = "wsdlAxis1"
+
+        /**
+         * Configuration name of Axis 2.
+         */
         const val WSDL_AXIS2_CONFIGURATION_NAME = "wsdlAxis2"
 
+        /**
+         * Folder names for generated java files.
+         **/
         const val CODEGEN_OUTPUTPATH = "generated/wsdl2java"
     }
 
+    /**
+     * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
+     */
     @get:Inject
     abstract val objectFactory: ObjectFactory
 
