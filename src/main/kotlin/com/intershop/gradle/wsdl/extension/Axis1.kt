@@ -19,6 +19,7 @@ import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.utils.getValue
 import com.intershop.gradle.wsdl.utils.property
 import com.intershop.gradle.wsdl.utils.setValue
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
@@ -97,7 +98,7 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
     /**
      * Names and values of a properties for use by the custom GeneratorFactory.
      */
-    val wsdlProperties = objectFactory.domainObjectContainer(WSDLProperty::class.java)
+    val wsdlProperties: NamedDomainObjectContainer<WSDLProperty> = objectFactory.domainObjectContainer(WSDLProperty::class.java)
 
     /**
      * Provider for noImports property.

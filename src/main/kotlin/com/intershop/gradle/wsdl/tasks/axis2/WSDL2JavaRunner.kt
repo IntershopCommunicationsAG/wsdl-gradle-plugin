@@ -26,6 +26,6 @@ import org.gradle.workers.WorkAction
 abstract class WSDL2JavaRunner : WorkAction<WSDL2JavaParameters> {
 
     override fun execute() {
-        WSDL2Code.main(getParameters().paramList.get().toTypedArray())
+        WSDL2Code.main(parameters.paramList.get().toTypedArray())
     }
 }
