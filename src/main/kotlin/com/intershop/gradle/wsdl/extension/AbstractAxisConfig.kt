@@ -19,6 +19,7 @@ import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
 import com.intershop.gradle.wsdl.utils.getValue
 import com.intershop.gradle.wsdl.utils.property
 import com.intershop.gradle.wsdl.utils.setValue
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -69,7 +70,7 @@ abstract class AbstractAxisConfig(val name: String) {
      * urn:AddressFetcher2=samples.addr
      * </pre></blockquote></p>
      */
-    val namespacePackageMappings = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
+    val namespacePackageMappings: NamedDomainObjectContainer<NamespacePackageMapping> = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
 
     /**
      * Provider for packageName.

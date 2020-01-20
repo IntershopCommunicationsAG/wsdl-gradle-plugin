@@ -378,7 +378,7 @@ abstract class WSDL2Java @Inject constructor(private val workerExecutor: WorkerE
     @TaskAction
     fun run() {
         // start runner
-        val workQueue = workerExecutor.processIsolation() {
+        val workQueue = workerExecutor.processIsolation {
             it.classpath.setFrom(toolsClasspath)
 
             if(internalForkOptionsAction != null) {
