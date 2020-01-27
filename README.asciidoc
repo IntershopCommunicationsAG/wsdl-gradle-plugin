@@ -1,8 +1,8 @@
 = WSDL Gradle Plugin
-:latestRevision: 2.0.0
+:latestRevision: 3.0.0
 :icons: font
 
-NOTE: Version 2 of this plugin will only work with Gradle 5 and JDK 8.
+NOTE: Version 3 of this plugin will only work with Gradle 6 and JDK 8.
 
 == Summary
 This plugin generates Java code from WSDL files based on Apache Axis 1 (see http://axis.apache.org/axis/)
@@ -10,6 +10,11 @@ or Apache Axis 2 (see http://axis.apache.org/axis2/java/core/).
 
 == Usage
 To apply the WSDL Gradle Plugin to your projects, add the following in your build script:
+
+++++
+<details open>
+<summary>Groovy</summary>
+++++
 
 [source,groovy]
 [subs=+attributes]
@@ -65,6 +70,75 @@ wsdl {
     }
 ----
 
+++++
+</details>
+++++
+
+++++
+<details>
+<summary>Kotlin</summary>
+++++
+
+[source,kotlin]
+[subs=+attributes]
+.build.gradle.kts
+----
+plugins {
+    id("com.intershop.gradle.wsdl") version "{latestRevision}"
+}
+
+wsdl {
+    axis1 {
+        register("genNameAxis1") {
+            wsdlFile = file("staticfiles/wsdl/axis1File.wsdl")
+            serverSide = true
+            namespacePackageMappings {
+                soap {
+                    namespace = "http://soapinterop.org/"
+                    packageName = "samples.axis1"
+                }
+                soapxsd {
+                    namespace = "http://soapinterop.org/xsd"
+                    packageName = "samples.axis1"
+                }
+            }
+            // more parameters are possible
+        }
+    }
+    axis2 {
+        register("genNameAxis2") {
+            wsdlFile = file("staticfiles/wsdl/axis2File.wsdl")
+            serverSide = true
+            allPorts = true
+            serviceDescription = true
+            packageName = "samples.axis2"
+            databindingMethod = "none"
+            // more parameters are possible
+        }
+    }
+
+    // set special JVM configuration parameter for code generation tasks of Axis1
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java::class.java) {
+        forkOptions {
+            maxHeapSize = "64m"
+            systemProperty("http.proxyHost", "10.0.0.100")
+            systemProperty("http.proxyPort", "8800")
+        }
+    }
+
+    tasks.withType(om.intershop.gradle.wsdl.tasks.axis2.WSDL2Java::class.java) {
+        forkOptions {
+            maxHeapSize = "64m"
+            systemProperty("http.proxyHost", "10.0.0.100")
+            systemProperty("http.proxyPort", "8800")
+        }
+    }
+}
+----
+
+++++
+</details>
+++++
 If the JavaBasePlugin is applied to the project, generated java sources will be added to the specified source set. Per default the main source set is used.
 
 IMPORTANT: This plugin uses the version 1.4 of Axis 1 and 1.7.7 of Axis 2. It is possible to change or extend the configuration with special configurations.
