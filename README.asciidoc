@@ -170,11 +170,11 @@ This plugin adds an extension *`wsdl`* to the project.
 
 ===== Properties
 
-[cols="25%,10%,10%,55%", width="90%, options="header"]
+[cols="10%,10%,10%,70%", width="100%, options="header"]
 |===
 |Property | Type | Default value | Description
-| *noImports* | `boolean` | `false` | Only generate code for the WSDL document that appears on the command line if this value is true.
-The default behaviour is to generate files for all WSDL documents, the immediate one and all imported ones. +
+
+| *noImports* | `boolean` | `false` | Only generate code for the WSDL document that appears on the command line if this value is true. The default behaviour is to generate files for all WSDL documents, the immediate one and all imported ones. +
 WSDL2Java Parameter: -n, --noImports
 | *timeout* | `int` | `240` | Timeout in seconds. The default is 240. Use -1 to disable the timeout. +
 WSDL2Java Parameter: -O, --timeout
@@ -191,8 +191,8 @@ WSDL2Java Parameter: -W, --noWrapped
 | *serverSide* | `boolean` | `false` | Emit the server-side bindings for the web service. +
 WSDL2Java Parameter: -s, --server-side
 | *skeletonDeploy* | `String` | `""` | If this property is defined, the parameter is added. If deploy skeleton (true) or implementation (false) in deploy.wsdd. +
-Default is an empty string. Assumes server-side="true". WSDL2Java Parameter: -S, --skeletonDeploy <true|false>
-| *deployScope* | `String` | | Add scope to deploy.wsdd: +
+Default is an empty string. Assumes server-side="true". WSDL2Java Parameter: -S, --skeletonDeploy <true or false>
+| *deployScope* | `String` | `""` | Add scope to deploy.wsdd: +
 - APPLICATION -> "Application", +
 - REQUEST     -> "Request", or +
 - SESSION     -> "Session". +
@@ -271,7 +271,7 @@ The default output dir is `<project build dir>/generated/wsdl2java/axis1/<config
 
 ===== Properties
 
-[cols="25%,10%,10%,55%", width="90%, options="header"]
+[cols="10%,10%,10%,70%", width="100%, options="header"]
 |===
 |Property | Type | Default value | Description
 | *async* | `boolean` | `false` | Generate code only for async style. When this option is used the generated stubs will have only the asynchronous invocation methods. Switched off by default. +
