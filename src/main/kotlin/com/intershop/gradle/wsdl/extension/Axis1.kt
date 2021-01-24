@@ -16,12 +16,10 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
-import com.intershop.gradle.wsdl.utils.getValue
-import com.intershop.gradle.wsdl.utils.property
-import com.intershop.gradle.wsdl.utils.setValue
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import java.io.File
 import javax.inject.Inject
@@ -31,7 +29,8 @@ import javax.inject.Inject
  *
  * @constructur default constructor with project and configuration name.
  */
-abstract class Axis1(name: String) : AbstractAxisConfig(name) {
+open class Axis1 @Inject constructor(name: String, objectFactory: ObjectFactory, layout: ProjectLayout):
+    AbstractAxisConfig(name, objectFactory) {
 
     companion object {
         /**
@@ -40,24 +39,18 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
         const val TIMEOUT = 240
     }
 
-    /**
-     * Inject service of ProjectLayout (See "Service injection" in Gradle documentation.
-     */
-    @get:Inject
-    abstract val layout: ProjectLayout
-
-    // property is a string, because there are problems with Integer and Int for the property
-    private val timeoutProperty = objectFactory.property<Int>()
+    // Integer
+    private val timeoutProperty = objectFactory.property(Int::class.java)
     
-    // properties will analyzed as Boolean
-    private val noImportsProperty = objectFactory.property<Boolean>()
-    private val noWrappedProperty = objectFactory.property<Boolean>()
-    private val serverSideProperty = objectFactory.property<Boolean>()
-    private val skeletonDeployProperty = objectFactory.property<String>()
-    private val generateAllClassesProperty = objectFactory.property<Boolean>()
-    private val helperGenProperty = objectFactory.property<Boolean>()
-    private val wrapArraysProperty = objectFactory.property<Boolean>()
-    private val allowInvalidURLProperty = objectFactory.property<Boolean>()
+    // Boolean
+    private val noImportsProperty = objectFactory.property(Boolean::class.java)
+    private val noWrappedProperty = objectFactory.property(Boolean::class.java)
+    private val serverSideProperty = objectFactory.property(Boolean::class.java)
+    private val skeletonDeployProperty = objectFactory.property(String::class.java)
+    private val generateAllClassesProperty = objectFactory.property(Boolean::class.java)
+    private val helperGenProperty = objectFactory.property(Boolean::class.java)
+    private val wrapArraysProperty = objectFactory.property(Boolean::class.java)
+    private val allowInvalidURLProperty = objectFactory.property(Boolean::class.java)
 
     // Strings
     private val deployScopeProperty = objectFactory.property(String::class.java)
@@ -72,25 +65,25 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
     private val outputDirProperty = objectFactory.directoryProperty()
 
     init {
-        noImportsProperty.set(false)
-        timeoutProperty.set(TIMEOUT)
-        noWrappedProperty.set(false)
-        serverSideProperty.set(false)
-        skeletonDeployProperty.set("")
-        deployScopeProperty.set("")
-        generateAllClassesProperty.set(false)
-        typeMappingVersionProperty.set("1.2")
-        factoryProperty.set("")
-        helperGenProperty.set(false)
-        userNameProperty.set("")
-        passwordProperty.set("")
-        implementationClassNameProperty.set("")
-        wrapArraysProperty.set(false)
-        allowInvalidURLProperty.set(false)
-        nsIncludeProperty.set("")
-        nsExcludeProperty.set("")
+        noImportsProperty.convention(false)
+        timeoutProperty.convention(TIMEOUT)
+        noWrappedProperty.convention(false)
+        serverSideProperty.convention(false)
+        skeletonDeployProperty.convention("")
+        deployScopeProperty.convention("")
+        generateAllClassesProperty.convention(false)
+        typeMappingVersionProperty.convention("1.2")
+        factoryProperty.convention("")
+        helperGenProperty.convention(false)
+        userNameProperty.convention("")
+        passwordProperty.convention("")
+        implementationClassNameProperty.convention("")
+        wrapArraysProperty.convention(false)
+        allowInvalidURLProperty.convention(false)
+        nsIncludeProperty.convention("")
+        nsExcludeProperty.convention("")
 
-        outputDirProperty.set(layout.buildDirectory.dir(
+        outputDirProperty.convention(layout.buildDirectory.dir(
                 "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis1/${name.replace(' ', '_')}"
         ))
     }
@@ -98,7 +91,8 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
     /**
      * Names and values of a properties for use by the custom GeneratorFactory.
      */
-    val wsdlProperties: NamedDomainObjectContainer<WSDLProperty> = objectFactory.domainObjectContainer(WSDLProperty::class.java)
+    val wsdlProperties: NamedDomainObjectContainer<WSDLProperty>
+            = objectFactory.domainObjectContainer(WSDLProperty::class.java)
 
     /**
      * Provider for noImports property.
@@ -113,7 +107,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property noImports
      */
-    var noImports by noImportsProperty
+    var noImports : Boolean
+        get() = noImportsProperty.get()
+        set(value) = noImportsProperty.set(value)
 
     /**
      * Provider for timeout property.
@@ -127,7 +123,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property timeout
      */
-    var timeout by timeoutProperty
+    var timeout : Int
+        get() = timeoutProperty.get()
+        set(value) = timeoutProperty.set(value)
 
     /**
      * Provider for noWrapped property.
@@ -148,7 +146,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property noWrapped
      */
-    var noWrapped by noWrappedProperty
+    var noWrapped : Boolean
+        get() = noWrappedProperty.get()
+        set(value) = noWrappedProperty.set(value)
 
     /**
      * Provider for serverSide property.
@@ -161,7 +161,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property serverSide
      */
-    var serverSide by serverSideProperty
+    var serverSide : Boolean
+        get() = serverSideProperty.get()
+        set(value) = serverSideProperty.set(value)
 
     /**
      * Provider for skeletonDeploy property.
@@ -189,7 +191,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property skeletonDeploy
      */
-    var skeletonDeploy by skeletonDeployProperty
+    var skeletonDeploy : String
+        get() = skeletonDeployProperty.get()
+        set(value) = skeletonDeployProperty.set(value)
 
     /**
      * Provider for deployScope property.
@@ -207,7 +211,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      *   @property deployScope
      */
-    var deployScope: String by deployScopeProperty
+    var deployScope : String
+        get() = deployScopeProperty.get()
+        set(value) = deployScopeProperty.set(value)
 
     /**
      * Provider for generateAllClasses property.
@@ -239,7 +245,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property generateAllClasses
      */
-    var generateAllClasses by generateAllClassesProperty
+    var generateAllClasses : Boolean
+        get() = generateAllClassesProperty.get()
+        set(value) = generateAllClassesProperty.set(value)
 
     /**
      * Provider for typeMappingVersion property.
@@ -252,7 +260,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property typeMappingVersion
      */
-    var typeMappingVersion: String by typeMappingVersionProperty
+    var typeMappingVersion : String
+        get() = typeMappingVersionProperty.get()
+        set(value) = typeMappingVersionProperty.set(value)
 
     /**
      * Provider for factory property.
@@ -266,7 +276,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property factory
      */
-    var factory: String by factoryProperty
+    var factory : String
+        get() = factoryProperty.get()
+        set(value) = factoryProperty.set(value)
 
     /**
      * Provider for helperGen property.
@@ -279,7 +291,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property helperGen
      */
-    var helperGen by helperGenProperty
+    var helperGen : Boolean
+        get() = helperGenProperty.get()
+        set(value) = helperGenProperty.set(value)
 
     /**
      * Provider for userName property.
@@ -294,7 +308,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property userName
      */
-    var userName: String by userNameProperty
+    var userName : String
+        get() = userNameProperty.get()
+        set(value) = userNameProperty.set(value)
 
     /**
      * Provider for password property.
@@ -308,7 +324,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property password
      */
-    var password: String by passwordProperty
+    var password : String
+        get() = passwordProperty.get()
+        set(value) = passwordProperty.set(value)
 
     /**
      * Provider for implementationClassName property.
@@ -325,7 +343,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property implementationClassName
      */
-    var implementationClassName: String by implementationClassNameProperty
+    var implementationClassName : String
+        get() = implementationClassNameProperty.get()
+        set(value) = implementationClassNameProperty.set(value)
 
     /**
      * Provider for wrapArrays property.
@@ -350,7 +370,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property wrapArrays
      */
-    var wrapArrays by wrapArraysProperty
+    var wrapArrays : Boolean
+        get() = wrapArraysProperty.get()
+        set(value) = wrapArraysProperty.set(value)
 
     /**
      * Provider for allowInvalidURL property.
@@ -365,7 +387,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property allowInvalidURL
      */
-    var allowInvalidURL by allowInvalidURLProperty
+    var allowInvalidURL : Boolean
+        get() = allowInvalidURLProperty.get()
+        set(value) = allowInvalidURLProperty.set(value)
 
     /**
      * Provider for nsInclude property.
@@ -379,7 +403,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property nsInclude
      */
-    var nsInclude: String by nsIncludeProperty
+    var nsInclude : String
+        get() = nsIncludeProperty.get()
+        set(value) = nsIncludeProperty.set(value)
 
     /**
      * Provider for nsExclude property.
@@ -393,7 +419,9 @@ abstract class Axis1(name: String) : AbstractAxisConfig(name) {
      *
      * @property nsExclude
      */
-    var nsExclude: String by nsExcludeProperty
+    var nsExclude : String
+        get() = nsExcludeProperty.get()
+        set(value) = nsExcludeProperty.set(value)
 
     /**
      * Provider for outputDir property.

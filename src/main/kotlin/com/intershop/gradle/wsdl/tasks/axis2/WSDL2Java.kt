@@ -18,6 +18,7 @@ package com.intershop.gradle.wsdl.tasks.axis2
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.Databinding
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
@@ -31,7 +32,9 @@ import javax.inject.Inject
  *
  * @constructor constructor initialize a WSDL2Java task with a worker executtor.
  */
-abstract class WSDL2Java @Inject constructor(private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java() {
+abstract class WSDL2Java
+    @Inject constructor(objectFactory: ObjectFactory,
+                        private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java(objectFactory) {
 
     private val asyncProperty = objectFactory.property(Boolean::class.java)
 

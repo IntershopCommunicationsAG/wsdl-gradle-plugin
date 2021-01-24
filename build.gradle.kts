@@ -23,7 +23,7 @@ plugins {
     // project plugins
     `java-gradle-plugin`
     groovy
-    id("nebula.kotlin") version "1.3.61"
+    kotlin("jvm") version "1.4.20"
 
     // test coverage
     jacoco
@@ -35,22 +35,22 @@ plugins {
     `maven-publish`
 
     // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "6.1.0"
+    id("com.intershop.gradle.scmversion") version "6.2.0"
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "2.4.0"
+    id("org.asciidoctor.jvm.convert") version "3.3.0"
 
     // documentation
-    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.jetbrains.dokka") version "0.10.1"
 
     // code analysis for kotlin
-    id("io.gitlab.arturbosch.detekt") version "1.4.0"
+    id("io.gitlab.arturbosch.detekt") version "1.15.0"
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "0.10.1"
+    id("com.gradle.plugin-publish") version "0.12.0"
 
     // plugin for publishing to jcenter
-    id("com.jfrog.bintray") version "1.8.4"
+    id("com.jfrog.bintray") version "1.8.5"
 }
 
 scm {
@@ -99,7 +99,7 @@ detekt {
 
 tasks {
     withType<Test>().configureEach {
-        systemProperty("intershop.gradle.versions", "6.0, 6.1")
+        systemProperty("intershop.gradle.versions", "6.8")
 
         dependsOn("jar")
     }
@@ -162,11 +162,11 @@ tasks {
         jacocoTestReport.dependsOn("test")
     }
 
-    getByName("bintrayUpload")?.dependsOn("asciidoctor")
-    getByName("jar")?.dependsOn("asciidoctor")
+    getByName("bintrayUpload").dependsOn("asciidoctor")
+    getByName("jar").dependsOn("asciidoctor")
 
     val compileKotlin by getting(KotlinCompile::class) {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     val dokka by existing(DokkaTask::class) {
@@ -262,13 +262,14 @@ bintray {
 }
 
 dependencies {
-    implementation(gradleKotlinDsl())
+    implementation(gradleApi())
+    implementation(localGroovy())
 
     compileOnly("org.apache.axis:axis:1.4")
     compileOnly("org.apache.axis2:axis2-codegen:1.7.7")
 
     testImplementation("commons-io:commons-io:2.2")
-    testImplementation("com.intershop.gradle.test:test-gradle-plugin:3.4.0")
+    testImplementation("com.intershop.gradle.test:test-gradle-plugin:3.7.0")
     testImplementation(gradleTestKit())
 }
 
