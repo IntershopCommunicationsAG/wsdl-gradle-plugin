@@ -16,12 +16,10 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.utils.Databinding
-import com.intershop.gradle.wsdl.utils.getValue
-import com.intershop.gradle.wsdl.utils.property
-import com.intershop.gradle.wsdl.utils.setValue
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
@@ -32,29 +30,24 @@ import javax.inject.Inject
  *
  * @constructur default constructor with project and configuration name.
  */
-abstract class Axis2(name: String) : AbstractAxisConfig(name) {
-
-    /**
-     * Inject service of ProjectLayout (See "Service injection" in Gradle documentation.
-     */
-    @get:Inject
-    abstract val layout: ProjectLayout
+open class Axis2 @Inject constructor(name: String, objectFactory: ObjectFactory, layout: ProjectLayout):
+    AbstractAxisConfig(name, objectFactory) {
 
     // properties will analyzed as Boolean
-    private val asyncProperty = objectFactory.property<Boolean>()
-    private val syncProperty = objectFactory.property<Boolean>()
-    private val serverSideProperty = objectFactory.property<Boolean>()
-    private val serviceDescriptionProperty = objectFactory.property<Boolean>()
-    private val generateAllClassesProperty = objectFactory.property<Boolean>()
-    private val unpackClassesProperty = objectFactory.property<Boolean>()
-    private val serversideInterfaceProperty = objectFactory.property<Boolean>()
-    private val flattenFilesProperty = objectFactory.property<Boolean>()
-    private val unwrapParamsProperty = objectFactory.property<Boolean>()
-    private val xsdconfigProperty = objectFactory.property<Boolean>()
-    private val allPortsProperty = objectFactory.property<Boolean>()
-    private val backwordCompatibleProperty = objectFactory.property<Boolean>()
-    private val suppressPrefixesProperty = objectFactory.property<Boolean>()
-    private val noMessageReceiverProperty = objectFactory.property<Boolean>()
+    private val asyncProperty = objectFactory.property(Boolean::class.java)
+    private val syncProperty = objectFactory.property(Boolean::class.java)
+    private val serverSideProperty = objectFactory.property(Boolean::class.java)
+    private val serviceDescriptionProperty = objectFactory.property(Boolean::class.java)
+    private val generateAllClassesProperty = objectFactory.property(Boolean::class.java)
+    private val unpackClassesProperty = objectFactory.property(Boolean::class.java)
+    private val serversideInterfaceProperty = objectFactory.property(Boolean::class.java)
+    private val flattenFilesProperty = objectFactory.property(Boolean::class.java)
+    private val unwrapParamsProperty = objectFactory.property(Boolean::class.java)
+    private val xsdconfigProperty = objectFactory.property(Boolean::class.java)
+    private val allPortsProperty = objectFactory.property(Boolean::class.java)
+    private val backwordCompatibleProperty = objectFactory.property(Boolean::class.java)
+    private val suppressPrefixesProperty = objectFactory.property(Boolean::class.java)
+    private val noMessageReceiverProperty = objectFactory.property(Boolean::class.java)
     
     // Strings
     private val databindingMethodProperty: Property<String> = objectFactory.property(String::class.java)
@@ -65,26 +58,26 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
     private val outputDirProperty: DirectoryProperty = objectFactory.directoryProperty()
 
     init {
-        asyncProperty.set(false)
-        syncProperty.set(false)
-        serverSideProperty.set(false)
-        serviceDescriptionProperty.set(false)
-        databindingMethodProperty.set(Databinding.ADB.binding)
-        generateAllClassesProperty.set(false)
-        unpackClassesProperty.set(false)
-        serviceNameProperty.set("")
-        portNameProperty.set("")
-        serversideInterfaceProperty.set(false)
-        wsdlVersionProperty.set("")
-        flattenFilesProperty.set(false)
-        unwrapParamsProperty.set(false)
-        xsdconfigProperty.set(false)
-        allPortsProperty.set(false)
-        backwordCompatibleProperty.set(false)
-        suppressPrefixesProperty.set(false)
-        noMessageReceiverProperty.set(false)
+        asyncProperty.convention(false)
+        syncProperty.convention(false)
+        serverSideProperty.convention(false)
+        serviceDescriptionProperty.convention(false)
+        databindingMethodProperty.convention(Databinding.ADB.binding)
+        generateAllClassesProperty.convention(false)
+        unpackClassesProperty.convention(false)
+        serviceNameProperty.convention("")
+        portNameProperty.convention("")
+        serversideInterfaceProperty.convention(false)
+        wsdlVersionProperty.convention("")
+        flattenFilesProperty.convention(false)
+        unwrapParamsProperty.convention(false)
+        xsdconfigProperty.convention(false)
+        allPortsProperty.convention(false)
+        backwordCompatibleProperty.convention(false)
+        suppressPrefixesProperty.convention(false)
+        noMessageReceiverProperty.convention(false)
 
-        outputDirProperty.set(layout.buildDirectory.dir(
+        outputDirProperty.convention(layout.buildDirectory.dir(
                 "${WSDLExtension.CODEGEN_OUTPUTPATH}/axis2/${name.replace(' ', '_')}"
         ))
     }
@@ -101,7 +94,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property async
      */
-    var async by asyncProperty
+    var async : Boolean
+        get() = asyncProperty.get()
+        set(value) = asyncProperty.set(value)
 
     /**
      * Provider for sync property.
@@ -116,7 +111,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property sync
      */
-    var sync by syncProperty
+    var sync : Boolean
+        get() = syncProperty.get()
+        set(value) = syncProperty.set(value)
 
     /**
      * Provider for serverSide property.
@@ -129,7 +126,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property serverSide
      */
-    var serverSide by serverSideProperty
+    var serverSide : Boolean
+        get() = serverSideProperty.get()
+        set(value) = serverSideProperty.set(value)
 
     /**
      * Provider for serviceDescription property.
@@ -143,7 +142,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property serviceDescription
      */
-    var serviceDescription by serviceDescriptionProperty
+    var serviceDescription : Boolean
+        get() = serviceDescriptionProperty.get()
+        set(value) = serviceDescriptionProperty.set(value)
 
     /**
      * Provider for databindingMethod property.
@@ -163,7 +164,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      *  @property databindingMethod
      */
-    var databindingMethod by databindingMethodProperty
+    var databindingMethod : String
+        get() = databindingMethodProperty.get()
+        set(value) = databindingMethodProperty.set(value)
 
     /**
      * Provider for generateAllClasses property.
@@ -177,7 +180,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property generateAllClasses
      */
-    var generateAllClasses by generateAllClassesProperty
+    var generateAllClasses : Boolean
+        get() = generateAllClassesProperty.get()
+        set(value) = generateAllClassesProperty.set(value)
 
     /**
      * Provider for unpackClasses property.
@@ -191,7 +196,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property unpackClasses
      */
-    var unpackClasses by unpackClassesProperty
+    var unpackClasses : Boolean
+        get() = unpackClassesProperty.get()
+        set(value) = unpackClassesProperty.set(value)
 
     /**
      * Provider for serviceName property.
@@ -205,7 +212,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property serviceName
      */
-    var serviceName by serviceNameProperty
+    var serviceName : String
+        get() = serviceNameProperty.get()
+        set(value) = serviceNameProperty.set(value)
 
     /**
      * Provider for portName property.
@@ -219,7 +228,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property portName
      */
-    var portName by portNameProperty
+    var portName : String
+        get() = portNameProperty.get()
+        set(value) = portNameProperty.set(value)
 
     /**
      * Provider for serversideInterface property.
@@ -232,7 +243,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property serversideInterface
      */
-    var serversideInterface by serversideInterfaceProperty
+    var serversideInterface : Boolean
+        get() = serversideInterfaceProperty.get()
+        set(value) = serversideInterfaceProperty.set(value)
 
     /**
      * Provider for wsdlVersion property.
@@ -245,7 +258,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property wsdlVersion
      */
-    var wsdlVersion by wsdlVersionProperty
+    var wsdlVersion : String
+        get() = wsdlVersionProperty.get()
+        set(value) = wsdlVersionProperty.set(value)
 
     /**
      * Provider for flattenFiles property.
@@ -258,7 +273,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property flattenFiles
      */
-    var flattenFiles by flattenFilesProperty
+    var flattenFiles : Boolean
+        get() = flattenFilesProperty.get()
+        set(value) = flattenFilesProperty.set(value)
 
     /**
      * Provider for unwrapParams property.
@@ -271,7 +288,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property unwrapParams
      */
-    var unwrapParams by unwrapParamsProperty
+    var unwrapParams : Boolean
+        get() = unwrapParamsProperty.get()
+        set(value) = unwrapParamsProperty.set(value)
 
     /**
      * Provider for xsdconfig property.
@@ -285,7 +304,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property xsdconfig
      */
-    var xsdconfig by xsdconfigProperty
+    var xsdconfig : Boolean
+        get() = xsdconfigProperty.get()
+        set(value) = xsdconfigProperty.set(value)
 
     /**
      * Provider for allPorts property.
@@ -298,7 +319,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property allPorts
      */
-    var allPorts by allPortsProperty
+    var allPorts : Boolean
+        get() = allPortsProperty.get()
+        set(value) = allPortsProperty.set(value)
 
     /**
      * Provider for backwordCompatible property.
@@ -311,7 +334,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property backwordCompatible
      */
-    var backwordCompatible by backwordCompatibleProperty
+    var backwordCompatible : Boolean
+        get() = backwordCompatibleProperty.get()
+        set(value) = backwordCompatibleProperty.set(value)
 
     /**
      * Provider for suppressPrefixes property.
@@ -324,7 +349,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property suppressPrefixes
      */
-    var suppressPrefixes by suppressPrefixesProperty
+    var suppressPrefixes : Boolean
+        get() = suppressPrefixesProperty.get()
+        set(value) = suppressPrefixesProperty.set(value)
 
     /**
      * Provider for noMessageReceiver property.
@@ -337,7 +364,9 @@ abstract class Axis2(name: String) : AbstractAxisConfig(name) {
      *
      * @property noMessageReceiver
      */
-    var noMessageReceiver by noMessageReceiverProperty
+    var noMessageReceiver : Boolean
+        get() = noMessageReceiverProperty.get()
+        set(value) = noMessageReceiverProperty.set(value)
 
     /**
      * Provider for outputDir property.

@@ -16,9 +16,6 @@
 package com.intershop.gradle.wsdl.extension
 
 import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
-import com.intershop.gradle.wsdl.utils.getValue
-import com.intershop.gradle.wsdl.utils.property
-import com.intershop.gradle.wsdl.utils.setValue
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
@@ -35,13 +32,7 @@ import javax.inject.Inject
  *
  * @constructur default constructor with project and a configuration name.
  */
-abstract class AbstractAxisConfig(val name: String) {
-
-    /**
-     * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
-     */
-    @get:Inject
-    abstract val objectFactory: ObjectFactory
+open class AbstractAxisConfig @Inject constructor(val name: String, objectFactory: ObjectFactory) {
 
     private val sourceSetNameProperty: Property<String> = objectFactory.property(String::class.java)
     private val packageNameProperty: Property<String?> = objectFactory.property(String::class.java)
@@ -52,7 +43,7 @@ abstract class AbstractAxisConfig(val name: String) {
     private val argumentsProperty: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     // will be analyzed as Boolean
-    private val generateTestcaseProperty = objectFactory.property<Boolean>()
+    private val generateTestcaseProperty: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     init {
         sourceSetNameProperty.set(SourceSet.MAIN_SOURCE_SET_NAME)
@@ -70,7 +61,8 @@ abstract class AbstractAxisConfig(val name: String) {
      * urn:AddressFetcher2=samples.addr
      * </pre></blockquote></p>
      */
-    val namespacePackageMappings: NamedDomainObjectContainer<NamespacePackageMapping> = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
+    val namespacePackageMappings: NamedDomainObjectContainer<NamespacePackageMapping>
+        = objectFactory.domainObjectContainer(NamespacePackageMapping::class.java)
 
     /**
      * Provider for packageName.
@@ -87,7 +79,9 @@ abstract class AbstractAxisConfig(val name: String) {
      *
      * @property packageName
      */
-    var packageName by packageNameProperty
+    var packageName: String?
+        get() = packageNameProperty.orNull
+        set(value) = packageNameProperty.set(value)
 
     /**
      * Provider for generateTestcase.
@@ -103,7 +97,9 @@ abstract class AbstractAxisConfig(val name: String) {
      *
      * @property generateTestcase
      */
-    var generateTestcase by generateTestcaseProperty
+    var generateTestcase : Boolean
+        get() = generateTestcaseProperty.getOrElse(false)
+        set(value) = generateTestcaseProperty.set(value)
 
     /**
      * Provider for namespacePackageMappingFile.
@@ -192,5 +188,7 @@ abstract class AbstractAxisConfig(val name: String) {
     /**
      * SourceSet name for Java files.
      */
-    var sourceSetName by sourceSetNameProperty
+    var sourceSetName: String
+        get() = sourceSetNameProperty.get()
+        set(value) = sourceSetNameProperty.set(value)
 }

@@ -16,7 +16,6 @@
 package com.intershop.gradle.wsdl.tasks
 
 import com.intershop.gradle.wsdl.extension.data.NamespacePackageMapping
-import com.intershop.gradle.wsdl.utils.property
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
@@ -40,13 +39,7 @@ import javax.inject.Inject
 /**
  * Abbstract class for axis 1 and axis2 code generator.
  */
-abstract class AbstractWSDL2Java : DefaultTask() {
-
-    /**
-     * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
-     */
-    @get:Inject
-    abstract val objectFactory: ObjectFactory
+open class AbstractWSDL2Java @Inject constructor(objectFactory: ObjectFactory) : DefaultTask() {
     
     companion object {
         /**
@@ -128,7 +121,7 @@ abstract class AbstractWSDL2Java : DefaultTask() {
             return mappings.toList()
         }
 
-    private val generateTestcaseProperty = objectFactory.property<Boolean>()
+    private val generateTestcaseProperty = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate a client-side JUnit test case. This test case can stand on its own, but it doesn't

@@ -19,28 +19,37 @@ import com.intershop.gradle.wsdl.extension.Axis1.Companion.TIMEOUT
 import com.intershop.gradle.wsdl.extension.data.WSDLProperty
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.DeployScope
+import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.file.FileCollectionFactory
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
+import org.gradle.process.JavaExecSpec
 import org.gradle.process.JavaForkOptions
 import org.gradle.process.internal.DefaultJavaDebugOptions
 import org.gradle.process.internal.DefaultJavaForkOptions
+import javax.inject.Inject
 
 /**
  * This task generates the source code from existing WSDL with axis1 files with a specific configuration.
  *
  * @constructor constructor initialize a WSDL2Java task with a worker executtor.
  */
-abstract class WSDL2Java : AbstractWSDL2Java(){
+abstract class WSDL2Java @Inject constructor(objectFactory: ObjectFactory, @Internal val execOps: ExecOperations):
+        AbstractWSDL2Java(objectFactory){
     
-    private val noImportsProperty = objectFactory.property(Boolean::class.java)
+    private val noImportsProperty: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     /**
      * Only generate code for the WSDLExtension document that appears on the command line
@@ -179,7 +188,7 @@ abstract class WSDL2Java : AbstractWSDL2Java(){
      */
     fun provideDeployScope(deployScope: Provider<String>) = deployScopeProperty.set(deployScope)
 
-    private val generateAllClassesProperty = objectFactory.property(Boolean::class.java)
+    private val generateAllClassesProperty: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     /**
      * Generate code for all elements, even unreferenced ones. By default,
@@ -461,20 +470,22 @@ abstract class WSDL2Java : AbstractWSDL2Java(){
      */
     @TaskAction
     fun run() {
-
         if (internalForkOptionsAction != null) {
             project.logger.debug("Add configured JavaForkOptions to WSDL2Java Axis2 code generation runner.")
             (internalForkOptionsAction)?.execute(javaOptions)
         }
 
-        project.javaexec {
+        val result = execOps.javaexec {
             it.classpath = toolsClasspath
-            it.main = "org.apache.axis.wsdl.WSDL2Java"
+            it.mainClass.set("org.apache.axis.wsdl.WSDL2Java")
             it.args = calculateParameters()
             javaOptions.copyTo(it)
+            it.executable = "java"
+        }
+        if (result.exitValue != 0) {
+            throw GradleException("Execution for ${this.name} failed!")
         }
     }
-
 
     private fun calculateParameters() : List<String> {
         val parameters: MutableList<String> = mutableListOf()

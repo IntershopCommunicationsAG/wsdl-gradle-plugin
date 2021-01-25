@@ -52,7 +52,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
         """.stripIndent()
 
         when:
-        List<String> args = ['compileJava', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
+        List<String> args = ['compileJava', '-d', '-s', '-i', '--configure-on-demand', '--parallel', '--max-workers=4']
 
         def result1 = getPreparedGradleRunner()
                 .withArguments(args)
