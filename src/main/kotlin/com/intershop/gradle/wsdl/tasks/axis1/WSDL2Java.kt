@@ -46,8 +46,9 @@ import javax.inject.Inject
  *
  * @constructor constructor initialize a WSDL2Java task with a worker executtor.
  */
-abstract class WSDL2Java @Inject constructor(objectFactory: ObjectFactory, @Internal val execOps: ExecOperations):
-        AbstractWSDL2Java(objectFactory){
+abstract class WSDL2Java
+    @Inject constructor(objectFactory: ObjectFactory,
+                        @Internal val execOps: ExecOperations): AbstractWSDL2Java(objectFactory){
     
     private val noImportsProperty: Property<Boolean> = objectFactory.property(Boolean::class.java)
 

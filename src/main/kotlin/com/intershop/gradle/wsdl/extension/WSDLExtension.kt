@@ -22,7 +22,7 @@ import javax.inject.Inject
 /**
  * Main extension of the WSDL plugin.
  */
-abstract class WSDLExtension {
+open class WSDLExtension @Inject constructor(objectFactory: ObjectFactory) {
 
     companion object {
         /**
@@ -50,12 +50,6 @@ abstract class WSDLExtension {
          **/
         const val CODEGEN_OUTPUTPATH = "generated/wsdl2java"
     }
-
-    /**
-     * Inject service of ObjectFactory (See "Service injection" in Gradle documentation.
-     */
-    @get:Inject
-    abstract val objectFactory: ObjectFactory
 
     /**
      * Container for axis1 generation configurations.

@@ -17,13 +17,21 @@ package com.intershop.gradle.wsdl.tasks.axis2
 
 import com.intershop.gradle.wsdl.tasks.AbstractWSDL2Java
 import com.intershop.gradle.wsdl.utils.Databinding
+import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.internal.file.FileCollectionFactory
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
+import org.gradle.process.JavaForkOptions
+import org.gradle.process.internal.DefaultJavaDebugOptions
+import org.gradle.process.internal.DefaultJavaForkOptions
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
@@ -34,7 +42,7 @@ import javax.inject.Inject
  */
 abstract class WSDL2Java
     @Inject constructor(objectFactory: ObjectFactory,
-                        private val workerExecutor: WorkerExecutor) : AbstractWSDL2Java(objectFactory) {
+                        @Internal val execOps: ExecOperations) : AbstractWSDL2Java(objectFactory) {
 
     private val asyncProperty = objectFactory.property(Boolean::class.java)
 
@@ -375,26 +383,32 @@ abstract class WSDL2Java
     @get:Classpath
     val toolsClasspath : ConfigurableFileCollection = project.files()
 
+    private var javaOptions: JavaForkOptions = DefaultJavaForkOptions(
+        (project as ProjectInternal).fileResolver,
+        (project as ProjectInternal).services.get(FileCollectionFactory::class.java),
+        DefaultJavaDebugOptions()
+    )
+
     /**
      * This is the task action and generates Java source files.
      */
     @TaskAction
     fun run() {
-        // start runner
-        val workQueue = workerExecutor.processIsolation {
-            it.classpath.setFrom(toolsClasspath)
-
-            if(internalForkOptionsAction != null) {
-                project.logger.debug("WSDL2Java runner adds configured JavaForkOptions.")
-                internalForkOptionsAction?.execute(it.forkOptions)
-            }
+        if (internalForkOptionsAction != null) {
+            project.logger.debug("Add configured JavaForkOptions to WSDL2Java Axis2 code generation runner.")
+            (internalForkOptionsAction)?.execute(javaOptions)
         }
 
-        workQueue.submit(WSDL2JavaRunner::class.java) {
-            it.paramList.set(calculateParameters())
+        val result = execOps.javaexec {
+            it.classpath = toolsClasspath
+            it.mainClass.set("org.apache.axis2.wsdl.WSDL2Code")
+            it.args = calculateParameters()
+            javaOptions.copyTo(it)
+            it.executable = "java"
         }
-
-        workerExecutor.await()
+        if (result.exitValue != 0) {
+            throw GradleException("Execution for ${this.name} failed!")
+        }
     }
 
     private fun calculateParameters() : List<String> {
