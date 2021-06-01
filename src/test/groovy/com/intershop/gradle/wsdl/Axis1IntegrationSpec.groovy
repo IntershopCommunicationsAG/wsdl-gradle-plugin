@@ -41,13 +41,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
@@ -105,13 +105,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
@@ -155,13 +155,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
@@ -214,13 +214,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
@@ -270,13 +270,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
@@ -329,13 +329,13 @@ class Axis1IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis:axis:1.4'
-                compile 'org.apache.axis:axis-jaxrpc:1.4'
-                compile 'javax.xml:jaxrpc-api:1.1'
+                implementation 'org.apache.axis:axis:1.4'
+                implementation 'org.apache.axis:axis-jaxrpc:1.4'
+                implementation 'javax.xml:jaxrpc-api:1.1'
             }
         """.stripIndent()
 
