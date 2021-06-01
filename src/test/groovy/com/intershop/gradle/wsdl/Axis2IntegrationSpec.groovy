@@ -44,12 +44,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-adb:1.7.7'
+                implementation 'org.apache.axis2:axis2:1.7.7'
+                implementation 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -101,12 +101,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-adb:1.7.7'
+                implementation 'org.apache.axis2:axis2:1.7.7'
+                implementation 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -157,12 +157,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-adb:1.7.7'
+                implementation 'org.apache.axis2:axis2:1.7.7'
+                implementation 'org.apache.axis2:axis2-adb:1.7.7'
             }
         """.stripIndent()
 
@@ -216,19 +216,19 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             configurations {
-                wsdlAxis2.extendsFrom(compile)
+                wsdlAxis2.extendsFrom(implementation)
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-kernel:1.7.3'
-                compile 'org.apache.axis2:axis2-jibx:1.7.3'
-                compile 'org.jibx:jibx-run:1.2'
-                compile 'org.jibx:jibx-bind:1.2'
+                implementation 'org.apache.axis2:axis2:1.7.3'
+                implementation 'org.apache.axis2:axis2-kernel:1.7.3'
+                implementation 'org.apache.axis2:axis2-jibx:1.7.3'
+                implementation 'org.jibx:jibx-run:1.2'
+                implementation 'org.jibx:jibx-bind:1.2'
                 
                 wsdlAxis2 'org.apache.axis2:axis2-codegen:1.7.3'
                 wsdlAxis2 'wsdl4j:wsdl4j:1.6.3'
@@ -283,12 +283,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-kernel:1.7.7'
+                implementation 'org.apache.axis2:axis2:1.7.7'
+                implementation 'org.apache.axis2:axis2-kernel:1.7.7'
             }
         """.stripIndent()
 
@@ -340,12 +340,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.3'
-                compile 'org.apache.axis2:axis2-adb:1.7.3'
+                implementation 'org.apache.axis2:axis2:1.7.3'
+                implementation 'org.apache.axis2:axis2-adb:1.7.3'
             }
         """.stripIndent()
 
@@ -385,12 +385,12 @@ class Axis2IntegrationSpec extends AbstractIntegrationGroovySpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
-                compile 'org.apache.axis2:axis2:1.7.7'
-                compile 'org.apache.axis2:axis2-jaxbri:1.7.7'
+                implementation 'org.apache.axis2:axis2:1.7.7'
+                implementation 'org.apache.axis2:axis2-jaxbri:1.7.7'
             }
         """.stripIndent()
 

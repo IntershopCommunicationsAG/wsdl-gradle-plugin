@@ -41,7 +41,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
@@ -105,7 +105,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
@@ -155,7 +155,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
@@ -214,7 +214,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
@@ -271,7 +271,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
             
             repositories {
-                jcenter()
+                mavenCentral()
             }
 
             dependencies {
@@ -330,7 +330,7 @@ class Axis1IntegrationKtsSpec extends AbstractIntegrationKotlinSpec {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             
             dependencies {
