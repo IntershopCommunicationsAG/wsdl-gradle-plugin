@@ -242,6 +242,7 @@ class WSDLPlugin : Plugin<Project> {
                     it.add(dependencyHandler.create("org.apache.ws.xmlschema:xmlschema-core:2.2.1"))
                     it.add(dependencyHandler.create("com.sun.xml.bind:jaxb-impl:2.2.6"))
                     it.add(dependencyHandler.create("com.sun.xml.bind:jaxb-xjc:2.2.6"))
+                    it.add(dependencyHandler.create("javax.xml.soap:javax.xml.soap-api:1.4.0"))
                 }
     }
 }
