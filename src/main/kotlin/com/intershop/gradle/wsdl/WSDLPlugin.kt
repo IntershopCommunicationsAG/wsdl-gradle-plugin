@@ -211,6 +211,7 @@ class WSDLPlugin : Plugin<Project> {
 
                     it.add(dependencyHandler.create("org.apache.axis:axis:1.4"))
                     it.add(dependencyHandler.create("org.apache.axis:axis-jaxrpc:1.4"))
+                    it.add(dependencyHandler.create("javax.xml.soap:javax.xml.soap-api:1.4.0"))
                 }
     }
 
