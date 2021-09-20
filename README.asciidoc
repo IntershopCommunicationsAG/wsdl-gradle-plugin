@@ -62,12 +62,13 @@ wsdl {
         }
     }
 
-    tasks.withType(om.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
+    tasks.withType(com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java) {
         forkOptions { JavaForkOptions options ->
             options.setMaxHeapSize('64m')
             options.jvmArgs += ['-Dhttp.proxyHost=10.0.0.100', '-Dhttp.proxyPort=8800']
         }
     }
+}
 ----
 
 ++++
