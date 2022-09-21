@@ -21,7 +21,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import com.intershop.gradle.wsdl.tasks.axis1.WSDL2Java as axis1WSDL2Java
 import com.intershop.gradle.wsdl.tasks.axis2.WSDL2Java as axis2WSDL2Java
 
@@ -121,10 +121,12 @@ class WSDLPlugin : Plugin<Project> {
                     wsdlProperties = axis1.wsdlProperties
 
                     afterEvaluate {
-                        plugins.withType(JavaBasePlugin::class.java) {
-                            val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
-                            val sourceSet = javaPluginConvention.sourceSets.findByName(axis1.sourceSetName)
-                            sourceSet?.java?.srcDir(this@apply.outputs)
+                        project.plugins.withType(JavaBasePlugin::class.java) {
+                            project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.matching {
+                                it.name == axis1.sourceSetName
+                            }.forEach {
+                                it.java.srcDir(this@apply.outputs)
+                            }
                         }
                     }
 
@@ -177,10 +179,12 @@ class WSDLPlugin : Plugin<Project> {
                     toolsClasspath.from(project.configurations.findByName(WSDLExtension.WSDL_AXIS2_CONFIGURATION_NAME))
 
                     afterEvaluate {
-                        plugins.withType(JavaBasePlugin::class.java) {
-                            val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
-                            val sourceSet = javaPluginConvention.sourceSets.findByName(axis2.sourceSetName)
-                            sourceSet?.java?.srcDir(this@apply.outputs)
+                        project.plugins.withType(JavaBasePlugin::class.java) {
+                            project.extensions.getByType(JavaPluginExtension::class.java).sourceSets.matching {
+                                it.name == axis2.sourceSetName
+                            }.forEach {
+                                it.java.srcDir(this@apply.outputs)
+                            }
                         }
                     }
 

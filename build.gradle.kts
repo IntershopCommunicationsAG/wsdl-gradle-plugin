@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import java.util.Date
 
 plugins {
+
     // project plugins
     `java-gradle-plugin`
     groovy
-    kotlin("jvm") version "1.4.20"
+
+    kotlin("jvm") version "1.7.10"
 
     // test coverage
     jacoco
@@ -43,13 +43,13 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.2"
 
     // documentation
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.5.0"
 
     // code analysis for kotlin
-    id("io.gitlab.arturbosch.detekt") version "1.17.1"
+    id("io.gitlab.arturbosch.detekt") version "1.18.0"
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "0.15.0"
+    id("com.gradle.plugin-publish") version "1.0.0"
 }
 
 scm {
@@ -84,12 +84,12 @@ pluginBundle {
     val pluginURL = "https://github.com/IntershopCommunicationsAG/${project.name}"
     website = pluginURL
     vcsUrl = pluginURL
-    tags = listOf("intershop", "gradle", "plugin", "build", "wsdl")
+    tags = listOf("intershop", "wsdl", "build", "code", "generator")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 // set correct project status
@@ -98,7 +98,7 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 }
 
 detekt {
-    input = files("src/main/kotlin")
+    source = files("src/main/kotlin")
     config = files("detekt.yml")
 }
 
@@ -114,12 +114,12 @@ tasks {
             languageVersion.set(JavaLanguageVersion.of(11))
         })
 
-        systemProperty("intershop.gradle.versions", "6.8, 7.0.2")
+        systemProperty("intershop.gradle.versions", "7.2,7.5.1")
 
         useJUnitPlatform()
     }
 
-    val copyAsciiDoc = register<Copy>("copyAsciiDoc") {
+    register<Copy>("copyAsciiDoc") {
         includeEmptyDirs = false
 
         val outputDir = file("$buildDir/tmp/asciidoctorSrc")
@@ -167,10 +167,10 @@ tasks {
 
     withType<JacocoReport> {
         reports {
-            xml.isEnabled = true
-            html.isEnabled = true
+            xml.required.set(true)
+            html.required.set(true)
 
-            html.destination = File(project.buildDir, "jacocoHtml")
+            html.outputLocation.set( File(project.buildDir, "jacocoHtml") )
         }
 
         val jacocoTestReport by tasks
@@ -179,7 +179,7 @@ tasks {
 
     getByName("jar").dependsOn("asciidoctor")
 
-    val compileKotlin by getting(KotlinCompile::class) {
+    withType<KotlinCompile>  {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
@@ -187,17 +187,21 @@ tasks {
         outputDirectory.set(buildDir.resolve("dokka"))
     }
 
-    register<Jar>("sourceJar") {
-        description = "Creates a JAR that contains the source code."
-
-        from(sourceSets.getByName("main").allSource)
-        archiveClassifier.set("sources")
+    withType<Sign> {
+        val sign = this
+        withType<PublishToMavenLocal> {
+            this.dependsOn(sign)
+        }
+        withType<PublishToMavenRepository> {
+            this.dependsOn(sign)
+        }
     }
 
-    register<Jar>("javaDoc") {
-        dependsOn(dokkaJavadoc)
-        from(dokkaJavadoc)
-        archiveClassifier.set("javadoc")
+    afterEvaluate {
+        getByName<Jar>("javadocJar") {
+            dependsOn(dokkaJavadoc)
+            from(dokkaJavadoc)
+        }
     }
 }
 
@@ -206,8 +210,6 @@ publishing {
         create("intershopMvn", MavenPublication::class.java) {
 
             from(components["java"])
-            artifact(tasks.getByName("sourceJar"))
-            artifact(tasks.getByName("javaDoc"))
 
             artifact(File(buildDir, "docs/asciidoc/html5/README.html")) {
                 classifier = "reference"
@@ -271,6 +273,6 @@ dependencies {
     compileOnly("org.apache.axis:axis:1.4")
     compileOnly("org.apache.axis2:axis2-codegen:1.7.7")
 
-    testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.0")
+    testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.2")
     testImplementation(gradleTestKit())
 }

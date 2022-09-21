@@ -22,6 +22,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -447,6 +448,7 @@ open class Axis1 @Inject constructor(name: String, objectFactory: ObjectFactory,
     }
 
     private fun String.toCamelCase() : String {
-        return split(" ").joinToString("") { it.capitalize() }
+        return split(" ").joinToString("") {
+            it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
     }
 }
